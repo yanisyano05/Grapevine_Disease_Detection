@@ -2,10 +2,12 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+from data_pretreat import train_ds
+
 # Configuration
-data_dir = os.getcwd()[:-9] + "/data/datasplit/"
-class_names = ['Black_Rot', 'ESCA', 'Healthy', 'Leaf_Blight']
-subsets = ['train', 'val', 'test']
+data_dir = os.getcwd()[:-9] + "/data/"
+class_names = ['Black Rot', 'ESCA', 'Healthy', 'Leaf Blight']
+subsets = [dir_ for dir_ in os.listdir(data_dir)]
 
 class_counts = {subset: {class_name: 0 for class_name in class_names} for subset in subsets}
 
@@ -34,7 +36,7 @@ for idx, subset in enumerate(subsets):
         print(f"  {class_name}: {count} images ({percentage:.1f}%)")
     print(f"  Total: {total_lst[idx]} images")
 
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+fig, axes = plt.subplots(1, len(subsets), figsize=(15, 5))
 
 for idx, subset in enumerate(subsets):
     counts = [class_counts[subset][class_name] for class_name in class_names]
@@ -49,7 +51,7 @@ for idx, subset in enumerate(subsets):
                       ha='center', va='bottom', fontweight='bold')
     
     axes[idx].set_title(subset.upper()+" tot: "+str(total_lst[idx]), fontsize=12, fontweight='bold')
-    axes[idx].set_ylabel('Nombre d\'images', fontsize=10)
+    axes[idx].set_ylabel('Number of images', fontsize=10)
     axes[idx].set_xlabel('Classes', fontsize=10)
     axes[idx].tick_params(axis='x', rotation=45)
     axes[idx].grid(axis='y', alpha=0.3, linestyle='--')
@@ -57,3 +59,12 @@ for idx, subset in enumerate(subsets):
 plt.tight_layout()
 plt.show()
 
+# Load examples
+
+for img, lbl in train_ds.take(1):
+    for i in range(4):
+        ax = plt.subplot(2, 2, i + 1)
+        plt.imshow(img[i].numpy().astype("uint8"))
+        plt.title(class_names[lbl[i]])
+        plt.axis("off")
+plt.show()

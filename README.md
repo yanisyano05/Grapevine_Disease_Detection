@@ -4,57 +4,73 @@ This document outlines the development of a modile application that uses a DeepL
 
 ## Dataset
 
-The data used in this study is split into training, validation, and testing sets ensuring a robust evaluation of our model's performance. The dataset consists of a set of 9027 images of three disease commonly found on grapevines: 
-**Black Rot**, **ESCA**, and **Leaf Blight**, balanced with equal representation across the classes. Images are in .jpeg format with dimensions of 256x256 pixels.
+The data used in this study came from [kaggle](kaggle.com/datasets/rm1000/grape-disease-dataset-original). It is split into training, validation, and testing sets ensuring a robust evaluation of our model's performance. The dataset consists of a set of 9027 images of three disease commonly found on grapevines:
+**Black Rot**, **ESCA**, and **Leaf Blight**. Classes are well balenced with a slit overrepresentation of **ESCA** and **Black Rot** . Images are in .jpeg format with dimensions of 256x256 pixels.
 
 ![Dataset Overview](./docs/images/dataset_overview.png)
+![Sample](./docs/images/samples_img.png)
 
 ## Model Structure
 
 Our model is a Convolutional Neural Network (CNN) built using Keras API with TensorFlow backend. It includes several convolutional layers followed by batch normalization, ReLU activation function and max pooling for downsampling. 
 Dropout layers are used for regularization to prevent overfitting. The architecture details and parameters are as follows: 
 
-| Layer (type)                         | Output Shape               | Param #  |
-|--------------------------------------|-----------------------------|----------|
-| sequential                           | (None, 224, 224, 3)        |    0     |
-| conv2d                               | (None, 224, 224, 32)       |    896   |
-| batch_normalization                  | (None, 224, 224, 32)       |    128   |
-| conv2d_1                             | (None, 224, 224, 32)       |    9248  |
-| batch_normalization_1                 | (None, 224, 224, 32)       |    128   |
-| max_pooling2d                        | (None, 112, 112, 32)       |    0     |
-| dropout                              | (None, 112, 112, 32)       |    0     |
-| conv2d_2                             | (None, 112, 112, 64)       |    18496 |
-| batch_normalization_2                 | (None, 112, 112, 64)       |    256   |
-| conv2d_3                             | (None, 112, 112, 64)       |    36864 |
-| batch_normalization_3                 | (None, 112, 112, 64)       |    256   |
-| max_pooling2d_1                      | (None, 56, 56, 64)         |    0     |
-| dropout_1                            | (None, 56, 56, 64)         |    0     |
-| conv2d_4                             | (None, 56, 56, 128)        |    73728 |
-| batch_normalization_4                 | (None, 56, 56, 128)        |    512   |
-| conv2d_5                             | (None, 56, 56, 128)        |    147584|
-| batch_normalization_5                 | (None, 56, 56, 128)        |    512   |
-| max_pooling2d_2                      | (None, 28, 28, 128)        |    0     |
-| dropout_2                            | (None, 28, 28, 128)        |    0     |
-| conv2d_6                             | (None, 28, 28, 256)        |    294912|
-| batch_normalization_6                 | (None, 28, 28, 256)        |    1024   |
-| conv2d_7                             | (None, 28, 28, 256)        |    590080|
-| batch_normalization_7                 | (None, 28, 28, 256)        |    1024   |
-| max_pooling2d_3                      | (None, 14, 14, 256)        |    0     |
-| dropout_3                            | (None, 14, 14, 256)        |    0     |
-| global_average_pooling2d             | (None, 256)                |    0     |
-| dense                                | (None, 256)                |    65792 |
-| batch_normalization_8                 | (None, 256)                |    1024   |
-| dropout_4                            | (None, 256)                |    0     |
-| dense_1                              | (None, 128)                |    32768 |
-| batch_normalization_9                 | (None, 128)                |    512   |
-| dropout_5                            | (None, 128)                |    0     |
-| dense_2                              | (None, 4)                  |    516    |
+```{python}
+model = Sequential([
+    data_augmentation,
+    
+    # Block 1
+    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=2),
+    layers.Dropout(0.25),
+    
+    # Block 2
+    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=2),
+    layers.Dropout(0.25),
+    
+    # Block 3
+    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=2),
+    layers.Dropout(0.25),
+    
+    # Block 4
+    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=2),
+    layers.Dropout(0.25),
+    
+    # Classification head
+    layers.GlobalAveragePooling2D(),
+    layers.Dense(256, activation='relu'),
+    layers.BatchNormalization(),
+    layers.Dropout(0.5),
+    layers.Dense(128, activation='relu'),
+    layers.BatchNormalization(),
+    layers.Dropout(0.5),
+    layers.Dense(num_classes)
+])
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+
+```
 
 
- Total params: 3,825,134 (14.59 MB)
- Trainable params: 1,274,148 (4.86 MB)
- Non-trainable params: 2,688 (10.50 KB)
- Optimizer params: 2,548,298 (9.72 MB)
+ Total params: 3,825,134 (14.59 MB) <br>
+ Trainable params: 1,274,148 (4.86 MB) <br>
+ Non-trainable params: 2,688 (10.50 KB) <br>
+ Optimizer params: 2,548,298 (9.72 MB) <br>
 
 ## Training Details
 
@@ -81,9 +97,9 @@ model is identifying key features for accurate classification.
 
 ### ressources: 
 
-https://www.tensorflow.org/tutorials/images/classification?hl=en
-https://www.tensorflow.org/lite/convert?hl=en
-https://www.tensorflow.org/tutorials/interpretability/integrated_gradients?hl=en
+https://www.tensorflow.org/tutorials/images/classification?hl=en <br>
+https://www.tensorflow.org/lite/convert?hl=en <br>
+https://www.tensorflow.org/tutorials/interpretability/integrated_gradients?hl=en <br>
 
 AI(s) : deepseek-coder:6.7b | deepseek-r1:8b
 

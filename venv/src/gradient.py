@@ -5,61 +5,10 @@ import os
 import math
 from tensorflow.keras.models import load_model
 
-from load_model import *
-from data_pretreat import * # src/ function
+from load_model import select_model
+from data_pretreat import test_ds, img_name_tensors, class_names, img_height, img_width
 
 model, model_dir = select_model()
-
-def read_image(file_name):
-    image = tf.io.read_file(file_name)
-    image = tf.io.decode_jpeg(image, channels=channels)
-    image = tf.image.convert_image_dtype(image, tf.float32)
-    image = tf.image.resize_with_pad(image, target_height=img_height, target_width=img_width)
-    return image
-
-def top_k_predictions(img, k=2):
-    image_batch = tf.expand_dims(img, 0)
-    predictions = model(image_batch)
-    probs = tf.nn.softmax(predictions, axis=-1)
-    top_probs, top_idxs = tf.math.top_k(input=probs, k=k)
-    
-    top_labels = [class_names[idx.numpy()] for idx in top_idxs[0]]
-    
-    return top_labels, top_probs[0]
-
-# Load img
-img_name_tensors = {}
-
-for images, labels in test_ds:  
-    for i, class_name in enumerate(class_names):
-        class_idx = class_names.index(class_name)
-        mask = labels == class_idx
-        
-        if tf.reduce_any(mask):
-            img_name_tensors[class_name] = images[mask][0] / 255.0
-
-
-# Show img with prediction
-plt.figure(figsize=(14, 12))
-num_images = len(img_name_tensors)
-cols = 2
-rows = math.ceil(num_images / cols)
-
-for n, (name, img_tensor) in enumerate(img_name_tensors.items()):
-    ax = plt.subplot(rows, cols, n+1)
-    ax.imshow(img_tensor)
-    
-    pred_labels, pred_probs = top_k_predictions(img_tensor, k=4)
-    
-    pred_text = f"Real classe: {name}\n\nPredictions:\n"
-    for label, prob in zip(pred_labels, pred_probs):
-        pred_text += f"{label}: {prob.numpy():0.1%}\n"
-
-    ax.axis('off')
-    ax.text(-0.5, 0.95, pred_text, ha='left', va='top', transform=ax.transAxes)
-
-plt.tight_layout()
-plt.show()
 
 # Calculate Integrated Gradients
 def f(x):
@@ -185,16 +134,10 @@ def plot_img_attributions(baseline,
   plt.tight_layout()
   return fig
 
-_ = plot_img_attributions(image=img_name_tensors['Leaf_Blight'],
+_ = plot_img_attributions(image=img_name_tensors[class_names[3]],
                           baseline=baseline,
                           target_class_idx=3,
                           m_steps=240,
                           cmap=plt.cm.inferno,
                           overlay_alpha=0.4)
 plt.show()
-
-
-"""
-@ref : 
-https://www.tensorflow.org/tutorials/interpretability/integrated_gradients?hl=en
-"""

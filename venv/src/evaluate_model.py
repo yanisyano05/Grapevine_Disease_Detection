@@ -1,14 +1,15 @@
 import os
 import numpy as np 
+import tensorflow as tf
+import math
 import matplotlib.pyplot as plt
 import pandas as pd
-import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
-from load_model import *
-from data_pretreat import * # src/ function
+from load_model import select_model
+from data_pretreat import test_ds, img_name_tensors, class_names
 
 model, model_dir = select_model()
 
@@ -23,16 +24,12 @@ loss = df['loss']
 val_loss = df['val_loss']
 
 # Model testing 
-y_pred = model.predict(test_ds)
-y_ = np.argmax(y_pred, axis=1)
+y_ = model.predict(test_ds)
+y_ = np.argmax(y_, axis=1)
 
-y_test_raw = np.concatenate([y for x, y in test_ds], axis=0)
-
-y_test_classes = y_test_raw
+y_test_classes = np.concatenate([y for x, y in test_ds], axis=0)
 
 cm = confusion_matrix(y_test_classes, y_)
-
-class_names = ['Black_Rot', 'ESCA', 'Healthy', 'Leaf_Blight']
 
 plt.figure(figsize=(16, 5))
 
@@ -60,10 +57,42 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=class_names, 
             yticklabels=class_names,
             cbar=False)
-plt.title('Matrice de Confusion')
-plt.ylabel('Vraies étiquettes')
-plt.xlabel('Prédictions')
+plt.title('Confusion Matrix')
+plt.ylabel('True Classes')
+plt.xlabel('Predictions')
 
 plt.tight_layout()
 plt.show()
+ 
+# Display images probabilities 
+def top_k_predictions(img, k=2):
+    image_batch = tf.expand_dims(img, 0)
+    predictions = model(image_batch)
+    probs = tf.nn.softmax(predictions, axis=-1)
+    top_probs, top_idxs = tf.math.top_k(input=probs, k=k)
+    
+    top_labels = [class_names[idx.numpy()] for idx in top_idxs[0]]
+    
+    return top_labels, top_probs[0]
 
+# Show img with prediction
+plt.figure(figsize=(14, 12))
+num_images = len(img_name_tensors)
+cols = 2
+rows = math.ceil(num_images / cols)
+
+for n, (name, img_tensor) in enumerate(img_name_tensors.items()):
+    ax = plt.subplot(rows, cols, n+1)
+    ax.imshow(img_tensor)
+    
+    pred_labels, pred_probs = top_k_predictions(img_tensor, k=4)
+    
+    pred_text = f"Real classe: {name}\n\nPredictions:\n"
+    for label, prob in zip(pred_labels, pred_probs):
+        pred_text += f"{label}: {prob.numpy():0.1%}\n"
+
+    ax.axis('off')
+    ax.text(-0.5, 0.95, pred_text, ha='left', va='top', transform=ax.transAxes)
+
+plt.tight_layout()
+plt.show()
