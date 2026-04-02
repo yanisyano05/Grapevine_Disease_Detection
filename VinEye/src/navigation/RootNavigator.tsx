@@ -3,8 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import SplashScreen from '@/screens/SplashScreen';
 import ResultScreen from '@/screens/ResultScreen';
-import HistoryScreen from '@/screens/HistoryScreen';
+import NotificationsScreen from '@/screens/NotificationsScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
+import SettingsScreen from '@/screens/SettingsScreen';
+import GuidesScreen from '@/screens/GuidesScreen';
+import LibraryScreen from '@/screens/LibraryScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import linking from './linking';
 import type { RootStackParamList } from '@/types/navigation';
@@ -27,12 +30,27 @@ export default function RootNavigator() {
         />
         <Stack.Screen
           name="Notifications"
-          component={HistoryScreen}
+          component={NotificationsScreen}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{ animation: 'slide_from_right' }}
         />
         <Stack.Screen
           name="Settings"
-          component={ProfileScreen}
+          component={SettingsScreen}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Guides"
+          component={GuidesScreen}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Library"
+          component={LibraryScreen}
           options={{ animation: 'slide_from_right' }}
         />
       </Stack.Navigator>

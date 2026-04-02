@@ -4,18 +4,22 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { House, ScanLine, MapPin } from "lucide-react-native";
+import { House, ScanLine, Map, BookOpen, Leaf } from "lucide-react-native";
 
 import HomeScreen from "@/screens/HomeScreen";
 import ScannerScreen from "@/screens/ScannerScreen";
 import MapScreen from "@/screens/MapScreen";
+import GuidesScreen from "@/screens/GuidesScreen";
+import LibraryScreen from "@/screens/LibraryScreen";
 import { colors } from "@/theme/colors";
 
 const Tab = createBottomTabNavigator();
 
 const TAB_ICONS: Record<string, any> = {
   Home: House,
-  Map: MapPin,
+  Guides: BookOpen,
+  Library: Leaf,
+  Map: Map,
 };
 
 function MyCustomTabBar({ state, descriptors, navigation }: any) {
@@ -118,7 +122,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
                 strokeWidth={isFocused ? 2.5 : 1.8}
               />
             )}
-            <Text
+            {/* <Text
               numberOfLines={1}
               style={{
                 fontSize: 11,
@@ -128,7 +132,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
               }}
             >
               {label}
-            </Text>
+            </Text> */}
           </TouchableOpacity>
         );
       })}
@@ -150,9 +154,19 @@ export default function BottomTabNavigator() {
         options={{ tabBarLabel: t("common.home") }}
       />
       <Tab.Screen
+        name="Guides"
+        component={GuidesScreen}
+        options={{ tabBarLabel: t("guides.screenTitle") }}
+      />
+      <Tab.Screen
         name="Scanner"
         component={ScannerScreen}
         options={{ tabBarLabel: t("common.scan") }}
+      />
+      <Tab.Screen
+        name="Library"
+        component={LibraryScreen}
+        options={{ tabBarLabel: t("library.title") }}
       />
       <Tab.Screen
         name="Map"

@@ -15,7 +15,10 @@ const linking: LinkingOptions<RootStackParamList> = {
       },
       Result: 'result',
       Notifications: 'notifications',
+      Profile: 'profile',
       Settings: 'settings',
+      Guides: 'guides',
+      Library: 'library',
     },
   },
 };

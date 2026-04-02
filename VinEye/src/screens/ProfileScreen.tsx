@@ -1,208 +1,253 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n';
+import { View, ScrollView, StyleSheet, Platform, Dimensions, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 
-import { Card } from '@/components/ui/Card';
-import { XPBar } from '@/components/gamification/XPBar';
-import { BadgeCard } from '@/components/gamification/BadgeCard';
-import { useGameProgress } from '@/hooks/useGameProgress';
-import { useHistory } from '@/hooks/useHistory';
-import { colors } from '@/theme/colors';
-import { typography } from '@/theme/typography';
-import { spacing } from '@/theme/spacing';
+import { Text } from "@/components/ui/text";
+import { colors } from "@/theme/colors";
+import { useGameProgress } from "@/hooks/useGameProgress";
+import type { RootStackParamList } from "@/types/navigation";
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+const { width } = Dimensions.get("window");
+const STAT_CARD_SIZE = (width - 56) / 2; // Ajusté pour le gap de 16
+
+const BENTO_STATS = [
+  { key: "scans", icon: "scan-outline", iconColor: "#F59E0B", label: "profile.totalScans" },
+  { key: "grapes", icon: "leaf-outline", iconColor: "#10B981", label: "profile.uniqueGrapes" },
+  { key: "streak", icon: "flame-outline", iconColor: "#EF4444", label: "profile.bestStreak" },
+  { key: "xp", icon: "star-outline", iconColor: "#6366F1", label: "profile.xpTotal" },
+];
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
-  const { progress, resetProgress } = useGameProgress();
-  const { clearHistory } = useHistory();
-
-  const successRate =
-    progress.totalScans > 0
-      ? Math.round(
-          (progress.totalScans -
-            // we don't store not_vine count separately, so approximate
-            0) /
-            progress.totalScans *
-            100
-        )
-      : 0;
-
-  function handleLanguageToggle() {
-    const newLang = i18n.language === 'fr' ? 'en' : 'fr';
-    i18n.changeLanguage(newLang);
-  }
-
-  function handleReset() {
-    Alert.alert(t('common.confirm'), t('profile.resetConfirm'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('profile.resetData'),
-        style: 'destructive',
-        onPress: async () => {
-          await resetProgress();
-          await clearHistory();
-        },
-      },
-    ]);
+  const navigation = useNavigation<Nav>();
+  const { progress } = useGameProgress();
+  function handleBack() {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Main" as any);
+    }
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>🧑‍🌾</Text>
+    <View style={styles.root}>
+      {/* Hero Header - Style Courbé */}
+      <View style={styles.heroBlock}>
+        <SafeAreaView edges={["top"]} style={styles.heroSafeArea}>
+          <View style={styles.heroTopRow}>
+            <TouchableOpacity onPress={handleBack} style={styles.heroBackBtn}>
+              <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={styles.heroSettingsBtn}>
+              <Ionicons name="settings-outline" size={22} color={colors.primary[800]} />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.username}>Vigneron</Text>
-          <Text style={styles.xpTotal}>{progress.xp} XP</Text>
+        </SafeAreaView>
+      </View>
+
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* Avatar avec bague de séparation */}
+        <View style={styles.avatarContainer}>
+          <View style={styles.avatarRing}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarEmoji}>🧑‍🌾</Text>
+            </View>
+          </View>
         </View>
 
-        {/* XP Bar */}
-        <Card style={styles.section} variant="elevated">
-          <XPBar xp={progress.xp} />
-        </Card>
+        {/* User Info - Focus sur la clarté */}
+        <View style={styles.infoCard}>
+          <Text style={styles.userName}>Yanis Cyrius</Text>
+          <Text style={styles.userEmail}>yanis@vineye.app</Text>
 
-        {/* Stats */}
-        <Card style={styles.section} variant="elevated">
-          <Text style={styles.sectionTitle}>{t('profile.stats')}</Text>
-          <View style={styles.statsGrid}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{progress.totalScans}</Text>
-              <Text style={styles.statLabel}>{t('profile.totalScans')}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{progress.uniqueGrapes.length}</Text>
-              <Text style={styles.statLabel}>{t('profile.uniqueGrapes')}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.warning }]}>{progress.bestStreak}</Text>
-              <Text style={styles.statLabel}>{t('profile.bestStreak')}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{progress.streak}</Text>
-              <Text style={styles.statLabel}>{t('home.currentStreak')}</Text>
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={styles.friendBtn} activeOpacity={0.8}>
+              <Text style={styles.friendBtnText}>+ Friends</Text>
+            </TouchableOpacity>
+            <View style={styles.xpBadge}>
+              <Text style={styles.xpBadgeText}>{progress.xp} XP</Text>
             </View>
           </View>
-        </Card>
+        </View>
 
-        {/* Badges */}
-        <Card style={styles.section} variant="elevated">
-          <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
-          <View style={styles.badgesGrid}>
-            {progress.badges.map((badge) => (
-              <BadgeCard key={badge.id} badge={badge} />
-            ))}
-          </View>
-        </Card>
+        {/* Stats Grid - Bento Style Pur */}
+        <View style={styles.statsGrid}>
+          {BENTO_STATS.map((stat) => (
+            <View key={stat.key} style={styles.statCard}>
+              <View style={[styles.statIconWrap, { backgroundColor: `${stat.iconColor}15` }]}>
+                <Ionicons name={stat.icon as any} size={22} color={stat.iconColor} />
+              </View>
+              <Text style={styles.statValue}>
+                {stat.key === "grapes" ? (progress.uniqueGrapes?.length ?? 0) : progress[stat.key as keyof typeof progress] || 0}
+              </Text>
+              <Text style={styles.statLabel}>{t(stat.label)}</Text>
+            </View>
+          ))}
+        </View>
 
-        {/* Settings */}
-        <Card style={styles.section} variant="elevated">
-          <TouchableOpacity style={styles.settingRow} onPress={handleLanguageToggle}>
-            <Text style={styles.settingLabel}>{t('profile.language')}</Text>
-            <Text style={styles.settingValue}>
-              {i18n.language === 'fr' ? '🇫🇷 Français' : '🇬🇧 English'}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity style={styles.settingRow} onPress={handleReset}>
-            <Text style={[styles.settingLabel, { color: colors.danger }]}>
-              {t('profile.resetData')}
-            </Text>
-            <Text style={styles.settingValue}>›</Text>
-          </TouchableOpacity>
-        </Card>
-
-        <View style={{ height: spacing['2xl'] }} />
+        <View style={{ height: 60 }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  header: {
-    alignItems: 'center',
-    paddingVertical: spacing['2xl'],
-    gap: spacing.sm,
+  root: {
+    flex: 1,
+    backgroundColor: "#F8F9FB", // Gris très clair bleuté
+  },
+  heroBlock: {
+    height: 200,
+    backgroundColor: colors.primary[700],
+    borderBottomLeftRadius: 48,
+    borderBottomRightRadius: 48,
+  },
+  heroSafeArea: {
+    flex: 1,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  heroBackBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroSettingsBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: -70,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+  },
+  avatarContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatarRing: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    ...Platform.select({
+      ios: { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 12 },
+      android: { elevation: 8 },
+    }),
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primary[200],
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.primary[50],
+    alignItems: "center",
+    justifyContent: "center",
   },
-  avatarText: { fontSize: 40 },
-  username: {
-    fontSize: typography.fontSizes.xl,
-    fontWeight: typography.fontWeights.bold,
-    color: colors.neutral[900],
+  avatarEmoji: {
+    fontSize: 48,
   },
-  xpTotal: {
-    fontSize: typography.fontSizes.sm,
-    color: colors.primary[700],
-    fontWeight: typography.fontWeights.semibold,
+  infoCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 32,
+    padding: 24,
+    alignItems: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
-  section: {
-    marginHorizontal: spacing.base,
-    marginBottom: spacing.md,
-    gap: spacing.md,
+  userName: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#1A1A1A",
+    letterSpacing: -0.5,
   },
-  sectionTitle: {
-    fontSize: typography.fontSizes.md,
-    fontWeight: typography.fontWeights.semibold,
-    color: colors.neutral[800],
-    marginBottom: spacing.xs,
+  userEmail: {
+    fontSize: 14,
+    color: "#A0A0A0",
+    marginTop: 2,
+    marginBottom: 20,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  friendBtn: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1.5,
+    borderColor: "#F97316",
+    borderRadius: 100,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  friendBtnText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#F97316",
+  },
+  xpBadge: {
+    backgroundColor: colors.primary[600],
+    borderRadius: 100,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    justifyContent: "center",
+  },
+  xpBadgeText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
-  statItem: {
-    width: '47%',
-    alignItems: 'center',
-    backgroundColor: colors.neutral[100],
-    borderRadius: 12,
-    paddingVertical: spacing.md,
-    gap: spacing.xs,
+  statCard: {
+    width: STAT_CARD_SIZE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 28,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#F2F2F2",
+  },
+  statIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
   },
   statValue: {
-    fontSize: typography.fontSizes.xl,
-    fontWeight: typography.fontWeights.bold,
-    color: colors.primary[800],
+    fontSize: 22,
+    fontWeight: "500", // Medium au lieu de Bold pour le look premium
+    color: "#1A1A1A",
   },
   statLabel: {
-    fontSize: typography.fontSizes.xs,
-    color: colors.neutral[600],
-    textAlign: 'center',
-  },
-  badgesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  settingLabel: {
-    fontSize: typography.fontSizes.base,
-    color: colors.neutral[800],
-  },
-  settingValue: {
-    fontSize: typography.fontSizes.sm,
-    color: colors.neutral[600],
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.neutral[200],
+    fontSize: 13,
+    color: "#9A9A9A",
+    marginTop: 4,
   },
 });
