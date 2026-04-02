@@ -10,11 +10,12 @@ const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           Home: 'home',
           Scanner: 'scan',
-          History: 'history',
-          Profile: 'profile',
+          Map: 'map',
         },
       },
       Result: 'result',
+      Notifications: 'notifications',
+      Settings: 'settings',
     },
   },
 };

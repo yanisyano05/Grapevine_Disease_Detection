@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors } from '@/theme/colors';
@@ -21,9 +21,13 @@ export default function SplashScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.leafEmoji}>🍃</Text>
-      <Text style={styles.logo}>VinEye</Text>
-      <Text style={styles.subtitle}>Détection de vignes par IA</Text>
+      <Image
+        source={require('@/assets/images/icon.png')}
+        style={styles.logoImage}
+        resizeMode="contain"
+      />
+      {/* <Text style={styles.logo}>VinEye</Text>
+      <Text style={styles.subtitle}>Détection de vignes par IA</Text> */}
     </View>
   );
 }
@@ -31,12 +35,15 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary[900],
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 24,
+    
   },
-  leafEmoji: { fontSize: 80 },
+  logoImage: {
+    width: 198,
+    height: 198,
+  },
   logo: {
     fontSize: typography.fontSizes['4xl'],
     fontWeight: typography.fontWeights.extrabold,

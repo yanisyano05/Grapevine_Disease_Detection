@@ -9,7 +9,10 @@
     "confirm": "Confirm",
     "loading": "Loading...",
     "error": "Error",
-    "retry": "Retry"
+    "retry": "Retry",
+    "map": "Map",
+    "notifications": "Notifications",
+    "settings": "Settings"
   },
   "home": {
     "greeting": "Hello, Winemaker!",

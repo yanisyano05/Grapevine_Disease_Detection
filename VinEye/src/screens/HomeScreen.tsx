@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { View, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
@@ -24,13 +24,14 @@ import {
   getLevelNumber,
   getXPProgress,
 } from "@/utils/achievements";
-import type { BottomTabParamList } from "@/types/navigation";
+import type { RootStackParamList } from "@/types/navigation";
 import StatCard from "@/components/home/gamificationstat";
 import StatisticsSection from "@/components/home/statssection";
+import SearchHeader from "@/components/home/SearchHeader";
 import SectionHeader from "@/components/home/components/homeheader";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-type HomeNav = BottomTabNavigationProp<BottomTabParamList, "Home">;
+type HomeNav = NativeStackNavigationProp<RootStackParamList>;
 
 interface GameProgress {
   totalScans: number;
@@ -116,37 +117,10 @@ export default function HomeScreen() {
         className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 130, // La hauteur de ta barre (70) + le margin bas (~34) + de l'espace pour respirer (26)
+          paddingBottom: 24,
         }}
       >
-        {/* Header — title left, icons right */}
-        <View className="flex-row items-center justify-between  px-5 pt-3 pb-4">
-          <View className="flex-1 flex-row items-center gap-2">
-            <View className="flex-1 flex-row items-center rounded-full bg-neutral-200 px-3 py-2">
-              <Ionicons
-                name="search-outline"
-                size={18}
-                color={colors.neutral[500]}
-              />
-              <TextInput
-                className="ml-2 flex-1 text-[14px]"
-                placeholder={t("history.search")}
-                placeholderTextColor={colors.neutral[500]}
-                style={{ color: colors.neutral[900], paddingVertical: 0 }}
-              />
-            </View>
-            <TouchableOpacity
-              className="h-9 w-9 items-center justify-center rounded-full bg-neutral-200"
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="add-outline"
-                size={22}
-                color={colors.neutral[800]}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <SearchHeader />
 
         <StatisticsSection progress={userProgress} />
 
@@ -204,7 +178,7 @@ export default function HomeScreen() {
           <View className="mx-5 mb-6 gap-2">
             <SectionHeader
               title={t("home.lastScan")}
-              onViewAll={() => navigation.navigate("History")}
+              onViewAll={() => navigation.navigate("Notifications")}
             />
             <ScanCard record={lastScan} />
           </View>

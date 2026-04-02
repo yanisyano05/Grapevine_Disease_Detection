@@ -1,62 +1,51 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Platform, LayoutAnimation, UIManager } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
-import * as Haptics from 'expo-haptics';
+import React from "react";
+import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
+import { House, ScanLine, MapPin } from "lucide-react-native";
 
-// Imports de tes écrans
-import HomeScreen from '@/screens/HomeScreen';
-import ScannerScreen from '@/screens/ScannerScreen';
-import HistoryScreen from '@/screens/HistoryScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
-
-// Activation de LayoutAnimation pour Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import HomeScreen from "@/screens/HomeScreen";
+import ScannerScreen from "@/screens/ScannerScreen";
+import MapScreen from "@/screens/MapScreen";
+import { colors } from "@/theme/colors";
 
 const Tab = createBottomTabNavigator();
 
+const TAB_ICONS: Record<string, any> = {
+  Home: House,
+  Map: MapPin,
+};
+
 function MyCustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
-  
-  // Gestion de la marge basse pour éviter la superposition avec la barre système
-  const safeBottom = Platform.OS === 'android' ? Math.max(insets.bottom, 24) : insets.bottom;
 
   return (
-    <View 
-      className="absolute bg-white flex-row items-center justify-between px-2"
+    <View
       style={{
-        bottom: safeBottom + 10,
-        left: 20,
-        right: 20,
-        height: 70,
-        borderRadius: 35,
-        elevation: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.15,
-        shadowRadius: 20,
+        flexDirection: "row",
+        backgroundColor: colors.surface,
+        borderTopWidth: 1,
+        borderTopColor: colors.neutral[300],
+        paddingBottom: insets.bottom,
+        paddingTop: 8,
+        alignItems: "flex-end",
       }}
     >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
+        const label = options.tabBarLabel || route.name;
+        const isScanner = route.name === "Scanner";
 
         const onPress = () => {
-          // 1. Retour Haptique (Vibration légère "Impact")
-          if (Platform.OS !== 'web') {
+          if (Platform.OS !== "web") {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }
 
-          // 2. Animation de la transition (Pill expansion)
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -66,48 +55,80 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
           }
         };
 
-        // Choix de l'icône (Outline vs Solid)
-        const getIcon = (name: string, focused: boolean) => {
-          switch (name) {
-            case 'Home': return focused ? 'home' : 'home-outline';
-            case 'History': return focused ? 'receipt' : 'receipt-outline';
-            case 'Scanner': return focused ? 'scan' : 'scan-outline';
-            case 'Profile': return focused ? 'person' : 'person-outline';
-            default: return 'help-outline';
-          }
-        };
+        // FAB central pour Scanner
+        if (isScanner) {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              onPress={onPress}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={label}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  backgroundColor: colors.primary[800],
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: -28,
+                  shadowColor: colors.primary[900],
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}
+              >
+                <ScanLine size={26} color="#FFFFFF" />
+              </View>
+            </TouchableOpacity>
+          );
+        }
 
-        const label = options.tabBarLabel || route.name;
+        // Onglets classiques (Home, Map)
+        const Icon = TAB_ICONS[route.name];
+        const tintColor = isFocused ? colors.primary[700] : colors.neutral[400];
 
         return (
           <TouchableOpacity
-            key={index}
+            key={route.key}
             onPress={onPress}
             activeOpacity={0.7}
-            style={{ flex: isFocused ? 2 : 1 }}
-            className="items-center justify-center h-full"
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={label}
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingVertical: 6,
+            }}
           >
-            <View 
-              className={`flex-row items-center justify-center py-2.5 ${
-                isFocused ? 'bg-gray-900 px-5' : 'bg-transparent px-0'
-              }`}
-              style={{ borderRadius: 999 }} 
-            >
-              <Ionicons 
-                name={getIcon(route.name, isFocused) as any} 
-                size={22} 
-                color={isFocused ? '#FFFFFF' : '#9CA3AF'} 
+            {Icon && (
+              <Icon
+                size={22}
+                color={tintColor}
+                strokeWidth={isFocused ? 2.5 : 1.8}
               />
-              
-              {isFocused && (
-                <Text 
-                  numberOfLines={1}
-                  className="ml-2 text-white font-bold text-[13px]"
-                >
-                  {label}
-                </Text>
-              )}
-            </View>
+            )}
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 11,
+                marginTop: 4,
+                color: tintColor,
+                fontWeight: isFocused ? "600" : "400",
+              }}
+            >
+              {label}
+            </Text>
           </TouchableOpacity>
         );
       })}
@@ -123,25 +144,20 @@ export default function BottomTabNavigator() {
       tabBar={(props) => <MyCustomTabBar {...props} />}
       screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen 
-        name="Home" 
-        component={HomeScreen} 
-        options={{ tabBarLabel: t('common.home') }} 
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarLabel: t("common.home") }}
       />
-      <Tab.Screen 
-        name="History" 
-        component={HistoryScreen} 
-        options={{ tabBarLabel: t('common.history') }} 
+      <Tab.Screen
+        name="Scanner"
+        component={ScannerScreen}
+        options={{ tabBarLabel: t("common.scan") }}
       />
-      <Tab.Screen 
-        name="Scanner" 
-        component={ScannerScreen} 
-        options={{ tabBarLabel: 'Scan' }} 
-      />
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen} 
-        options={{ tabBarLabel: t('common.profile') }} 
+      <Tab.Screen
+        name="Map"
+        component={MapScreen}
+        options={{ tabBarLabel: t("common.map") }}
       />
     </Tab.Navigator>
   );

@@ -23,3 +23,6 @@ VinEye/.expo/
 VinEye/dist/
 VinEye/ios/
 VinEye/android/
+
+# dependances
+node_modules/

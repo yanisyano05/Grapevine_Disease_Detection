@@ -4,11 +4,12 @@ export type RootStackParamList = {
   Splash: undefined;
   Main: undefined;
   Result: { detection: Detection };
+  Notifications: undefined;
+  Settings: undefined;
 };
 
 export type BottomTabParamList = {
   Home: undefined;
   Scanner: undefined;
-  History: undefined;
-  Profile: undefined;
+  Map: undefined;
 };

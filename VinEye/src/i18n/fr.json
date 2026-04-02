@@ -9,7 +9,10 @@
     "confirm": "Confirmer",
     "loading": "Chargement...",
     "error": "Erreur",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "map": "Carte",
+    "notifications": "Notifications",
+    "settings": "Paramètres"
   },
   "home": {
     "greeting": "Bonjour, Vigneron !",

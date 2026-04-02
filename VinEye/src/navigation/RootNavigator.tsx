@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import SplashScreen from '@/screens/SplashScreen';
 import ResultScreen from '@/screens/ResultScreen';
+import HistoryScreen from '@/screens/HistoryScreen';
+import ProfileScreen from '@/screens/ProfileScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import linking from './linking';
 import type { RootStackParamList } from '@/types/navigation';
@@ -22,6 +24,16 @@ export default function RootNavigator() {
           name="Result"
           component={ResultScreen}
           options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
+        />
+        <Stack.Screen
+          name="Notifications"
+          component={HistoryScreen}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={ProfileScreen}
+          options={{ animation: 'slide_from_right' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
