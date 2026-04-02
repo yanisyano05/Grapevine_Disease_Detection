@@ -13,7 +13,7 @@ def select_model():
     while True:
         try:
             # all_model_dir = input("Model dir : ")
-            all_model_dir = "/home/jhodi/bit/Python/Grapevine_Pathology_Detection/venv/models"
+            all_model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models')
             model_found = 0
             for foldername, subfolders, filenames in os.walk(all_model_dir):
                     for filename in filenames:

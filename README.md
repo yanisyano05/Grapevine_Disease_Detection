@@ -10,7 +10,7 @@ The data used in this study came from [kaggle](kaggle.com/datasets/rm1000/grape-
 ![Dataset Overview](./docs/images/dataset_overview.png)
 ![Sample](./docs/images/samples_img.png)
 
-## Model Structure
+## Model Structure 
 
 Our model is a Convolutional Neural Network (CNN) built using Keras API with TensorFlow backend. It includes several convolutional layers followed by batch normalization, ReLU activation function and max pooling for downsampling. 
 Dropout layers are used for regularization to prevent overfitting. The architecture details and parameters are as follows: 
