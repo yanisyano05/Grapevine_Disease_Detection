@@ -24,5 +24,12 @@ VinEye/dist/
 VinEye/ios/
 VinEye/android/
 
-# dependances
+# Virtual environment
+venv/
+
+# Dependencies
 node_modules/
+
+# vineye-admin
+vineye-admin/node_modules/
+vineye-admin/.next/

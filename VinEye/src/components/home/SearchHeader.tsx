@@ -38,10 +38,10 @@ export default function SearchHeader() {
         <TouchableOpacity
           style={styles.notifButton}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate("Profile")}
+          onPress={() => navigation.navigate("Settings")}
         >
           <Ionicons
-            name="person-outline"
+            name="settings-outline"
             size={22}
             color={colors.neutral[800]}
           />
@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   brandTitle: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "900", // Très gras pour l'identité
     color: colors.primary[900],
     letterSpacing: -1, // Look "Logo"
   },
   greetingText: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: "500",
     color: colors.neutral[500],
     marginTop: -2,
@@ -81,27 +81,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#F0F0F0",
-    borderRadius: 16,
+    borderRadius: 32,
   },
   notifButton: {
     height: 48,
     width: 48,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    borderRadius: 32,
+  
+   
   },
   notifBadge: {
     position: "absolute",

@@ -82,7 +82,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
                   backgroundColor: colors.primary[800],
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: -28,
+                  marginTop: -25,
                   shadowColor: colors.primary[900],
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
@@ -122,7 +122,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
                 strokeWidth={isFocused ? 2.5 : 1.8}
               />
             )}
-            {/* <Text
+            <Text
               numberOfLines={1}
               style={{
                 fontSize: 11,
@@ -132,7 +132,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
               }}
             >
               {label}
-            </Text> */}
+            </Text>
           </TouchableOpacity>
         );
       })}

@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
+    
     fontWeight: "500",
     color: colors.neutral[900],
     // Évite le décalage de texte sur Android
