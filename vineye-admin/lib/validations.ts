@@ -20,6 +20,25 @@ export const diseaseSchema = z.object({
   bgColor: z.string().trim().optional().default("#E1F5EE"),
   imageUrl: z.string().url().optional().nullable(),
   published: z.boolean().optional().default(true),
+  // Enriched fields
+  startMonth: z.number().int().min(1).max(12).optional().nullable(),
+  endMonth: z.number().int().min(1).max(12).optional().nullable(),
+  peakMonth: z.number().int().min(1).max(12).optional().nullable(),
+  conditions: z.array(z.string().trim()).optional().default([]),
+  conditionsEn: z.array(z.string().trim()).optional().default([]),
+  preventiveActions: z.array(z.string().trim()).optional().default([]),
+  preventiveActionsEn: z.array(z.string().trim()).optional().default([]),
+  curativeActions: z.array(z.string().trim()).optional().default([]),
+  curativeActionsEn: z.array(z.string().trim()).optional().default([]),
+  impactedParts: z.array(z.string().trim()).optional().default([]),
+  impactedPartsEn: z.array(z.string().trim()).optional().default([]),
+  spreadMethod: z.string().trim().optional().nullable(),
+  spreadMethodEn: z.string().trim().optional().nullable(),
+  images: z.array(z.object({
+    url: z.string().url(),
+    alt: z.string().optional().default(""),
+    order: z.number().int().optional().default(0),
+  })).optional().default([]),
 });
 
 export const guideSchema = z.object({
@@ -28,7 +47,7 @@ export const guideSchema = z.object({
   slug: z.string().max(100).trim().optional(),
   subtitle: z.string().min(1, "Sous-titre requis").max(500).trim(),
   subtitleEn: z.string().max(500).trim().optional().default(""),
-  content: z.string().min(1, "Contenu requis").trim(),
+  content: z.string().trim().optional().default(""),
   contentEn: z.string().trim().optional().default(""),
   category: z.string().trim().optional().default("general"),
   iconName: z.string().trim().optional().default("book"),
@@ -36,6 +55,18 @@ export const guideSchema = z.object({
   bgColor: z.string().trim().optional().default("#E6F1FB"),
   published: z.boolean().optional().default(true),
   order: z.number().int().min(0).optional().default(0),
+  readTime: z.number().int().min(1).optional().nullable(),
+  coverImage: z.string().trim().optional().nullable(),
+  sections: z.array(z.object({
+    title: z.string().min(1, "Titre de section requis").trim(),
+    titleEn: z.string().trim().optional().default(""),
+    body: z.string().min(1, "Contenu de section requis").trim(),
+    bodyEn: z.string().trim().optional().default(""),
+    image: z.string().trim().optional().nullable(),
+    tip: z.string().trim().optional().nullable(),
+    tipEn: z.string().trim().optional().nullable(),
+    order: z.number().int().optional().default(0),
+  })).optional().default([]),
 });
 
 export const alertSchema = z.object({

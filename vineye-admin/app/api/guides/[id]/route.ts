@@ -6,11 +6,14 @@ import { slugify } from "@/lib/utils";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
-  const guide = await prisma.guide.findUnique({ where: { id } });
+  const guide = await prisma.guide.findUnique({
+    where: { id },
+    include: { sections: { orderBy: { order: "asc" } } },
+  });
   if (!guide) {
     return Response.json({ error: "Guide introuvable" }, { status: 404 });
   }
@@ -20,7 +23,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await requireAdmin();
   if ("error" in auth) {
@@ -39,12 +42,12 @@ export async function PUT(
   if (!result.success) {
     return Response.json(
       { error: "Validation failed", details: result.error.flatten() },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  const data = result.data;
-  const slug = data.slug || slugify(data.title);
+  const { sections, ...guideData } = result.data;
+  const slug = guideData.slug || slugify(guideData.title);
 
   const slugConflict = await prisma.guide.findFirst({
     where: { slug, id: { not: id } },
@@ -53,9 +56,55 @@ export async function PUT(
     return Response.json({ error: "Ce slug existe deja" }, { status: 409 });
   }
 
+  await prisma.guide.update({
+    where: { id },
+    data: { ...guideData, slug },
+  });
+
+  // Replace sections
+  if (sections) {
+    await prisma.guideSection.deleteMany({ where: { guideId: id } });
+    if (sections.length > 0) {
+      await Promise.all(
+        sections.map((s) =>
+          prisma.guideSection.create({ data: { ...s, guideId: id } }),
+        ),
+      );
+    }
+  }
+
+  const updated = await prisma.guide.findUnique({
+    where: { id },
+    include: { sections: { orderBy: { order: "asc" } } },
+  });
+
+  return Response.json({ data: updated });
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const auth = await requireAdmin();
+  if ("error" in auth) {
+    return Response.json({ error: auth.error }, { status: auth.status });
+  }
+
+  const { id } = await params;
+  const existing = await prisma.guide.findUnique({ where: { id } });
+  if (!existing) {
+    return Response.json({ error: "Guide introuvable" }, { status: 404 });
+  }
+
+  const body = await request.json();
+
+  if (typeof body.published !== "boolean") {
+    return Response.json({ error: "Champ 'published' requis" }, { status: 400 });
+  }
+
   const guide = await prisma.guide.update({
     where: { id },
-    data: { ...data, slug },
+    data: { published: body.published },
   });
 
   return Response.json({ data: guide });
@@ -63,7 +112,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await requireAdmin();
   if ("error" in auth) {

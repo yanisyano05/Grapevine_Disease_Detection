@@ -1,20 +1,22 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import type { Detection } from './detection';
-
-export type RootStackParamList = {
-  Splash: undefined;
-  Main: undefined;
-  Result: { detection: Detection };
-  Notifications: undefined;
-  Profile: undefined;
-  Settings: undefined;
-  Guides: undefined;
-  Library: undefined;
-};
 
 export type BottomTabParamList = {
   Home: undefined;
   Guides: undefined;
   Scanner: undefined;
-  Library: undefined;
+  MyPlants: undefined;
   Map: undefined;
+};
+
+export type RootStackParamList = {
+  Splash: undefined;
+  Main: NavigatorScreenParams<BottomTabParamList>;
+  Result: { detection: Detection };
+  Notifications: undefined;
+  Profile: undefined;
+  Settings: undefined;
+  DiseaseDetail: { diseaseId: string };
+  GuideDetail: { guideId: string };
+  ScanDetail: { scanId: string };
 };

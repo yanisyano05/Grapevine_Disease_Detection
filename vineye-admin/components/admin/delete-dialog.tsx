@@ -48,7 +48,7 @@ export default function DeleteDialog({ title, description, onConfirm }: DeleteDi
       </AlertDialogTrigger>
       <AlertDialogContent className="border-[oklch(0.22_0.006_60)] bg-card">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-display font-semibold text-cream">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold text-cream">{title}</AlertDialogTitle>
           <AlertDialogDescription className="text-stone-400">{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

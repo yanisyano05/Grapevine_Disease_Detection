@@ -73,20 +73,10 @@ export default function DiseasesClient({ diseases }: { diseases: Disease[] }) {
 
   async function handleTogglePublish(id: string, published: boolean) {
     try {
-      const disease = diseases.find((d) => d.id === id);
-      if (!disease) return;
-
       const res = await fetch(`/api/diseases/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...disease,
-          published,
-          symptoms: [],
-          description: "placeholder",
-          treatment: "placeholder",
-          season: "placeholder",
-        }),
+        body: JSON.stringify({ published }),
       });
 
       if (!res.ok) throw new Error();
@@ -112,7 +102,7 @@ export default function DiseasesClient({ diseases }: { diseases: Disease[] }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-cream">
+          <h1 className="text-3xl font-bold tracking-tight text-cream">
             Maladies de la vigne
           </h1>
           <p className="text-sm text-stone-600 mt-1">{diseases.length} maladies repertoriees</p>

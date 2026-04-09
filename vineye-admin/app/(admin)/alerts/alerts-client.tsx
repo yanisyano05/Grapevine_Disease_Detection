@@ -49,12 +49,10 @@ export default function AlertsClient({ alerts }: { alerts: Alert[] }) {
 
   async function handleToggleActive(id: string, active: boolean) {
     try {
-      const alert = alerts.find((a) => a.id === id);
-      if (!alert) return;
       const res = await fetch(`/api/alerts/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...alert, active }),
+        body: JSON.stringify({ active }),
       });
       if (!res.ok) throw new Error();
       toast.success(active ? "Alerte activee" : "Alerte desactivee");
@@ -78,7 +76,7 @@ export default function AlertsClient({ alerts }: { alerts: Alert[] }) {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-cream">
+          <h1 className="text-3xl font-bold tracking-tight text-cream">
             Alertes saisonnieres
           </h1>
           <p className="text-sm text-stone-600 mt-1">{alerts.length} alertes</p>

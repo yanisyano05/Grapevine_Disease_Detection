@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-[260px] border-r border-[oklch(0.20_0.006_60)] bg-[oklch(0.11_0.005_60)]">
+        <SheetContent side="left" showCloseButton={false} className="p-0 w-[260px] border-r border-[oklch(0.20_0.006_60)] bg-[oklch(0.11_0.005_60)]">
           <Sidebar userName={userName} userEmail={userEmail} />
         </SheetContent>
       </Sheet>

@@ -9,10 +9,9 @@ import {
   AlertTriangle,
   Users,
   LogOut,
-  Grape,
-  ChevronLeft,
-  ChevronRight,
+  ChevronsLeft,
 } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/lib/auth-client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -63,44 +62,46 @@ export default function Sidebar({
   return (
     <aside
       className={cn(
-        "relative flex flex-col h-full bg-[oklch(0.11_0.005_60)] border-r border-[oklch(0.20_0.006_60)] transition-all duration-300",
+        "relative flex flex-col h-full bg-[oklch(0.11_0.005_60)] border-r border-[oklch(0.20_0.006_60)] transition-all duration-300 ease-in-out",
         collapsed ? "w-[68px]" : "w-[260px]"
       )}
     >
-      {/* Logo area */}
+      {/* Logo + collapse toggle */}
       <div className="flex items-center justify-between px-4 h-16 shrink-0">
-        {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="h-8 w-8 rounded-lg bg-vine/10 flex items-center justify-center group-hover:bg-vine/15 transition-colors">
-              <Grape className="h-4.5 w-4.5 text-vine" />
-            </div>
-            <span className="font-display text-lg font-semibold tracking-tight text-cream">
-              VinEye
-            </span>
-          </Link>
-        )}
-        {collapsed && (
-          <Link href="/dashboard" className="mx-auto">
-            <div className="h-8 w-8 rounded-lg bg-vine/10 flex items-center justify-center hover:bg-vine/15 transition-colors">
-              <Grape className="h-4.5 w-4.5 text-vine" />
-            </div>
-          </Link>
+        {!collapsed ? (
+          <>
+            <Link href="/dashboard" className="flex items-center gap-2.5 group">
+              <div className="h-8 w-8 rounded-lg bg-vine/10 flex items-center justify-center group-hover:bg-vine/15 transition-colors overflow-hidden">
+                <Image src="/logo.png" alt="VinEye" width={24} height={24} className="object-contain" />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-cream">
+                VinEye
+              </span>
+            </Link>
+            {onCollapse && (
+              <button
+                onClick={onCollapse}
+                className="h-7 w-7 rounded-lg flex items-center justify-center text-stone-600 hover:text-cream hover:bg-[oklch(0.17_0.005_60)] transition-all duration-200"
+              >
+                <ChevronsLeft
+                  className="h-4 w-4 transition-transform duration-300"
+                  strokeWidth={1.5}
+                />
+              </button>
+            )}
+          </>
+        ) : (
+          <button
+            onClick={onCollapse}
+            className="mx-auto h-8 w-8 rounded-lg bg-vine/10 flex items-center justify-center hover:bg-vine/15 transition-colors overflow-hidden"
+          >
+            <ChevronsLeft
+              className="h-4 w-4 text-vine rotate-180 transition-transform duration-300"
+              strokeWidth={1.5}
+            />
+          </button>
         )}
       </div>
-
-      {/* Collapse toggle */}
-      {onCollapse && (
-        <button
-          onClick={onCollapse}
-          className="absolute -right-3 top-[52px] z-10 h-6 w-6 rounded-full border border-[oklch(0.25_0.006_60)] bg-[oklch(0.15_0.005_60)] flex items-center justify-center text-stone-400 hover:text-vine hover:border-vine/30 transition-colors"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-3 w-3" />
-          ) : (
-            <ChevronLeft className="h-3 w-3" />
-          )}
-        </button>
-      )}
 
       {/* Divider */}
       <div className="mx-3 h-px bg-gradient-to-r from-transparent via-[oklch(0.25_0.006_60)] to-transparent" />

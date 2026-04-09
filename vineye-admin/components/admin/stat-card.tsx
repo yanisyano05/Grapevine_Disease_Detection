@@ -25,7 +25,7 @@ export default function StatCard({
           <p className="text-[11px] font-semibold text-stone-600 uppercase tracking-[0.08em] mb-2">
             {title}
           </p>
-          <p className="text-[28px] font-display font-semibold tracking-tight text-cream leading-none">
+          <p className="text-[28px] font-bold tracking-tight text-cream leading-none">
             {value.toLocaleString("fr-FR")}
           </p>
         </div>

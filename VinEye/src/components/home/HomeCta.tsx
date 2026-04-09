@@ -67,17 +67,17 @@ export default function HeroScanner() {
       {/* Main CTA button */}
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => navigation.navigate("Scanner")}
+        onPress={() => navigation.navigate("Main", { screen: "Scanner" })}
         style={styles.mainButton}
       >
         <Text style={styles.buttonText}>{t("home.scanButton")}</Text>
-        <View style={styles.buttonIconWrapper}>
+        {/* <View style={styles.buttonIconWrapper}>
           <MaterialIcons
             name="arrow-forward"
             size={18}
             color={colors.primary[800]}
           />
-        </View>
+        </View> */}
       </TouchableOpacity>
     </View>
   );

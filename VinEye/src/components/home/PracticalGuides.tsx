@@ -1,112 +1,63 @@
-import { View, TouchableOpacity, StyleSheet, Platform } from "react-native";
-import { useTranslation } from "react-i18next";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Platform } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Text } from "@/components/ui/text";
-import { colors } from "@/theme/colors";
-import { PRACTICAL_GUIDES } from "@/data/guides";
+import GuideListItem from "@/components/ui/GuideListItem";
+import { GuideListItemSkeleton } from "@/components/ui/Skeleton";
+import type { Guide } from "@/data/guides";
+import type { RootStackParamList } from "@/types/navigation";
 
-export default function PracticalGuides() {
-  const { t } = useTranslation();
+type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+interface PracticalGuidesProps {
+  guides: Guide[];
+  isLoading?: boolean;
+}
+
+export default function PracticalGuides({ guides, isLoading }: PracticalGuidesProps) {
+  const navigation = useNavigation<Nav>();
+  const items = guides.slice(0, 3);
+
+  if (isLoading && items.length === 0) {
+    return (
+      <View style={styles.card}>
+        <GuideListItemSkeleton />
+        <GuideListItemSkeleton />
+        <GuideListItemSkeleton />
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {PRACTICAL_GUIDES.map((guide) => (
-        <TouchableOpacity
+    <View style={styles.card}>
+      {items.map((guide, index) => (
+        <GuideListItem
           key={guide.id}
-          activeOpacity={0.6}
-          style={styles.card}
-        >
-          {/* Icône avec fond translucide assorti */}
-          <View 
-            style={[
-              styles.iconContainer, 
-              { backgroundColor: `${guide.iconColor}12` } // 12 = ~7% d'opacité
-            ]}
-          >
-            <Ionicons
-              name={guide.icon as any}
-              size={24}
-              color={guide.iconColor}
-            />
-          </View>
-
-          {/* Textes */}
-          <View style={styles.textStack}>
-            <Text numberOfLines={1} style={styles.title}>
-              {t(guide.title)}
-            </Text>
-            <Text numberOfLines={1} style={styles.subtitle}>
-              {t(guide.subtitle)}
-            </Text>
-          </View>
-
-          {/* Indicateur d'action discret */}
-          <View style={styles.chevronWrapper}>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={colors.neutral[300]}
-            />
-          </View>
-        </TouchableOpacity>
+          guide={guide}
+          onPress={() => navigation.navigate("GuideDetail", { guideId: guide.id })}
+          showSeparator={index < items.length - 1}
+          index={index}
+        />
       ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-    paddingHorizontal: 4, // Pour ne pas couper l'ombre
-  },
   card: {
-    flexDirection: "row",
-    alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: 24, // Arrondi plus prononcé style "Bento"
-    padding: 14,
+    borderRadius: 16,
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#F1F1F1",
+    borderColor: "#F0F0F0",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.04,
         shadowRadius: 8,
       },
-      android: {
-        elevation: 2,
-      },
+      android: { elevation: 2 },
     }),
-  },
-  iconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textStack: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.neutral[900],
-    letterSpacing: -0.3,
-    marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: colors.neutral[500],
-  },
-  chevronWrapper: {
-    marginLeft: 8,
-    backgroundColor: "#F8F9FA",
-    padding: 6,
-    borderRadius: 12,
   },
 });

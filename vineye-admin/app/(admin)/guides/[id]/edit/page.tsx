@@ -9,7 +9,10 @@ export default async function EditGuidePage({
 }) {
   const { id } = await params;
 
-  const guide = await prisma.guide.findUnique({ where: { id } });
+  const guide = await prisma.guide.findUnique({
+    where: { id },
+    include: { sections: { orderBy: { order: "asc" } } },
+  });
   if (!guide) notFound();
 
   return (
@@ -29,6 +32,18 @@ export default async function EditGuidePage({
         bgColor: guide.bgColor,
         published: guide.published,
         order: guide.order,
+        readTime: guide.readTime,
+        coverImage: guide.coverImage,
+        sections: guide.sections.map((s) => ({
+          title: s.title,
+          titleEn: s.titleEn ?? "",
+          body: s.body,
+          bodyEn: s.bodyEn ?? "",
+          image: s.image ?? "",
+          tip: s.tip ?? "",
+          tipEn: s.tipEn ?? "",
+          order: s.order,
+        })),
       }}
     />
   );

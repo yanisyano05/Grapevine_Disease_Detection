@@ -13,7 +13,14 @@
     "map": "Map",
     "notifications": "Notifications",
     "settings": "Settings",
-    "details": "Details"
+    "details": "Details",
+    "readTime": "{{min}} min read",
+    "conditions": "Favorable conditions",
+    "prevention": "Prevention",
+    "curativeActions": "Curative actions",
+    "impactedParts": "Affected parts",
+    "spreadMethod": "Spread method",
+    "timeline": "Active period"
   },
   "home": {
     "greeting": "Hello, Winemaker!",
@@ -52,7 +59,19 @@
       "symptom2": "White cottony down on the underside",
       "symptom3": "Drying and premature leaf drop",
       "treatment": "Preventive copper-based treatment (Bordeaux mixture). Apply before rain, renew every 10-14 days.",
-      "season": "May to August — favored by heat and humidity"
+      "season": "May to August — favored by heat and humidity",
+      "condition1": "Humidity above 80%",
+      "condition2": "Temperatures between 18 and 25°C",
+      "condition3": "Frequent spring rains",
+      "preventive1": "Preventive copper treatment (Bordeaux mixture)",
+      "preventive2": "Improve air circulation through shoot thinning",
+      "preventive3": "Avoid excess nitrogen fertilization",
+      "curative1": "Apply a registered systemic fungicide",
+      "curative2": "Remove severely affected leaves",
+      "part1": "Leaves",
+      "part2": "Clusters",
+      "part3": "Shoots",
+      "spread": "Spores dispersed by wind and rain splash"
     },
     "oidium": {
       "name": "Powdery mildew",
@@ -60,7 +79,19 @@
       "symptom1": "White-grey powder on leaves and clusters",
       "symptom2": "Berries that crack or dry out",
       "treatment": "Sulfur dusting or spraying. Preventive treatments from bud break.",
-      "season": "April to September — favored by warm, dry weather"
+      "season": "April to September — favored by warm, dry weather",
+      "condition1": "Hot and dry weather",
+      "condition2": "Temperatures between 25 and 30°C",
+      "condition3": "High day/night temperature difference",
+      "preventive1": "Preventive sulfur treatment",
+      "preventive2": "Promote cluster ventilation",
+      "preventive3": "Moderate leaf removal",
+      "curative1": "Apply an anti-powdery mildew fungicide",
+      "curative2": "Wettable sulfur as curative treatment",
+      "part1": "Leaves",
+      "part2": "Clusters",
+      "part3": "Young shoots",
+      "spread": "Spores carried by wind"
     },
     "blackRot": {
       "name": "Black rot",
@@ -68,23 +99,59 @@
       "symptom1": "Circular brown spots bordered with black on leaves",
       "symptom2": "Mummified, black and wrinkled berries",
       "treatment": "Remove mummified berries. Preventive fungicide treatments in spring.",
-      "season": "May to July — favored by spring rains"
+      "season": "May to July — favored by spring rains",
+      "condition1": "Spring rainfall",
+      "condition2": "Temperatures between 20 and 30°C",
+      "condition3": "Presence of mummified berries from the previous year",
+      "preventive1": "Remove mummies (dried clusters) in winter",
+      "preventive2": "Preventive fungicide treatments from flowering",
+      "preventive3": "Maintain good air circulation",
+      "curative1": "No effective curative treatment",
+      "curative2": "Remove and destroy affected organs",
+      "part1": "Leaves",
+      "part2": "Clusters",
+      "part3": "Tendrils",
+      "spread": "Spores released from mummies by rain"
     },
     "esca": {
       "name": "Esca",
       "description": "Esca is a complex of wood diseases caused by several fungi. A chronic disease that can kill the vine.",
-      "symptom1": "Discoloration between leaf veins (striped appearance)",
+      "symptom1": "Discoloration between leaf veins (tiger stripe pattern)",
       "symptom2": "Sudden drying of foliage (apoplexy)",
       "treatment": "No curative treatment. Cutting back affected vine. Protect pruning wounds.",
-      "season": "Symptoms visible in summer — June to September"
+      "season": "Symptoms visible in summer — June to September",
+      "condition1": "Old vines (over 10 years)",
+      "condition2": "Water stress",
+      "condition3": "Poorly healed pruning wounds",
+      "preventive1": "Protect pruning wounds with sealant paste",
+      "preventive2": "Prune late in the season",
+      "preventive3": "Avoid large cuts",
+      "curative1": "No registered curative treatment",
+      "curative2": "Wood curettage (experimental technique)",
+      "curative3": "Trunk renewal if the vine is not too affected",
+      "part1": "Leaves",
+      "part2": "Wood (trunk, arms)",
+      "part3": "Clusters (apoplexy)",
+      "spread": "Fungi enter through pruning wounds"
     },
     "botrytis": {
-      "name": "Botrytis",
-      "description": "Grey rot is caused by Botrytis cinerea. It attacks clusters at maturity.",
+      "name": "Botrytis (Grey mold)",
+      "description": "Grey mold is caused by Botrytis cinerea. It attacks clusters at maturity.",
       "symptom1": "Soft grey rot on berries",
       "symptom2": "Characteristic grey felt on clusters",
       "treatment": "Promote cluster aeration. Leaf removal. Anti-botrytis treatments before cluster closure.",
-      "season": "August to harvest — favored by humidity"
+      "season": "August to harvest — favored by humidity",
+      "condition1": "Prolonged high humidity",
+      "condition2": "Temperatures between 15 and 25°C",
+      "condition3": "Compact, tight clusters",
+      "preventive1": "Leaf removal around clusters",
+      "preventive2": "Choose varieties with loose clusters",
+      "preventive3": "Limit vine vigor",
+      "curative1": "Apply a registered anti-botrytis product",
+      "curative2": "Harvest affected parts quickly",
+      "part1": "Clusters (berries)",
+      "part2": "Leaves (rare)",
+      "spread": "Airborne spores, favored by berry wounds"
     },
     "flavescence": {
       "name": "Flavescence dorée",
@@ -92,7 +159,19 @@
       "symptom1": "Leaf rolling with yellow or red coloration depending on variety",
       "symptom2": "Non-lignification of shoots (remain rubbery)",
       "treatment": "Mandatory uprooting of contaminated vines. Insecticide treatment against the vector leafhopper.",
-      "season": "Symptoms visible from July"
+      "season": "Symptoms visible from July",
+      "condition1": "Presence of the leafhopper Scaphoideus titanus",
+      "condition2": "Vineyards not treated against the vector",
+      "condition3": "Contaminated areas nearby",
+      "preventive1": "Mandatory insecticide treatment against the leafhopper",
+      "preventive2": "Prospection and uprooting of affected vines",
+      "preventive3": "Use certified plant material",
+      "curative1": "No curative treatment",
+      "curative2": "Mandatory uprooting of contaminated vines",
+      "part1": "Leaves (rolling, discoloration)",
+      "part2": "Shoots (absent lignification)",
+      "part3": "Clusters (desiccation)",
+      "spread": "Transmitted by the leafhopper Scaphoideus titanus"
     },
     "chlorose": {
       "name": "Iron chlorosis",
@@ -100,7 +179,17 @@
       "symptom1": "Yellowing between veins, veins remaining green",
       "symptom2": "General weakening of the vine",
       "treatment": "Iron chelate application. Choose rootstock adapted to calcareous soils.",
-      "season": "Spring — especially on calcareous soils after heavy rain"
+      "season": "Spring — especially on calcareous soils after heavy rain",
+      "condition1": "Active calcareous soil",
+      "condition2": "Compacted or waterlogged soil",
+      "condition3": "Excess water in spring",
+      "preventive1": "Choose rootstock adapted to calcareous soils",
+      "preventive2": "Improve drainage",
+      "preventive3": "Add organic matter",
+      "curative1": "Foliar spray of iron chelate",
+      "curative2": "Iron sulfate treatment",
+      "part1": "Leaves (interveinal yellowing)",
+      "spread": "Not contagious — nutritional deficiency linked to soil"
     }
   },
   "notifications": {
@@ -144,6 +233,60 @@
       "body": "Scan your first vine to start your collection!"
     }
   },
+  "myPlants": {
+    "title": "My Plants",
+    "tabLabel": "My Plants",
+    "searchPlaceholder": "Search a plant...",
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "older": "Older"
+    },
+    "actions": {
+      "favorite": "Favorite",
+      "unfavorite": "Remove",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete this scan?",
+      "deleteConfirmMessage": "This action cannot be undone.",
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "favorited": "Added to favorites",
+      "unfavorited": "Removed from favorites",
+      "deleted": "Scan deleted"
+    },
+    "empty": {
+      "title": "No plants scanned yet",
+      "subtitle": "Scan your first plant to start your collection",
+      "cta": "Scan"
+    },
+    "detail": {
+      "results": {
+        "vine": "Vine identified",
+        "uncertain": "Uncertain result",
+        "notVine": "Not a vine",
+        "unidentified": "Unidentified plant"
+      },
+      "confidence": "Confidence",
+      "cepageSection": "Detected grape",
+      "scannedOn": "Scanned on",
+      "xpEarned": "XP earned",
+      "location": "Location",
+      "noLocation": "No location recorded",
+      "addLocation": "Add my location",
+      "share": "Share",
+      "delete": "Delete",
+      "shareConfirmTitle": "Share this scan?",
+      "shareConfirmMessage": "The photo and scan information will be shared.",
+      "shareAction": "Share",
+      "shareText": "My VinEye scan",
+      "shareError": "Could not share the scan",
+      "notFound": "Scan not found",
+      "goBack": "Go back"
+    }
+  },
   "guides": {
     "screenTitle": "Guides & Tips",
     "tabDiseases": "Diseases",
@@ -155,15 +298,66 @@
     },
     "healthyLeaf": {
       "title": "Recognizing a healthy leaf",
-      "subtitle": "Basics for beginners"
+      "subtitle": "Basics for beginners",
+      "sections": {
+        "colorTexture": {
+          "title": "Color and texture",
+          "body": "A healthy vine leaf shows a uniform, vibrant and bright green. The upper surface is smooth while the underside is slightly downy. Veins are clear, well-defined and a slightly lighter green than the blade. Run your finger along the leaf: it should feel firm, supple and free of abnormal roughness.",
+          "tip": "A healthy leaf never has brown, yellow or powdery spots. If you see any, scan it immediately with VinEye."
+        },
+        "shape": {
+          "title": "Shape and symmetry",
+          "body": "Leaf shape varies by variety: 3 lobes (Merlot), 5 lobes (Cabernet Sauvignon) or nearly entire (Gamay). Regardless of variety, a healthy leaf is symmetrical with regular serrated edges. The sinuses (indentations between lobes) are clean. An asymmetric or deformed leaf may indicate a viral issue or herbicide damage."
+        },
+        "warning": {
+          "title": "When to worry",
+          "body": "Watch for these early signs: discoloration between veins (chlorosis), translucent oily spots (downy mildew), white powder (powdery mildew), downward leaf edge rolling (water stress or viral), brown necrosis (black rot). The earlier you act, the more effective the treatment.",
+          "tip": "Photograph the suspicious leaf with VinEye at the first symptoms. Early detection is the key to successful treatment."
+        }
+      }
     },
     "treatmentCalendar": {
       "title": "Treatment calendar",
-      "subtitle": "When and how to treat"
+      "subtitle": "When and how to treat",
+      "sections": {
+        "winter": {
+          "title": "Winter (December-February)",
+          "body": "This is the dormant period. Use this time to prune the vine, remove and burn dead wood (a source of inoculum). Apply a winter treatment with dormant oil to eliminate scale insect eggs and overwintering pest forms. Clean pruning tools between each vine to prevent esca spread."
+        },
+        "spring": {
+          "title": "Spring (March-May)",
+          "body": "Bud break marks the beginning of the vigilance season. From the 2-3 unfolded leaves stage, begin preventive treatments: Bordeaux mixture against downy mildew, sulfur against powdery mildew. Renew after each rainfall exceeding 10 mm. Watch for chlorosis on calcareous soils. This is also the time to treat against the leafhopper vector of flavescence dorée (mandatory treatment in regulated zones).",
+          "tip": "The first preventive treatment must be applied at the 2-3 unfolded leaves stage. Don't miss it — it's the most important of the season."
+        },
+        "summer": {
+          "title": "Summer (June-August)",
+          "body": "Active monitoring period. Downy mildew peaks in June, powdery mildew in July. Adapt your treatments to the weather: increase after rain for downy mildew, during heat waves for powdery mildew. Practice leaf removal to ventilate clusters and reduce botrytis risk. Watch for esca symptoms (tiger-striped leaves, sudden apoplexy).",
+          "tip": "After each rainfall over 10 mm, inspect your vines within 48 hours. This is when downy mildew infections occur."
+        },
+        "autumn": {
+          "title": "Autumn (September-November)",
+          "body": "Harvest time and final treatments. Watch for botrytis on ripe clusters, especially if humidity is high. After harvest, a final copper treatment can protect remaining foliage and reduce inoculum for the following year. Prepare for winter by collecting fallen leaves and plant debris."
+        }
+      }
     },
     "grapeVarieties": {
       "title": "Bordeaux grape varieties",
-      "subtitle": "Merlot, Cabernet, Sauvignon..."
+      "subtitle": "Merlot, Cabernet, Sauvignon...",
+      "sections": {
+        "reds": {
+          "title": "Iconic red varieties",
+          "body": "Merlot is the most planted red grape in Bordeaux. Soft and fruity, it dominates the right bank (Saint-Émilion, Pomerol). It is susceptible to downy mildew and botrytis. Cabernet Sauvignon reigns on the left bank (Médoc, Graves). More tannic and structured, it resists diseases better but is susceptible to powdery mildew. Cabernet Franc, the third Bordeaux variety, offers aromas of bell pepper and violet. It is more resistant to grey rot than Merlot."
+        },
+        "whites": {
+          "title": "White varieties",
+          "body": "Sauvignon Blanc brings freshness and citrus aromas. A vigorous variety, it requires careful leaf removal to avoid botrytis. Sémillon is the great variety of Sauternes sweet wines. Paradoxically, its susceptibility to 'noble rot' (Botrytis cinerea under controlled conditions) is what makes these wines great. Muscadelle, rarer, completes the blend with its floral notes."
+        },
+        "choosing": {
+          "title": "Choosing your variety",
+          "body": "The choice of variety depends on the terroir: Merlot prefers cool clay soils, Cabernet Sauvignon well-drained gravel soils. Climate matters too: late-ripening varieties like Cabernet Sauvignon need heat to ripen. Also consider disease susceptibility: in humid areas, favor varieties resistant to downy mildew.",
+          "tip": "Merlot is more tolerant of clay and cool soils, while Cabernet Sauvignon prefers well-drained, warm gravel. Match your choice to your terroir."
+        }
+      }
     }
   },
   "scanner": {

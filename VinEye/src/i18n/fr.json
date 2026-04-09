@@ -13,7 +13,14 @@
     "map": "Carte",
     "notifications": "Notifications",
     "settings": "Paramètres",
-    "details": "Détails"
+    "details": "Détails",
+    "readTime": "{{min}} min de lecture",
+    "conditions": "Conditions favorables",
+    "prevention": "Prévention",
+    "curativeActions": "Actions curatives",
+    "impactedParts": "Parties touchées",
+    "spreadMethod": "Propagation",
+    "timeline": "Période d'activité"
   },
   "home": {
     "greeting": "Bonjour, Vigneron !",
@@ -52,7 +59,19 @@
       "symptom2": "Duvet blanc cotonneux sur la face inférieure",
       "symptom3": "Dessèchement et chute prématurée des feuilles",
       "treatment": "Traitement préventif à base de cuivre (bouillie bordelaise). Appliquer avant les pluies, renouveler tous les 10-14 jours.",
-      "season": "Mai à août — favorisé par la chaleur et l'humidité"
+      "season": "Mai à août — favorisé par la chaleur et l'humidité",
+      "condition1": "Humidité supérieure à 80%",
+      "condition2": "Températures entre 18 et 25°C",
+      "condition3": "Pluies fréquentes au printemps",
+      "preventive1": "Traitement cuivrique préventif (bouillie bordelaise)",
+      "preventive2": "Aérer la végétation par ébourgeonnage",
+      "preventive3": "Éviter l'excès d'azote",
+      "curative1": "Appliquer un fongicide systémique homologué",
+      "curative2": "Retirer les feuilles très atteintes",
+      "part1": "Feuilles",
+      "part2": "Grappes",
+      "part3": "Rameaux",
+      "spread": "Spores dispersées par le vent et les éclaboussures de pluie"
     },
     "oidium": {
       "name": "Oïdium",
@@ -60,7 +79,19 @@
       "symptom1": "Poudre blanche-grisâtre sur feuilles et grappes",
       "symptom2": "Baies qui éclatent ou se dessèchent",
       "treatment": "Soufre en poudrage ou pulvérisation. Traitements préventifs dès le débourrement.",
-      "season": "Avril à septembre — favorisé par temps chaud et sec"
+      "season": "Avril à septembre — favorisé par temps chaud et sec",
+      "condition1": "Temps chaud et sec",
+      "condition2": "Températures entre 25 et 30°C",
+      "condition3": "Forte amplitude thermique jour/nuit",
+      "preventive1": "Traitement soufré préventif",
+      "preventive2": "Favoriser l'aération des grappes",
+      "preventive3": "Effeuillage modéré",
+      "curative1": "Appliquer un fongicide anti-oïdium",
+      "curative2": "Soufre mouillable en curatif",
+      "part1": "Feuilles",
+      "part2": "Grappes",
+      "part3": "Jeunes pousses",
+      "spread": "Spores transportées par le vent"
     },
     "blackRot": {
       "name": "Black rot",
@@ -68,7 +99,19 @@
       "symptom1": "Taches brunes circulaires bordées de noir sur les feuilles",
       "symptom2": "Baies momifiées, noires et ridées",
       "treatment": "Éliminer les baies momifiées. Traitements fongicides préventifs au printemps.",
-      "season": "Mai à juillet — favorisé par les pluies printanières"
+      "season": "Mai à juillet — favorisé par les pluies printanières",
+      "condition1": "Pluies au printemps",
+      "condition2": "Températures entre 20 et 30°C",
+      "condition3": "Présence de baies momifiées de l'année précédente",
+      "preventive1": "Éliminer les momies (grappes séchées) en hiver",
+      "preventive2": "Traitements fongicides préventifs dès la floraison",
+      "preventive3": "Maintenir une bonne aération",
+      "curative1": "Pas de traitement curatif efficace",
+      "curative2": "Retirer et détruire les organes atteints",
+      "part1": "Feuilles",
+      "part2": "Grappes",
+      "part3": "Vrilles",
+      "spread": "Spores libérées par les momies sous l'effet de la pluie"
     },
     "esca": {
       "name": "Esca",
@@ -76,7 +119,20 @@
       "symptom1": "Décolorations entre les nervures des feuilles (aspect tigré)",
       "symptom2": "Dessèchement brutal du feuillage (apoplexie)",
       "treatment": "Aucun traitement curatif. Recépage du cep atteint. Protéger les plaies de taille.",
-      "season": "Symptômes visibles en été — juin à septembre"
+      "season": "Symptômes visibles en été — juin à septembre",
+      "condition1": "Vignes âgées (plus de 10 ans)",
+      "condition2": "Stress hydrique",
+      "condition3": "Plaies de taille mal cicatrisées",
+      "preventive1": "Protéger les plaies de taille avec un mastic",
+      "preventive2": "Tailler tard en saison",
+      "preventive3": "Éviter les grosses coupes",
+      "curative1": "Aucun traitement curatif homologué",
+      "curative2": "Curetage du bois (technique expérimentale)",
+      "curative3": "Recépage si le cep n'est pas trop atteint",
+      "part1": "Feuilles",
+      "part2": "Bois (tronc, bras)",
+      "part3": "Grappes (apoplexie)",
+      "spread": "Champignons pénètrent par les plaies de taille"
     },
     "botrytis": {
       "name": "Botrytis",
@@ -84,7 +140,18 @@
       "symptom1": "Pourriture molle grise sur les baies",
       "symptom2": "Feutrage gris caractéristique sur les grappes",
       "treatment": "Favoriser l'aération des grappes. Effeuillage. Traitements anti-botrytis avant fermeture de la grappe.",
-      "season": "Août à vendanges — favorisé par l'humidité"
+      "season": "Août à vendanges — favorisé par l'humidité",
+      "condition1": "Humidité élevée prolongée",
+      "condition2": "Températures entre 15 et 25°C",
+      "condition3": "Grappes compactes et serrées",
+      "preventive1": "Effeuillage autour des grappes",
+      "preventive2": "Choisir des cépages à grappes lâches",
+      "preventive3": "Limiter la vigueur",
+      "curative1": "Appliquer un anti-botrytis homologué",
+      "curative2": "Vendanger les parties atteintes rapidement",
+      "part1": "Grappes (baies)",
+      "part2": "Feuilles (rare)",
+      "spread": "Spores aériennes, favorisées par les blessures sur baies"
     },
     "flavescence": {
       "name": "Flavescence dorée",
@@ -92,7 +159,19 @@
       "symptom1": "Enroulement des feuilles avec coloration jaune ou rouge selon le cépage",
       "symptom2": "Non-aoûtement des rameaux (restent caoutchouteux)",
       "treatment": "Arrachage obligatoire des ceps contaminés. Traitement insecticide contre la cicadelle vectrice.",
-      "season": "Symptômes visibles à partir de juillet"
+      "season": "Symptômes visibles à partir de juillet",
+      "condition1": "Présence de la cicadelle Scaphoideus titanus",
+      "condition2": "Vignobles non traités contre le vecteur",
+      "condition3": "Zones contaminées à proximité",
+      "preventive1": "Traitement insecticide obligatoire contre la cicadelle",
+      "preventive2": "Prospection et arrachage des ceps atteints",
+      "preventive3": "Utiliser du matériel végétal certifié",
+      "curative1": "Aucun traitement curatif",
+      "curative2": "Arrachage obligatoire des ceps contaminés",
+      "part1": "Feuilles (enroulement, décoloration)",
+      "part2": "Rameaux (aoûtement absent)",
+      "part3": "Grappes (dessèchement)",
+      "spread": "Transmis par la cicadelle Scaphoideus titanus"
     },
     "chlorose": {
       "name": "Chlorose ferrique",
@@ -100,7 +179,17 @@
       "symptom1": "Jaunissement entre les nervures, nervures restant vertes",
       "symptom2": "Affaiblissement général de la vigne",
       "treatment": "Apport de chélates de fer. Choix d'un porte-greffe adapté aux sols calcaires.",
-      "season": "Printemps — surtout sur sols calcaires après de fortes pluies"
+      "season": "Printemps — surtout sur sols calcaires après de fortes pluies",
+      "condition1": "Sol calcaire actif",
+      "condition2": "Sol compacté ou asphyxiant",
+      "condition3": "Excès d'eau au printemps",
+      "preventive1": "Choisir un porte-greffe adapté aux sols calcaires",
+      "preventive2": "Améliorer le drainage",
+      "preventive3": "Apport de matière organique",
+      "curative1": "Pulvérisation foliaire de chélate de fer",
+      "curative2": "Traitement au sulfate de fer",
+      "part1": "Feuilles (jaunissement internervaire)",
+      "spread": "Non contagieux — carence nutritionnelle liée au sol"
     }
   },
   "notifications": {
@@ -144,6 +233,60 @@
       "body": "Scannez votre première vigne pour commencer votre collection !"
     }
   },
+  "myPlants": {
+    "title": "Mes plantes",
+    "tabLabel": "Mes plantes",
+    "searchPlaceholder": "Rechercher une plante...",
+    "groups": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "older": "Plus ancien"
+    },
+    "actions": {
+      "favorite": "Favori",
+      "unfavorite": "Retirer",
+      "delete": "Supprimer",
+      "deleteConfirmTitle": "Supprimer ce scan ?",
+      "deleteConfirmMessage": "Cette action est irréversible.",
+      "cancel": "Annuler"
+    },
+    "toasts": {
+      "favorited": "Ajouté aux favoris",
+      "unfavorited": "Retiré des favoris",
+      "deleted": "Scan supprimé"
+    },
+    "empty": {
+      "title": "Aucune plante scannée",
+      "subtitle": "Scannez votre première plante pour commencer votre collection",
+      "cta": "Scanner"
+    },
+    "detail": {
+      "results": {
+        "vine": "Vigne identifiée",
+        "uncertain": "Résultat incertain",
+        "notVine": "Pas une vigne",
+        "unidentified": "Plante non identifiée"
+      },
+      "confidence": "Confiance",
+      "cepageSection": "Cépage détecté",
+      "scannedOn": "Scan effectué le",
+      "xpEarned": "XP gagnés",
+      "location": "Localisation",
+      "noLocation": "Aucune localisation enregistrée",
+      "addLocation": "Ajouter ma position",
+      "share": "Partager",
+      "delete": "Supprimer",
+      "shareConfirmTitle": "Partager ce scan ?",
+      "shareConfirmMessage": "La photo et les informations du scan seront partagées.",
+      "shareAction": "Partager",
+      "shareText": "Mon scan VinEye",
+      "shareError": "Impossible de partager le scan",
+      "notFound": "Scan introuvable",
+      "goBack": "Retour"
+    }
+  },
   "guides": {
     "screenTitle": "Guides & Conseils",
     "tabDiseases": "Maladies",
@@ -155,15 +298,66 @@
     },
     "healthyLeaf": {
       "title": "Reconnaître une feuille saine",
-      "subtitle": "Les bases pour débutants"
+      "subtitle": "Les bases pour débutants",
+      "sections": {
+        "colorTexture": {
+          "title": "Couleur et texture",
+          "body": "Une feuille de vigne saine présente un vert uniforme, vif et brillant. La texture est lisse sur la face supérieure et légèrement duveteuse dessous. Les nervures sont nettes, bien dessinées et d'un vert légèrement plus clair que le limbe. Passez votre doigt sur la feuille : elle doit être ferme, souple et sans rugosité anormale.",
+          "tip": "Une feuille saine n'a jamais de taches brunes, jaunes ou poudreuses. Si vous en voyez, scannez-la immédiatement avec VinEye."
+        },
+        "shape": {
+          "title": "Forme et symétrie",
+          "body": "La forme de la feuille varie selon le cépage : 3 lobes (Merlot), 5 lobes (Cabernet Sauvignon) ou presque entière (Gamay). Quelle que soit la variété, une feuille saine est symétrique, avec des bords dentés réguliers. Les sinus (échancrures entre les lobes) sont nets. Une feuille asymétrique ou déformée peut indiquer un problème viral ou un dégât d'herbicide."
+        },
+        "warning": {
+          "title": "Quand s'inquiéter",
+          "body": "Surveillez ces premiers signes : décoloration entre les nervures (chlorose), taches huileuses translucides (mildiou), poudre blanche (oïdium), enroulement des bords vers le bas (stress hydrique ou viral), nécroses brunes (black rot). Plus vous agissez tôt, plus le traitement sera efficace.",
+          "tip": "Photographiez la feuille suspecte avec VinEye dès les premiers symptômes. La détection précoce est la clé d'un traitement réussi."
+        }
+      }
     },
     "treatmentCalendar": {
       "title": "Calendrier de traitement",
-      "subtitle": "Quand et comment traiter"
+      "subtitle": "Quand et comment traiter",
+      "sections": {
+        "winter": {
+          "title": "Hiver (décembre-février)",
+          "body": "C'est la période de repos végétatif. Profitez-en pour tailler la vigne, retirer et brûler les bois morts (source d'inoculum). Appliquez un traitement d'hiver à base d'huile blanche pour éliminer les œufs de cochenilles et les formes hivernantes de parasites. Nettoyez le matériel de taille entre chaque cep pour éviter la propagation de l'esca."
+        },
+        "spring": {
+          "title": "Printemps (mars-mai)",
+          "body": "Le débourrement marque le début de la saison de vigilance. Dès le stade 2-3 feuilles étalées, commencez les traitements préventifs : bouillie bordelaise contre le mildiou, soufre contre l'oïdium. Renouvelez après chaque pluie supérieure à 10 mm. Surveillez l'apparition de la chlorose sur les sols calcaires. C'est aussi le moment de traiter contre la cicadelle vectrice de la flavescence dorée (traitement obligatoire en zone réglementée).",
+          "tip": "Le premier traitement préventif doit intervenir au stade 2-3 feuilles étalées. Ne l'oubliez pas, c'est le plus important de la saison."
+        },
+        "summer": {
+          "title": "Été (juin-août)",
+          "body": "Période de surveillance active. Le mildiou est à son pic en juin, l'oïdium en juillet. Adaptez vos traitements à la météo : renforcez après les pluies pour le mildiou, lors des fortes chaleurs pour l'oïdium. Pratiquez l'effeuillage pour aérer les grappes et réduire le risque de botrytis. Surveillez l'apparition de l'esca (feuilles tigrées, apoplexie brutale).",
+          "tip": "Après chaque pluie de plus de 10 mm, inspectez vos vignes dans les 48h. C'est le moment où les contaminations de mildiou se produisent."
+        },
+        "autumn": {
+          "title": "Automne (septembre-novembre)",
+          "body": "C'est la période des vendanges et des derniers traitements. Surveillez le botrytis sur les grappes mûres, surtout si l'humidité est élevée. Après les vendanges, un dernier traitement cuivrique peut protéger le feuillage restant et limiter l'inoculum pour l'année suivante. Préparez l'hiver en ramassant les feuilles tombées et les débris végétaux."
+        }
+      }
     },
     "grapeVarieties": {
       "title": "Les cépages bordelais",
-      "subtitle": "Merlot, Cabernet, Sauvignon..."
+      "subtitle": "Merlot, Cabernet, Sauvignon...",
+      "sections": {
+        "reds": {
+          "title": "Les rouges emblématiques",
+          "body": "Le Merlot est le cépage rouge le plus planté à Bordeaux. Souple et fruité, il domine sur la rive droite (Saint-Émilion, Pomerol). Il est sensible au mildiou et au botrytis. Le Cabernet Sauvignon règne sur la rive gauche (Médoc, Graves). Plus tannique et structuré, il résiste mieux aux maladies mais est sensible à l'oïdium. Le Cabernet Franc, troisième cépage bordelais, offre des arômes de poivron et de violette. Il est plus résistant à la pourriture grise que le Merlot."
+        },
+        "whites": {
+          "title": "Les blancs",
+          "body": "Le Sauvignon Blanc apporte fraîcheur et arômes d'agrumes. Cépage vigoureux, il nécessite un effeuillage soigneux pour éviter le botrytis. Le Sémillon est le grand cépage des liquoreux de Sauternes. Paradoxalement, c'est sa sensibilité à la « pourriture noble » (Botrytis cinerea en conditions contrôlées) qui fait la grandeur de ces vins. La Muscadelle, plus rare, complète l'assemblage avec ses notes florales."
+        },
+        "choosing": {
+          "title": "Choisir son cépage",
+          "body": "Le choix du cépage dépend du terroir : le Merlot préfère les sols argileux et frais, le Cabernet Sauvignon les sols de graves bien drainés. Le climat joue aussi : les cépages tardifs comme le Cabernet Sauvignon ont besoin de chaleur pour mûrir. Pensez aussi à la sensibilité aux maladies : en zone humide, privilégiez des cépages résistants au mildiou.",
+          "tip": "Le Merlot est plus tolérant aux sols argileux et frais, le Cabernet Sauvignon préfère les graves bien drainés et chauds. Adaptez votre choix à votre terroir."
+        }
+      }
     }
   },
   "scanner": {

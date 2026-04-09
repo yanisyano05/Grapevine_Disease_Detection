@@ -45,9 +45,24 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Ce slug existe deja" }, { status: 409 });
   }
 
+  const { images, ...diseaseData } = data;
+
   const disease = await prisma.disease.create({
-    data: { ...data, slug },
+    data: { ...diseaseData, slug },
   });
 
-  return Response.json({ data: disease }, { status: 201 });
+  if (images && images.length > 0) {
+    await Promise.all(
+      images.map((img) =>
+        prisma.diseaseImage.create({ data: { ...img, diseaseId: disease.id } })
+      )
+    );
+  }
+
+  const created = await prisma.disease.findUnique({
+    where: { id: disease.id },
+    include: { images: { orderBy: { order: "asc" } } },
+  });
+
+  return Response.json({ data: created }, { status: 201 });
 }

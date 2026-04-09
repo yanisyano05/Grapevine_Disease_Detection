@@ -4,13 +4,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { House, ScanLine, Map, BookOpen, Leaf } from "lucide-react-native";
+import { House, ScanLine, Map, BookOpen, Sprout } from "lucide-react-native";
 
 import HomeScreen from "@/screens/HomeScreen";
 import ScannerScreen from "@/screens/ScannerScreen";
 import MapScreen from "@/screens/MapScreen";
 import GuidesScreen from "@/screens/GuidesScreen";
-import LibraryScreen from "@/screens/LibraryScreen";
+import MyPlantsScreen from "@/screens/MyPlantsScreen";
 import { colors } from "@/theme/colors";
 
 const Tab = createBottomTabNavigator();
@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const TAB_ICONS: Record<string, any> = {
   Home: House,
   Guides: BookOpen,
-  Library: Leaf,
+  MyPlants: Sprout,
   Map: Map,
 };
 
@@ -164,9 +164,9 @@ export default function BottomTabNavigator() {
         options={{ tabBarLabel: t("common.scan") }}
       />
       <Tab.Screen
-        name="Library"
-        component={LibraryScreen}
-        options={{ tabBarLabel: t("library.title") }}
+        name="MyPlants"
+        component={MyPlantsScreen}
+        options={{ tabBarLabel: t("myPlants.tabLabel") }}
       />
       <Tab.Screen
         name="Map"

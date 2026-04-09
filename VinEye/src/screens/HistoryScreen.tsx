@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import { ScanList } from "@/components/history/ScanList";
 import { useHistory } from "@/hooks/useHistory";
 import { getCepageById } from "@/utils/cepages";
@@ -78,10 +78,14 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t("history.title")}</Text>
+        {/* <Text style={styles.title}>{t("history.title")}</Text> */}
 
         <View style={styles.header}>
-          <Ionicons name="search-outline" size={22} color={colors.neutral[800]} />
+          <Ionicons
+            name="search-outline"
+            size={22}
+            color={colors.neutral[800]}
+          />
           <TextInput
             style={styles.search}
             placeholder={t("history.search")}

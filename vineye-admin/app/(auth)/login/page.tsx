@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Grape, Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,10 +51,10 @@ export default function LoginPage() {
     <div className="w-full max-w-[380px] mx-4">
       {/* Logo */}
       <div className="flex flex-col items-center mb-8">
-        <div className="h-14 w-14 rounded-2xl bg-vine/10 flex items-center justify-center mb-5 glow-green-sm">
-          <Grape className="h-7 w-7 text-vine" />
+        <div className="h-16 w-16 rounded-2xl bg-vine/10 flex items-center justify-center mb-5 glow-green-sm overflow-hidden">
+          <Image src="/logo.png" alt="VinEye" width={48} height={48} className="object-contain" />
         </div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-cream">
+        <h1 className="text-2xl font-bold tracking-tight text-cream">
           VinEye Admin
         </h1>
         <p className="text-sm text-stone-600 mt-1">

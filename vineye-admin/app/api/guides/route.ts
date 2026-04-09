@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
 
   const guides = await prisma.guide.findMany({
     where,
+    include: { sections: { orderBy: { order: "asc" } } },
     orderBy: { order: "asc" },
   });
 
@@ -31,12 +32,12 @@ export async function POST(request: NextRequest) {
   if (!result.success) {
     return Response.json(
       { error: "Validation failed", details: result.error.flatten() },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  const data = result.data;
-  const slug = data.slug || slugify(data.title);
+  const { sections, ...guideData } = result.data;
+  const slug = guideData.slug || slugify(guideData.title);
 
   const existing = await prisma.guide.findUnique({ where: { slug } });
   if (existing) {
@@ -44,8 +45,21 @@ export async function POST(request: NextRequest) {
   }
 
   const guide = await prisma.guide.create({
-    data: { ...data, slug },
+    data: { ...guideData, slug },
   });
 
-  return Response.json({ data: guide }, { status: 201 });
+  if (sections && sections.length > 0) {
+    await Promise.all(
+      sections.map((s) =>
+        prisma.guideSection.create({ data: { ...s, guideId: guide.id } }),
+      ),
+    );
+  }
+
+  const created = await prisma.guide.findUnique({
+    where: { id: guide.id },
+    include: { sections: { orderBy: { order: "asc" } } },
+  });
+
+  return Response.json({ data: created }, { status: 201 });
 }

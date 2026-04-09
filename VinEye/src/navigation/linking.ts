@@ -9,7 +9,9 @@ const linking: LinkingOptions<RootStackParamList> = {
       Main: {
         screens: {
           Home: 'home',
+          Guides: 'guides',
           Scanner: 'scan',
+          MyPlants: 'my-plants',
           Map: 'map',
         },
       },
@@ -17,8 +19,9 @@ const linking: LinkingOptions<RootStackParamList> = {
       Notifications: 'notifications',
       Profile: 'profile',
       Settings: 'settings',
-      Guides: 'guides',
-      Library: 'library',
+      DiseaseDetail: 'disease/:diseaseId',
+      GuideDetail: 'guide/:guideId',
+      ScanDetail: 'scan/:scanId',
     },
   },
 };

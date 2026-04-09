@@ -31,7 +31,7 @@ export default function DashboardClient({ stats, recentScans, topDiseases }: Das
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-cream">
+        <h1 className="text-3xl font-bold tracking-tight text-cream">
           Tableau de bord
         </h1>
         <p className="text-sm text-stone-600 mt-1 capitalize">{today}</p>

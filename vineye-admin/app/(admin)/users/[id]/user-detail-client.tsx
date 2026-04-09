@@ -79,7 +79,7 @@ export default function UserDetailClient({ user }: UserDetailProps) {
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-cream">
+        <h1 className="text-2xl font-bold tracking-tight text-cream">
           Utilisateur
         </h1>
       </div>

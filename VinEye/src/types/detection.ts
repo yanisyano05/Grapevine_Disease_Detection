@@ -13,4 +13,10 @@ export interface ScanRecord {
   detection: Detection;
   xpEarned: number;
   createdAt: string; // ISO date
+  isFavorite?: boolean;
+  location?: {
+    latitude: number;
+    longitude: number;
+    placeName?: string;
+  } | null;
 }

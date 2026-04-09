@@ -123,12 +123,45 @@ model Disease {
   published      Boolean     @default(true)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+
+  // Timeline (months 1-12)
+  startMonth     Int?
+  endMonth       Int?
+  peakMonth      Int?
+
+  // Detail arrays
+  conditions         String[]
+  conditionsEn       String[]
+  preventiveActions  String[]
+  preventiveActionsEn String[]
+  curativeActions    String[]
+  curativeActionsEn  String[]
+  impactedParts      String[]
+  impactedPartsEn    String[]
+  spreadMethod       String?
+  spreadMethodEn     String?
+
+  // Relations
+  images         DiseaseImage[]
   scans          Scan[]
 
   @@index([type])
   @@index([severity])
   @@index([published])
   @@map("diseases")
+}
+
+model DiseaseImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  diseaseId String
+  disease   Disease  @relation(fields: [diseaseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([diseaseId])
+  @@map("disease_images")
 }
 
 model Guide {
@@ -149,9 +182,34 @@ model Guide {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  // New fields
+  readTime   Int?
+  coverImage String?
+
+  // Relations
+  sections   GuideSection[]
+
   @@index([published])
   @@index([order])
   @@map("guides")
+}
+
+model GuideSection {
+  id        String   @id @default(cuid())
+  title     String
+  titleEn   String?
+  body      String   @db.Text
+  bodyEn    String?  @db.Text
+  image     String?
+  tip       String?  @db.Text
+  tipEn     String?  @db.Text
+  order     Int      @default(0)
+  guideId   String
+  guide     Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([guideId])
+  @@map("guide_sections")
 }
 
 model Scan {

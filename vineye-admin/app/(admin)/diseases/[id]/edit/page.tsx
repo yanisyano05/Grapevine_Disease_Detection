@@ -9,7 +9,10 @@ export default async function EditDiseasePage({
 }) {
   const { id } = await params;
 
-  const disease = await prisma.disease.findUnique({ where: { id } });
+  const disease = await prisma.disease.findUnique({
+    where: { id },
+    include: { images: { orderBy: { order: "asc" } } },
+  });
   if (!disease) notFound();
 
   return (
@@ -35,6 +38,24 @@ export default async function EditDiseasePage({
         iconColor: disease.iconColor,
         bgColor: disease.bgColor,
         published: disease.published,
+        startMonth: disease.startMonth,
+        endMonth: disease.endMonth,
+        peakMonth: disease.peakMonth,
+        conditions: disease.conditions,
+        conditionsEn: disease.conditionsEn,
+        preventiveActions: disease.preventiveActions,
+        preventiveActionsEn: disease.preventiveActionsEn,
+        curativeActions: disease.curativeActions,
+        curativeActionsEn: disease.curativeActionsEn,
+        impactedParts: disease.impactedParts,
+        impactedPartsEn: disease.impactedPartsEn,
+        spreadMethod: disease.spreadMethod,
+        spreadMethodEn: disease.spreadMethodEn,
+        images: disease.images.map((img) => ({
+          url: img.url,
+          alt: img.alt ?? "",
+          order: img.order,
+        })),
       }}
     />
   );

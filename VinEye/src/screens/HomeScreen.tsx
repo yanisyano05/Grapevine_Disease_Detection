@@ -5,6 +5,8 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 
 import type { RootStackParamList } from "@/types/navigation";
+import { useDiseases } from "@/hooks/useDiseases";
+import { useGuides } from "@/hooks/useGuides";
 import SearchHeader from "@/components/home/SearchHeader";
 import SearchSection from "@/components/home/SearchSection";
 import SectionHeader from "@/components/home/components/homeheader";
@@ -18,6 +20,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 export default function HomeScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
+  const { data: diseases, isLoading: diseasesLoading } = useDiseases();
+  const { data: guides } = useGuides();
 
   return (
     <SafeAreaView className="flex-1 bg-[#FAFAFA]" edges={["top"]}>
@@ -37,10 +41,10 @@ export default function HomeScreen() {
           <View className="px-5">
             <SectionHeader
               title={t("home.frequentDiseases")}
-              onViewAll={() => navigation.navigate("Guides")}
+              onViewAll={() => navigation.navigate("Main", { screen: "Guides" })}
             />
           </View>
-          <FrequentDiseases />
+          <FrequentDiseases diseases={diseases} isLoading={diseasesLoading} />
         </View>
 
         {/* Season alert */}
@@ -50,9 +54,9 @@ export default function HomeScreen() {
         <View className="mx-5 mb-6 gap-3">
           <SectionHeader
             title={t("home.practicalGuides")}
-            onViewAll={() => navigation.navigate("Guides")}
+            onViewAll={() => navigation.navigate("Main", { screen: "Guides" })}
           />
-          <PracticalGuides />
+          <PracticalGuides guides={guides} />
         </View>
 
         <View className="h-8" />

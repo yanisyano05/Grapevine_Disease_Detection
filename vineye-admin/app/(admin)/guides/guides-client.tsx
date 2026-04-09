@@ -62,7 +62,7 @@ export default function GuidesClient({ guides }: { guides: Guide[] }) {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-cream">
+          <h1 className="text-3xl font-bold tracking-tight text-cream">
             Guides
           </h1>
           <p className="text-sm text-stone-600 mt-1">{guides.length} guides</p>
