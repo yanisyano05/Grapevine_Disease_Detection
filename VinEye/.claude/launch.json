@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "VinEye — Expo (all platforms)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["start"],
+      "port": 8081
+    },
+    {
+      "name": "VinEye — Android",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["android"],
+      "port": 8081
+    },
+    {
+      "name": "VinEye — Web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["web"],
+      "port": 8081
+    }
+  ]
+}

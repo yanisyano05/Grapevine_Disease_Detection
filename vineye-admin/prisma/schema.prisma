@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// BETTER AUTH MODELS
+// ============================================
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // VinEye custom fields
+  role          String    @default("USER")
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  banned        Boolean   @default(false)
+  bannedReason  String?
+
+  sessions      Session[]
+  accounts      Account[]
+  scans         Scan[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verifications")
+}
+
+// ============================================
+// VINEYE BUSINESS MODELS
+// ============================================
+
+enum DiseaseType {
+  FUNGAL
+  BACTERIAL
+  PEST
+  ABIOTIC
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AlertType {
+  WARNING
+  INFO
+  DANGER
+}
+
+model Disease {
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  name           String
+  nameEn         String      @default("")
+  scientificName String      @default("")
+  type           DiseaseType
+  severity       Severity
+  description    String      @db.Text
+  descriptionEn  String      @default("") @db.Text
+  symptoms       String[]
+  symptomsEn     String[]
+  treatment      String      @db.Text
+  treatmentEn    String      @default("") @db.Text
+  season         String
+  seasonEn       String      @default("")
+  iconName       String      @default("leaf")
+  iconColor      String      @default("#1D9E75")
+  bgColor        String      @default("#E1F5EE")
+  imageUrl       String?
+  published      Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  scans          Scan[]
+
+  @@index([type])
+  @@index([severity])
+  @@index([published])
+  @@map("diseases")
+}
+
+model Guide {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  titleEn    String   @default("")
+  subtitle   String
+  subtitleEn String   @default("")
+  content    String   @db.Text
+  contentEn  String   @default("") @db.Text
+  category   String   @default("general")
+  iconName   String   @default("book")
+  iconColor  String   @default("#185FA5")
+  bgColor    String   @default("#E6F1FB")
+  published  Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([published])
+  @@index([order])
+  @@map("guides")
+}
+
+model Scan {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diseaseId  String?
+  disease    Disease? @relation(fields: [diseaseId], references: [id], onDelete: SetNull)
+  confidence Float    @default(0)
+  latitude   Float?
+  longitude  Float?
+  imageUrl   String?
+  deviceId   String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([diseaseId])
+  @@index([createdAt])
+  @@map("scans")
+}
+
+model SeasonAlert {
+  id        String    @id @default(cuid())
+  title     String
+  titleEn   String    @default("")
+  message   String    @db.Text
+  messageEn String    @default("") @db.Text
+  type      AlertType @default(WARNING)
+  region    String    @default("bordeaux")
+  active    Boolean   @default(true)
+  activeFrom DateTime @default(now())
+  activeTo  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([active])
+  @@index([region])
+  @@map("season_alerts")
+}

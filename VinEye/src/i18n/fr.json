@@ -1,0 +1,268 @@
+{
+  "common": {
+    "scan": "Scanner",
+    "history": "Historique",
+    "profile": "Profil",
+    "home": "Accueil",
+    "viewAll": "Voir tout",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "map": "Carte",
+    "notifications": "Notifications",
+    "settings": "Paramètres",
+    "details": "Détails"
+  },
+  "home": {
+    "greeting": "Bonjour, Vigneron !",
+    "scanButton": "Scanner une vigne",
+    "searchPlaceholder": "Rechercher une maladie, un cépage...",
+    "totalScans": "Scans totaux",
+    "uniqueGrapes": "Cépages trouvés",
+    "currentStreak": "Streak actuel",
+    "progression": "Progression",
+    "statistics": "Statistiques",
+    "bannerTitle": "Commencez votre collection",
+    "bannerSubtitle": "Découvrez les cépages et enrichissez vos connaissances viticoles",
+    "bannerButton": "Commencer",
+    "lastScan": "Dernier scan",
+    "noScansYet": "Aucun scan pour l'instant",
+    "startScanning": "Commencez à scanner !",
+    "tapToStart": "Appuyez pour scanner",
+    "frequentDiseases": "Maladies fréquentes",
+    "seasonAlert": {
+      "title": "Risque mildiou élevé",
+      "message": "Pluie et chaleur prévues cette semaine. Surveillez vos feuilles."
+    },
+    "practicalGuides": "Guides pratiques"
+  },
+  "diseases": {
+    "types": {
+      "fungal": "Fongique",
+      "bacterial": "Bactérien",
+      "pest": "Ravageur",
+      "abiotic": "Carence"
+    },
+    "mildiou": {
+      "name": "Mildiou",
+      "description": "Le mildiou est causé par le champignon Plasmopara viticola. Il attaque toutes les parties vertes de la vigne, principalement les feuilles.",
+      "symptom1": "Taches jaunes huileuses sur la face supérieure des feuilles",
+      "symptom2": "Duvet blanc cotonneux sur la face inférieure",
+      "symptom3": "Dessèchement et chute prématurée des feuilles",
+      "treatment": "Traitement préventif à base de cuivre (bouillie bordelaise). Appliquer avant les pluies, renouveler tous les 10-14 jours.",
+      "season": "Mai à août — favorisé par la chaleur et l'humidité"
+    },
+    "oidium": {
+      "name": "Oïdium",
+      "description": "L'oïdium est causé par Erysiphe necator. Il se développe par temps chaud et sec, contrairement au mildiou.",
+      "symptom1": "Poudre blanche-grisâtre sur feuilles et grappes",
+      "symptom2": "Baies qui éclatent ou se dessèchent",
+      "treatment": "Soufre en poudrage ou pulvérisation. Traitements préventifs dès le débourrement.",
+      "season": "Avril à septembre — favorisé par temps chaud et sec"
+    },
+    "blackRot": {
+      "name": "Black rot",
+      "description": "Le black rot est causé par Guignardia bidwellii. Il provoque des dégâts importants sur les baies.",
+      "symptom1": "Taches brunes circulaires bordées de noir sur les feuilles",
+      "symptom2": "Baies momifiées, noires et ridées",
+      "treatment": "Éliminer les baies momifiées. Traitements fongicides préventifs au printemps.",
+      "season": "Mai à juillet — favorisé par les pluies printanières"
+    },
+    "esca": {
+      "name": "Esca",
+      "description": "L'esca est un complexe de maladies du bois causé par plusieurs champignons. Maladie chronique qui peut tuer le cep.",
+      "symptom1": "Décolorations entre les nervures des feuilles (aspect tigré)",
+      "symptom2": "Dessèchement brutal du feuillage (apoplexie)",
+      "treatment": "Aucun traitement curatif. Recépage du cep atteint. Protéger les plaies de taille.",
+      "season": "Symptômes visibles en été — juin à septembre"
+    },
+    "botrytis": {
+      "name": "Botrytis",
+      "description": "La pourriture grise est causée par Botrytis cinerea. Elle attaque les grappes à maturité.",
+      "symptom1": "Pourriture molle grise sur les baies",
+      "symptom2": "Feutrage gris caractéristique sur les grappes",
+      "treatment": "Favoriser l'aération des grappes. Effeuillage. Traitements anti-botrytis avant fermeture de la grappe.",
+      "season": "Août à vendanges — favorisé par l'humidité"
+    },
+    "flavescence": {
+      "name": "Flavescence dorée",
+      "description": "Maladie à phytoplasme transmise par la cicadelle Scaphoideus titanus. Maladie réglementée, déclaration obligatoire.",
+      "symptom1": "Enroulement des feuilles avec coloration jaune ou rouge selon le cépage",
+      "symptom2": "Non-aoûtement des rameaux (restent caoutchouteux)",
+      "treatment": "Arrachage obligatoire des ceps contaminés. Traitement insecticide contre la cicadelle vectrice.",
+      "season": "Symptômes visibles à partir de juillet"
+    },
+    "chlorose": {
+      "name": "Chlorose ferrique",
+      "description": "Jaunissement des feuilles dû à une carence en fer, souvent lié à un sol trop calcaire.",
+      "symptom1": "Jaunissement entre les nervures, nervures restant vertes",
+      "symptom2": "Affaiblissement général de la vigne",
+      "treatment": "Apport de chélates de fer. Choix d'un porte-greffe adapté aux sols calcaires.",
+      "season": "Printemps — surtout sur sols calcaires après de fortes pluies"
+    }
+  },
+  "notifications": {
+    "markAllRead": "Tout lu",
+    "empty": {
+      "title": "Rien de nouveau",
+      "body": "Vos notifications apparaîtront ici. Scannez une vigne pour commencer !"
+    },
+    "mock": {
+      "mildewAlert": {
+        "title": "Alerte Mildiou",
+        "body": "Conditions favorables au mildiou détectées dans votre zone. Surveillez les taches jaunes sur les feuilles."
+      },
+      "sulfurTip": {
+        "title": "Conseil : Traitement soufre",
+        "body": "C'est le bon moment pour un poudrage de soufre préventif contre l'oïdium."
+      },
+      "scanReminder": {
+        "title": "Rappel de scan",
+        "body": "Vous n'avez pas scanné depuis 3 jours. Gardez votre streak en vie !"
+      },
+      "botrytisAlert": {
+        "title": "Risque Botrytis",
+        "body": "L'humidité élevée favorise la pourriture grise. Pensez à aérer vos grappes."
+      },
+      "pruningTip": {
+        "title": "Conseil : Taille de printemps",
+        "body": "Protégez vos plaies de taille avec un mastic cicatrisant pour prévenir l'esca."
+      },
+      "updateAvailable": {
+        "title": "Mise à jour disponible",
+        "body": "VinEye v2.1 est disponible avec la détection de 3 nouvelles maladies."
+      }
+    }
+  },
+  "library": {
+    "title": "Ma bibliothèque",
+    "plants": "plantes",
+    "empty": {
+      "title": "Aucune plante scannée",
+      "body": "Scannez votre première vigne pour commencer votre collection !"
+    }
+  },
+  "guides": {
+    "screenTitle": "Guides & Conseils",
+    "tabDiseases": "Maladies",
+    "tabGuides": "Guides Pratiques",
+    "severity": {
+      "critical": "Critique",
+      "moderate": "Modéré",
+      "low": "Faible"
+    },
+    "healthyLeaf": {
+      "title": "Reconnaître une feuille saine",
+      "subtitle": "Les bases pour débutants"
+    },
+    "treatmentCalendar": {
+      "title": "Calendrier de traitement",
+      "subtitle": "Quand et comment traiter"
+    },
+    "grapeVarieties": {
+      "title": "Les cépages bordelais",
+      "subtitle": "Merlot, Cabernet, Sauvignon..."
+    }
+  },
+  "scanner": {
+    "scanning": "Analyse en cours...",
+    "pointCamera": "Pointez la caméra vers une vigne",
+    "confidence": "Confiance",
+    "capture": "Capturer",
+    "analyzing": "Analyse...",
+    "permissionRequired": "Permission caméra requise",
+    "permissionMessage": "VinEye nécessite l'accès à votre caméra pour détecter les vignes.",
+    "grantPermission": "Autoriser la caméra",
+    "identify": "Identifier la plante"
+  },
+  "result": {
+    "vineDetected": "Vigne détectée !",
+    "notVine": "Ce n'est pas une vigne",
+    "uncertain": "Résultat incertain",
+    "grape": "Cépage probable",
+    "origin": "Origine",
+    "characteristics": "Caractéristiques",
+    "regions": "Régions typiques",
+    "xpEarned": "XP gagnés",
+    "scanAgain": "Scanner encore",
+    "viewHistory": "Voir l'historique",
+    "color": "Couleur",
+    "red": "Rouge",
+    "white": "Blanc",
+    "rose": "Rosé"
+  },
+  "history": {
+    "title": "Historique",
+    "empty": "Aucun scan dans l'historique",
+    "filter": {
+      "all": "Tous",
+      "vine": "Vigne",
+      "notVine": "Pas vigne"
+    },
+    "search": "Rechercher un cépage...",
+    "sortBy": "Trier par",
+    "date": "Date",
+    "confidence": "Confiance",
+    "deleteConfirm": "Supprimer ce scan ?"
+  },
+  "profile": {
+    "title": "Profil",
+    "stats": "Statistiques",
+    "totalScans": "Total scans",
+    "successRate": "Taux de réussite",
+    "bestStreak": "Meilleur streak",
+    "uniqueGrapes": "Cépages uniques",
+    "badges": "Badges",
+    "nextLevel": "Prochain niveau",
+    "language": "Langue",
+    "resetData": "Réinitialiser les données",
+    "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser toutes les données ?",
+    "days": "jours",
+    "xpTotal": "XP total"
+  },
+  "settings": {
+    "general": "Général",
+    "app": "Application",
+    "editProfile": "Modifier le profil",
+    "privacy": "Confidentialité",
+    "premiumStatus": "Statut Premium",
+    "inactive": "Inactif",
+    "appearance": "Apparence",
+    "helpCenter": "Centre d'aide",
+    "terms": "Conditions d'utilisation",
+    "referTitle": "Inviter un ami",
+    "referBody": "Partagez VinEye et gagnez des XP bonus pour chaque ami invité."
+  },
+  "achievements": {
+    "firstScan": "Premier Scan",
+    "firstScanDesc": "Premier scan effectué",
+    "connoisseur": "Connaisseur",
+    "connoisseurDesc": "10 cépages différents identifiés",
+    "onFire": "En Feu",
+    "onFireDesc": "Streak de 7 jours consécutifs",
+    "sharpEye": "Œil de Lynx",
+    "sharpEyeDesc": "5 scans avec confiance > 95%",
+    "explorer": "Explorateur",
+    "explorerDesc": "Scans dans 3 régions différentes",
+    "perfectionist": "Perfectionniste",
+    "perfectionistDesc": "50 scans réussis",
+    "master": "Maître Ampélographe",
+    "masterDesc": "Tous les badges débloqués",
+    "unlocked": "Badge débloqué !",
+    "locked": "Verrouillé",
+    "xpEarned": "+{{xp}} XP"
+  },
+  "levels": {
+    "bud": "Bourgeon",
+    "leaf": "Feuille",
+    "shoot": "Sarment",
+    "cluster": "Grappe",
+    "harvester": "Vendangeur",
+    "winemaker": "Vigneron",
+    "cellarMaster": "Maître de Chai",
+    "level": "Niveau {{level}}",
+    "xpToNext": "{{xp}} XP pour le prochain niveau"
+  }
+}

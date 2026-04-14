@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Models (too large for git)
+*.keras
+*.tflite
+*.h5
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VinEye (handled by VinEye/.gitignore)
+VinEye/node_modules/
+VinEye/.expo/
+VinEye/dist/
+VinEye/ios/
+VinEye/android/
+
+# Virtual environment
+venv/
+
+# Dependencies
+node_modules/
+
+# vineye-admin
+vineye-admin/node_modules/
+vineye-admin/.next/

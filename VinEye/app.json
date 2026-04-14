@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "VinEye",
+    "slug": "vineye",
+    "version": "1.0.0",
+    "scheme": "vineye",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./src/assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2D6A4F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vineye.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "backgroundColor": "#2D6A4F"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.vineye.app"
+    },
+    "web": {
+      "favicon": "./src/assets/images/icon.png"
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "VinEye needs camera access to detect grapevines."
+        }
+      ]
+    ]
+  }
+}

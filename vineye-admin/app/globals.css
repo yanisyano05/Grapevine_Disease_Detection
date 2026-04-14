@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-fraunces);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* VinEye "Cave a Vin" palette */
+  --color-vine: #4ADE80;
+  --color-vine-dim: #166534;
+  --color-gold: #D97706;
+  --color-gold-dim: #92400E;
+  --color-wine: #BE123C;
+  --color-cream: #FAFAF9;
+  --color-stone-800: #292524;
+  --color-stone-700: #44403C;
+  --color-stone-600: #57534E;
+  --color-stone-400: #A8A29E;
+}
+
+:root {
+  /* Warm stone dark palette — "Cave a Vin" */
+  --background: oklch(0.11 0.005 60);
+  --foreground: oklch(0.93 0.005 80);
+  --card: oklch(0.15 0.005 60);
+  --card-foreground: oklch(0.93 0.005 80);
+  --popover: oklch(0.15 0.005 60);
+  --popover-foreground: oklch(0.93 0.005 80);
+  --primary: oklch(0.72 0.19 150);
+  --primary-foreground: oklch(0.13 0.01 150);
+  --secondary: oklch(0.19 0.005 60);
+  --secondary-foreground: oklch(0.85 0.005 80);
+  --muted: oklch(0.19 0.005 60);
+  --muted-foreground: oklch(0.58 0.01 75);
+  --accent: oklch(0.19 0.008 60);
+  --accent-foreground: oklch(0.93 0.005 80);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.23 0.006 60);
+  --input: oklch(0.20 0.005 60);
+  --ring: oklch(0.72 0.19 150);
+  --radius: 0.625rem;
+
+  --chart-1: oklch(0.72 0.19 150);
+  --chart-2: oklch(0.68 0.14 85);
+  --chart-3: oklch(0.65 0.16 300);
+  --chart-4: oklch(0.70 0.13 230);
+  --chart-5: oklch(0.62 0.20 25);
+
+  --sidebar: oklch(0.13 0.005 60);
+  --sidebar-foreground: oklch(0.78 0.005 80);
+  --sidebar-primary: oklch(0.72 0.19 150);
+  --sidebar-primary-foreground: oklch(0.13 0.01 150);
+  --sidebar-accent: oklch(0.18 0.015 150);
+  --sidebar-accent-foreground: oklch(0.78 0.12 150);
+  --sidebar-border: oklch(0.20 0.005 60);
+  --sidebar-ring: oklch(0.72 0.19 150);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ─── Glow utilities ─── */
+.glow-green {
+  box-shadow:
+    0 0 0 1px oklch(0.72 0.19 150 / 0.15),
+    0 0 20px -5px oklch(0.72 0.19 150 / 0.15);
+}
+.glow-green-sm {
+  box-shadow:
+    0 0 0 1px oklch(0.72 0.19 150 / 0.10),
+    0 0 12px -4px oklch(0.72 0.19 150 / 0.12);
+}
+.glow-gold {
+  box-shadow:
+    0 0 0 1px oklch(0.68 0.14 85 / 0.15),
+    0 0 20px -5px oklch(0.68 0.14 85 / 0.15);
+}
+.glow-wine {
+  box-shadow:
+    0 0 0 1px oklch(0.55 0.22 25 / 0.15),
+    0 0 20px -5px oklch(0.55 0.22 25 / 0.15);
+}
+
+/* ─── Glass card ─── */
+.glass-card {
+  background: oklch(0.15 0.005 60 / 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid oklch(0.28 0.006 60 / 0.5);
+}
+
+/* ─── Gradient border ─── */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.72 0.19 150 / 0.4),
+    oklch(0.68 0.14 85 / 0.2),
+    oklch(0.72 0.19 150 / 0.1)
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+/* ─── Vine pulse animation ─── */
+@keyframes vine-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.animate-vine-pulse {
+  animation: vine-pulse 3s ease-in-out infinite;
+}
+
+/* ─── Subtle grain texture ─── */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ─── Scrollbar styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.30 0.005 60);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.38 0.005 60);
+}
+
+/* ─── Selection color ─── */
+::selection {
+  background: oklch(0.72 0.19 150 / 0.3);
+  color: oklch(0.95 0.005 80);
+}

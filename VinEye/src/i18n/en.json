@@ -1,0 +1,268 @@
+{
+  "common": {
+    "scan": "Scan",
+    "history": "History",
+    "profile": "Profile",
+    "home": "Home",
+    "viewAll": "View all",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "map": "Map",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "details": "Details"
+  },
+  "home": {
+    "greeting": "Hello, Winemaker!",
+    "scanButton": "Scan a vine",
+    "searchPlaceholder": "Search a disease, a grape variety...",
+    "totalScans": "Total scans",
+    "uniqueGrapes": "Grapes found",
+    "currentStreak": "Current streak",
+    "progression": "Progression",
+    "statistics": "Statistics",
+    "bannerTitle": "Start your collection",
+    "bannerSubtitle": "Discover grape varieties and grow your wine knowledge",
+    "bannerButton": "Get started",
+    "lastScan": "Last scan",
+    "noScansYet": "No scans yet",
+    "startScanning": "Start scanning!",
+    "tapToStart": "Tap to scan",
+    "frequentDiseases": "Frequent diseases",
+    "seasonAlert": {
+      "title": "High downy mildew risk",
+      "message": "Rain and heat expected this week. Keep an eye on your leaves."
+    },
+    "practicalGuides": "Practical guides"
+  },
+  "diseases": {
+    "types": {
+      "fungal": "Fungal",
+      "bacterial": "Bacterial",
+      "pest": "Pest",
+      "abiotic": "Deficiency"
+    },
+    "mildiou": {
+      "name": "Downy mildew",
+      "description": "Downy mildew is caused by the fungus Plasmopara viticola. It attacks all green parts of the vine, mainly the leaves.",
+      "symptom1": "Oily yellow spots on the upper surface of leaves",
+      "symptom2": "White cottony down on the underside",
+      "symptom3": "Drying and premature leaf drop",
+      "treatment": "Preventive copper-based treatment (Bordeaux mixture). Apply before rain, renew every 10-14 days.",
+      "season": "May to August — favored by heat and humidity"
+    },
+    "oidium": {
+      "name": "Powdery mildew",
+      "description": "Powdery mildew is caused by Erysiphe necator. It develops in warm, dry weather, unlike downy mildew.",
+      "symptom1": "White-grey powder on leaves and clusters",
+      "symptom2": "Berries that crack or dry out",
+      "treatment": "Sulfur dusting or spraying. Preventive treatments from bud break.",
+      "season": "April to September — favored by warm, dry weather"
+    },
+    "blackRot": {
+      "name": "Black rot",
+      "description": "Black rot is caused by Guignardia bidwellii. It causes significant damage to berries.",
+      "symptom1": "Circular brown spots bordered with black on leaves",
+      "symptom2": "Mummified, black and wrinkled berries",
+      "treatment": "Remove mummified berries. Preventive fungicide treatments in spring.",
+      "season": "May to July — favored by spring rains"
+    },
+    "esca": {
+      "name": "Esca",
+      "description": "Esca is a complex of wood diseases caused by several fungi. A chronic disease that can kill the vine.",
+      "symptom1": "Discoloration between leaf veins (striped appearance)",
+      "symptom2": "Sudden drying of foliage (apoplexy)",
+      "treatment": "No curative treatment. Cutting back affected vine. Protect pruning wounds.",
+      "season": "Symptoms visible in summer — June to September"
+    },
+    "botrytis": {
+      "name": "Botrytis",
+      "description": "Grey rot is caused by Botrytis cinerea. It attacks clusters at maturity.",
+      "symptom1": "Soft grey rot on berries",
+      "symptom2": "Characteristic grey felt on clusters",
+      "treatment": "Promote cluster aeration. Leaf removal. Anti-botrytis treatments before cluster closure.",
+      "season": "August to harvest — favored by humidity"
+    },
+    "flavescence": {
+      "name": "Flavescence dorée",
+      "description": "Phytoplasma disease transmitted by the leafhopper Scaphoideus titanus. Regulated disease, mandatory reporting.",
+      "symptom1": "Leaf rolling with yellow or red coloration depending on variety",
+      "symptom2": "Non-lignification of shoots (remain rubbery)",
+      "treatment": "Mandatory uprooting of contaminated vines. Insecticide treatment against the vector leafhopper.",
+      "season": "Symptoms visible from July"
+    },
+    "chlorose": {
+      "name": "Iron chlorosis",
+      "description": "Leaf yellowing due to iron deficiency, often linked to overly calcareous soil.",
+      "symptom1": "Yellowing between veins, veins remaining green",
+      "symptom2": "General weakening of the vine",
+      "treatment": "Iron chelate application. Choose rootstock adapted to calcareous soils.",
+      "season": "Spring — especially on calcareous soils after heavy rain"
+    }
+  },
+  "notifications": {
+    "markAllRead": "All read",
+    "empty": {
+      "title": "Nothing new",
+      "body": "Your notifications will appear here. Scan a vine to get started!"
+    },
+    "mock": {
+      "mildewAlert": {
+        "title": "Mildew Alert",
+        "body": "Favorable conditions for downy mildew detected in your area. Watch for yellow spots on leaves."
+      },
+      "sulfurTip": {
+        "title": "Tip: Sulfur Treatment",
+        "body": "Now is a good time for preventive sulfur dusting against powdery mildew."
+      },
+      "scanReminder": {
+        "title": "Scan Reminder",
+        "body": "You haven't scanned in 3 days. Keep your streak alive!"
+      },
+      "botrytisAlert": {
+        "title": "Botrytis Risk",
+        "body": "High humidity favors grey rot. Consider aerating your clusters."
+      },
+      "pruningTip": {
+        "title": "Tip: Spring Pruning",
+        "body": "Protect pruning wounds with a sealing paste to prevent esca."
+      },
+      "updateAvailable": {
+        "title": "Update Available",
+        "body": "VinEye v2.1 is available with detection for 3 new diseases."
+      }
+    }
+  },
+  "library": {
+    "title": "My Library",
+    "plants": "plants",
+    "empty": {
+      "title": "No scanned plants",
+      "body": "Scan your first vine to start your collection!"
+    }
+  },
+  "guides": {
+    "screenTitle": "Guides & Tips",
+    "tabDiseases": "Diseases",
+    "tabGuides": "Practical Guides",
+    "severity": {
+      "critical": "Critical",
+      "moderate": "Moderate",
+      "low": "Low"
+    },
+    "healthyLeaf": {
+      "title": "Recognizing a healthy leaf",
+      "subtitle": "Basics for beginners"
+    },
+    "treatmentCalendar": {
+      "title": "Treatment calendar",
+      "subtitle": "When and how to treat"
+    },
+    "grapeVarieties": {
+      "title": "Bordeaux grape varieties",
+      "subtitle": "Merlot, Cabernet, Sauvignon..."
+    }
+  },
+  "scanner": {
+    "scanning": "Analyzing...",
+    "pointCamera": "Point the camera at a vine",
+    "confidence": "Confidence",
+    "capture": "Capture",
+    "analyzing": "Analyzing...",
+    "permissionRequired": "Camera permission required",
+    "permissionMessage": "VinEye needs camera access to detect grapevines.",
+    "grantPermission": "Grant camera access",
+    "identify": "Identify the plant"
+  },
+  "result": {
+    "vineDetected": "Vine detected!",
+    "notVine": "This is not a vine",
+    "uncertain": "Uncertain result",
+    "grape": "Probable variety",
+    "origin": "Origin",
+    "characteristics": "Characteristics",
+    "regions": "Typical regions",
+    "xpEarned": "XP earned",
+    "scanAgain": "Scan again",
+    "viewHistory": "View history",
+    "color": "Color",
+    "red": "Red",
+    "white": "White",
+    "rose": "Rosé"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No scans in history",
+    "filter": {
+      "all": "All",
+      "vine": "Vine",
+      "notVine": "Not vine"
+    },
+    "search": "Search a variety...",
+    "sortBy": "Sort by",
+    "date": "Date",
+    "confidence": "Confidence",
+    "deleteConfirm": "Delete this scan?"
+  },
+  "profile": {
+    "title": "Profile",
+    "stats": "Statistics",
+    "totalScans": "Total scans",
+    "successRate": "Success rate",
+    "bestStreak": "Best streak",
+    "uniqueGrapes": "Unique grapes",
+    "badges": "Badges",
+    "nextLevel": "Next level",
+    "language": "Language",
+    "resetData": "Reset data",
+    "resetConfirm": "Are you sure you want to reset all data?",
+    "days": "days",
+    "xpTotal": "Total XP"
+  },
+  "settings": {
+    "general": "General",
+    "app": "Application",
+    "editProfile": "Edit profile",
+    "privacy": "Privacy",
+    "premiumStatus": "Premium Status",
+    "inactive": "Inactive",
+    "appearance": "Appearance",
+    "helpCenter": "Help Center",
+    "terms": "Terms of Use",
+    "referTitle": "Refer a friend",
+    "referBody": "Share VinEye and earn bonus XP for every friend you invite."
+  },
+  "achievements": {
+    "firstScan": "First Scan",
+    "firstScanDesc": "First scan completed",
+    "connoisseur": "Connoisseur",
+    "connoisseurDesc": "10 different grapes identified",
+    "onFire": "On Fire",
+    "onFireDesc": "7-day consecutive streak",
+    "sharpEye": "Sharp Eye",
+    "sharpEyeDesc": "5 scans with confidence > 95%",
+    "explorer": "Explorer",
+    "explorerDesc": "Scans in 3 different regions",
+    "perfectionist": "Perfectionist",
+    "perfectionistDesc": "50 successful scans",
+    "master": "Master Ampelographer",
+    "masterDesc": "All badges unlocked",
+    "unlocked": "Badge unlocked!",
+    "locked": "Locked",
+    "xpEarned": "+{{xp}} XP"
+  },
+  "levels": {
+    "bud": "Bud",
+    "leaf": "Leaf",
+    "shoot": "Shoot",
+    "cluster": "Cluster",
+    "harvester": "Harvester",
+    "winemaker": "Winemaker",
+    "cellarMaster": "Cellar Master",
+    "level": "Level {{level}}",
+    "xpToNext": "{{xp}} XP to next level"
+  }
+}
