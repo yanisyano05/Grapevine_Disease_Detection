@@ -12,11 +12,7 @@ The dataset originates from [Kaggle](https://kaggle.com/datasets/rm1000/grape-di
 - **ESCA (Net Blight)**  
 - **Leaf Blight**  
 
-<<<<<<< HEAD
 The dataset is **well-balanced** with a slight overrepresentation of **ESCA** and **Black Rot**. All images are in **.jpeg format** with dimensions **256x256 pixels**.  
-=======
-## Model Structure 
->>>>>>> fe70005a86f7095d5e60f104bd6a3e22f50c2dac
 
 ![Dataset Overview](./docs/images/dataset_overview.png)  <br>
 
