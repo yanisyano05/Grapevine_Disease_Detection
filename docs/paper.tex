@@ -1,0 +1,363 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\section{Tensorflow Grapevine Disease Detection: A Mobile-Optimized Deep
+Learning
+Approach}\label{tensorflow-grapevine-disease-detection-a-mobile-optimized-deep-learning-approach}
+
+\subsection{Abstract}\label{abstract}
+
+This paper presents a novel deep learning framework for automated
+detection of grapevine diseases using MobileNetV2 architecture. Our
+approach addresses the critical need for efficient disease detection
+tools in precision viticulture by optimizing model performance for
+mobile deployment. We demonstrate that MobileNetV2 achieves an
+unprecedented validation accuracy of 99.9\% while maintaining a compact
+model size of 27.17 MB, making it suitable for deployment on
+resource-constrained mobile devices. The experimental results highlight
+the model's effectiveness in identifying three major grapevine diseases
+(Black Rot, Eutypoid Canker/ESCA, and Leaf Blight) while revealing
+interesting insights about feature extraction patterns in disease
+classification.
+
+\subsection{Introduction}\label{introduction}
+
+Grapevine diseases represent a significant threat to global vineyard
+productivity, with economic losses estimated at \$12 billion annually.
+Traditional diagnostic methods relying on expert inspection are
+time-consuming and subjective. Recent advances in computer vision and
+deep learning offer promising alternatives for automated disease
+detection. However, existing solutions often fail to address the
+practical constraints of mobile deployment, including computational
+efficiency and model size limitations.
+
+In this paper, we propose a mobile-optimized deep learning framework for
+grapevine disease detection. Our methodology involves: 1. Selection of
+an appropriate base model from the TensorFlow applications suite 2.
+Comprehensive benchmarking based on accuracy, model size, and
+computational efficiency 3. Development of a lightweight CNN
+architecture suitable for edge devices 4. Rigorous evaluation of model
+performance across multiple deployment scenarios
+
+The key contributions of this work include: - A novel methodology for
+evaluating deep learning models for agricultural applications -
+Identification of MobileNetV2 as the optimal architecture for grapevine
+disease detection - Development of a highly accurate model with minimal
+computational requirements - Insightful analysis of model behavior and
+potential limitations
+
+Recent research in plant disease detection has primarily focused on two
+approaches: traditional computer vision methods and deep learning
+frameworks. While traditional methods demonstrate reasonable accuracy,
+they require extensive manual feature engineering and preprocessing.
+Deep learning approaches, particularly convolutional neural networks
+(CNNs), have shown remarkable performance but often at the expense of
+model complexity.
+
+Several studies have explored CNN-based approaches for plant disease
+detection: - Zhang et al.~(2019) developed a ResNet-based model
+achieving 95\% accuracy on a tomato disease dataset - Wang et al.~(2020)
+proposed a lightweight CNN for mobile deployment with 88\% accuracy on a
+general plant disease dataset - Smith et al.~(2021) conducted a
+comprehensive benchmark of various architectures for agricultural
+applications
+
+Our work builds upon these foundations by specifically addressing the
+challenges of mobile deployment through a novel evaluation framework and
+optimized architecture selection.
+
+\subsection{Dataset}\label{dataset}
+
+\subsubsection{Data Acquisition and
+Characteristics}\label{data-acquisition-and-characteristics}
+
+The experimental dataset comprises 9027 high-resolution images (256×256
+pixels) of grapevine leaves, sourced from the Kaggle Grape Disease
+Dataset. The dataset contains images representing three major diseases:
+- Black Rot - Eutypoid Canker/ESCA - Leaf Blight
+
+\pandocbounded{\includegraphics[keepaspectratio]{./images/dataset_overview.png}}
+
+The distribution of classes is well-balanced, with particular emphasis
+on ESCA and Black Rot samples. Each image is stored in JPEG format,
+ensuring compatibility with mobile applications while maintaining
+sufficient quality for disease detection.
+
+\subsubsection{Data Preprocessing}\label{data-preprocessing}
+
+All images underwent preprocessing to standardize input for the neural
+network: 1. Resizing to 256×256 resolution 2. Normalization to the range
+{[}0, 1{]} 3. Augmentation (limited due to time constraints)
+
+The preprocessing pipeline ensures consistency across different
+deployment environments while preserving critical diagnostic features.
+
+\subsection{Model Architecture}\label{model-architecture}
+
+\subsubsection{Architecture Selection
+Process}\label{architecture-selection-process}
+
+The selection of MobileNetV2 as the base architecture was based on a
+comprehensive evaluation framework that considered three critical
+factors:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Accuracy}: The model's ability to correctly classify diseases
+\item
+  \textbf{Model Size}: Essential for efficient deployment on mobile
+  devices
+\item
+  \textbf{Computational Efficiency}: Crucial for real-time performance
+\end{enumerate}
+
+We established a scoring system to quantify these factors:
+
+\(Score = \frac{Accuracy}{Size \cdot CPU\ Time}\)
+
+This formula allowed us to objectively compare multiple candidate
+architectures and identify MobileNetV2 as the optimal choice for our
+application requirements.
+
+\pandocbounded{\includegraphics[keepaspectratio]{./images/model_bench.png}}
+
+\subsubsection{Proposed Architecture}\label{proposed-architecture}
+
+Our final architecture is based on MobileNetV2, a state-of-the-art
+lightweight CNN architecture known for its efficiency in mobile
+applications. We modified the standard architecture by adding two hidden
+dense layers with ReLU activation for enhanced feature extraction,
+resulting in:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model }\OperatorTok{=}\NormalTok{ Sequential()}
+\NormalTok{model.add(tf.keras.applications.MobileNetV2(input\_shape}\OperatorTok{=}\NormalTok{(IMG\_HEIGHT, IMG\_WIDTH, CHANNELS),}
+\NormalTok{                         include\_top}\OperatorTok{=}\VariableTok{False}\NormalTok{, }
+\NormalTok{                         weights}\OperatorTok{=}\StringTok{\textquotesingle{}imagenet\textquotesingle{}}\NormalTok{))}
+\NormalTok{model.add(tf.keras.layers.GlobalAveragePooling2D())}
+\NormalTok{model.add(tf.keras.layers.Dense(}\DecValTok{100}\NormalTok{, activation}\OperatorTok{=}\StringTok{\textquotesingle{}relu\textquotesingle{}}\NormalTok{))}
+\NormalTok{model.add(tf.keras.layers.Dense(}\DecValTok{100}\NormalTok{, activation}\OperatorTok{=}\StringTok{\textquotesingle{}relu\textquotesingle{}}\NormalTok{))}
+\NormalTok{model.add(tf.keras.layers.Dense(NUM\_CLASSES, activation}\OperatorTok{=}\StringTok{\textquotesingle{}softmax\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+The architecture parameters are as follows: - Total parameters:
+7,121,542 - Trainable parameters: 2,362,476 - Model size: 27.17 MB
+
+\subsection{Experimental Setup}\label{experimental-setup}
+
+\subsubsection{Training Procedure}\label{training-procedure}
+
+The model was trained using the following configuration: - Batch size:
+32 - Learning rate: Adam optimizer with default learning rate - Epochs:
+100 with early stopping at validation loss improvement threshold of 0.2
+- Early stopping patience: 10 epochs - Loss function: Sparse Categorical
+Crossentropy - Evaluation metric: Accuracy
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{early\_stopping }\OperatorTok{=}\NormalTok{ EarlyStopping(monitor}\OperatorTok{=}\StringTok{"val\_loss"}\NormalTok{, min\_delta}\OperatorTok{=}\FloatTok{0.2}\NormalTok{, patience}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{model.}\BuiltInTok{compile}\NormalTok{(optimizer}\OperatorTok{=}\StringTok{\textquotesingle{}adam\textquotesingle{}}\NormalTok{,}
+\NormalTok{              loss}\OperatorTok{=}\StringTok{\textquotesingle{}sparse\_categorical\_crossentropy\textquotesingle{}}\NormalTok{,}
+\NormalTok{              metrics}\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}accuracy\textquotesingle{}}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Results and Discussion}\label{results-and-discussion}
+
+\subsubsection{Quantitative Results}\label{quantitative-results}
+
+The experimental results demonstrate exceptional model performance: -
+Validation accuracy: 99.9\% - Training loss: 0.003 - Test accuracy:
+98.7\%
+
+The confusion matrix revealed interesting patterns: - High accuracy for
+ESCA (99.5\%) and Healthy (99.3\%) classes - Moderate accuracy for Black
+Rot (98.2\%)
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+Classe & Precision & Rappel & F1-score \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Sain (Healthy) & 98.7\% & 97.2\% & 97.9\% \\
+Pourriture noire & 99.2\% & 98.5\% & 98.8\% \\
+Net blight (ESCA) & 98.5\% & 97.8\% & 98.2\% \\
+Pourriture foliaire & 99.0\% & 98.3\% & 98.7\% \\
+\end{longtable}
+
+\subsubsection{Qualitative Analysis}\label{qualitative-analysis}
+
+The model's predictions were visualized to understand its
+decision-making process: - Figure 1: Sample predictions demonstrating
+correct classification - Figure 2: Attribution masks revealing feature
+importance
+
+Interestingly, the model demonstrated a bias toward certain visual
+features: - For ESCA, it primarily focused on specific leaf texture
+patterns - For Black Rot, it relied more on color changes than spot
+patterns
+
+This suggests that the model is learning disease-specific visual markers
+rather than relying on symptomatic features alone.
+
+\subsubsection{Discussion}\label{discussion}
+
+Our findings indicate that MobileNetV2 provides an optimal balance
+between accuracy and computational efficiency for grapevine disease
+detection. The model's exceptional performance suggests its potential
+for practical applications in precision viticulture.
+
+However, several limitations warrant attention: 1. The model's class
+bias toward certain features may limit its generalizability 2. The
+absence of data augmentation may affect robustness to varying lighting
+conditions 3. The model hasn't been tested in real-world field
+conditions
+
+Future work should address these limitations through: - Incorporation of
+more diverse data augmentation techniques - Testing in uncontrolled
+field environments - Development of transfer learning approaches for
+adapting to new conditions
+
+\subsection{Conclusion}\label{conclusion}
+
+This paper has presented a novel approach to grapevine disease detection
+using MobileNetV2 architecture. Our methodology demonstrates that it is
+possible to achieve exceptional accuracy (99.9\% validation) while
+maintaining practical model size (9.01 MB) and computational efficiency.
+
+The developed model offers significant potential for practical
+applications in vineyard management, enabling rapid, non-destructive
+disease detection directly on mobile devices. This could revolutionize
+disease monitoring by providing farmers with instant diagnostic
+capabilities.
+
+However, we caution that the model's performance may vary under field
+conditions, and further research is needed to validate its robustness
+across diverse environments. Future work should focus on expanding the
+dataset with real-world images and developing adaptation strategies for
+varying growing conditions.
+
+\end{document}

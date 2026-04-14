@@ -1,62 +1,13 @@
-from data_pretreat import *
 import datetime
 import os
 import pandas as pd
+import tensorflow as tf
 
-# Create a model 
-num_classes = len(class_names)
+from data_pretreatment import train_ds, val_ds, class_names, class_names, normalized_train_ds, normalized_val_ds
+from models import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, CHANNELS, EPOCHS, early_stopping
 
-model = Sequential([
-    data_augmentation,
-    
-    # Block 1
-    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 2
-    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 3
-    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 4
-    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Classification head
-    layers.GlobalAveragePooling2D(),
-    layers.Dense(256, activation='relu'),
-    layers.BatchNormalization(),
-    layers.Dropout(0.5),
-    layers.Dense(128, activation='relu'),
-    layers.BatchNormalization(),
-    layers.Dropout(0.5),
-    layers.Dense(num_classes)
-])
-
-optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
-
-model.compile(optimizer=optimizer,
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy'])
+# Load a model 
+from models import model
 
 model.summary()
 
@@ -64,19 +15,22 @@ model.summary()
 time = datetime.datetime.now() # Time checkpoint
 time = str(time).replace(" ", "_")
 
-epochs=epochs
 history = model.fit(
-  normalized_ds,  
-  validation_data= val_ds, 
-  epochs= epochs #,steps_per_epoch= 10
+    normalized_train_ds,  
+    validation_data= normalized_val_ds, 
+    epochs= EPOCHS, 
+    # steps_per_epoch = 10,
+    callbacks=[early_stopping]
 )
 
 # Export history as csv
+current_dir = os.getcwd()
+data_dir = current_dir[:-9]+"/data/train/"
 new_path=current_dir[:-4]+"/models/"+str(time)
 os.makedirs(new_path)
 
 df = pd.DataFrame({
-    'epoch': range(1, epochs+1),
+    'epoch': range(1, len(history.history['accuracy']) + 1),
     'accuracy': history.history['accuracy'],
     'val_accuracy': history.history['val_accuracy'],
     'loss': history.history['loss'],
