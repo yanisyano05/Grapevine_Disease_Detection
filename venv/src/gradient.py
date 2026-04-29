@@ -5,8 +5,10 @@ import os
 import math
 from tensorflow.keras.models import load_model
 
-from load_model import select_model
-from data_pretreat import test_ds, img_name_tensors, class_names, img_height, img_width
+from model_load import select_model
+from data_pretreatment import test_ds, class_names, img_name_tensors
+from models import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, CHANNELS, EPOCHS
+
 
 model, model_dir = select_model()
 
@@ -21,7 +23,9 @@ x = tf.linspace(start=0.0, stop=1.0, num=6)
 y = f(x)
 
 # Establish a baseline
-baseline = tf.zeros(shape=(224,224,3))
+baseline = tf.zeros(shape=(IMG_HEIGHT,
+                            IMG_WIDTH,
+                            CHANNELS))
 
 m_steps=50
 alphas = tf.linspace(start=0.0, stop=1.0, num=m_steps+1) # Generate m_steps intervals for integral_approximation() below.

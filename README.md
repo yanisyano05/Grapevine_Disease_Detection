@@ -1,106 +1,124 @@
-# Tensorflow Grapevine Disease Detection
+# Tensorflow Grapevine Disease Detection  
 
-This document outlines the development of a modile application that uses a DeepLearning model de detect diseases on grapevine.
+## Description  
+This project develops a mobile application for detecting diseases on grapevines using a Deep Learning model. The implementation leverages TensorFlow and Keras to build a CNN-based classifier for identifying three common diseases: 
+Black Rot, ESA (Net Blight), and Leaf Blight.  
 
-## Dataset
 
-The data used in this study came from [kaggle](kaggle.com/datasets/rm1000/grape-disease-dataset-original). It is split into training, validation, and testing sets ensuring a robust evaluation of our model's performance. The dataset consists of a set of 9027 images of three disease commonly found on grapevines:
-**Black Rot**, **ESCA**, and **Leaf Blight**. Classes are well balenced with a slit overrepresentation of **ESCA** and **Black Rot** . Images are in .jpeg format with dimensions of 256x256 pixels.
+## 📁 Dataset  
 
-![Dataset Overview](./docs/images/dataset_overview.png)
-![Sample](./docs/images/samples_img.png)
+The dataset originates from [Kaggle](https://kaggle.com/datasets/rm1000/grape-disease-dataset-original), containing **9,027 images** of grapevine leaves. The diseases are categorized as:  
+- **Black Rot**  
+- **ESCA (Net Blight)**  
+- **Leaf Blight**  
 
-## Model Structure 
+The dataset is **well-balanced** with a slight overrepresentation of **ESCA** and **Black Rot**. All images are in **.jpeg format** with dimensions **256x256 pixels**.  
 
-Our model is a Convolutional Neural Network (CNN) built using Keras API with TensorFlow backend. It includes several convolutional layers followed by batch normalization, ReLU activation function and max pooling for downsampling. 
-Dropout layers are used for regularization to prevent overfitting. The architecture details and parameters are as follows: 
+![Dataset Overview](./docs/images/dataset_overview.png)  <br>
 
-```{python}
-model = Sequential([
-    data_augmentation,
-    
-    # Block 1
-    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(32, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 2
-    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 3
-    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(128, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Block 4
-    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.Conv2D(256, kernel_size=3, padding='same', activation='relu'),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(pool_size=2),
-    layers.Dropout(0.25),
-    
-    # Classification head
-    layers.GlobalAveragePooling2D(),
-    layers.Dense(256, activation='relu'),
-    layers.BatchNormalization(),
-    layers.Dropout(0.5),
-    layers.Dense(128, activation='relu'),
-    layers.BatchNormalization(),
-    layers.Dropout(0.5),
-    layers.Dense(num_classes)
-])
+![Sample](./docs/images/samples_img.png) <br>
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+## 📊 Model Architecture Selection  
 
+We evaluated pre-trained models from [`keras applications`](https://keras.io/api/applications/#usage-examples-for-image-classification-models) to balance **accuracy**, **model size**, and **inference speed**. The selection criteria included:  
+- **Maximize accuracy**  
+- **Minimize size** (1/size)  
+- **Maximize CPU speed** (1/CPU Time)  
+
+The **score formula** used for selection was:  
+$Score = \frac{Accuracy}{Size . CPU Time}$ 
+
+**Top Models (Score > 0.05):**  
+1. **MobileNetV2** (Smallest: 14 MB, High Accuracy: 77%)  
+2. **MobileNet** (Fastest: 22.6 ms)  
+3. **NASNetMobile**  
+4. **EfficientNetB0**  
+
+**Conclusion:**  
+`MobileNetV2` was chosen for its optimal balance between accuracy, size, and speed.  
+
+![Model Benchmark](./docs/images/model_bench.png)<br>
+
+
+
+## 🍇 Grapevine Diseases  
+
+### **Key Diseases:**  
+1. **Black Rot**  
+2. **ESCA (Net Blight)**  
+3. **Leaf Blight**  
+
+## 🤖 Model Structure  
+
+### **Architecture:**  
+```python
+# Auto Stop
+early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.2, patience=10)
+
+# Model
+model = Sequential()
+model.add(tf.keras.applications.MobileNetV2(
+    input_shape=(IMG_HEIGHT, IMG_WIDTH, CHANNELS),
+    include_top=False, 
+    weights='imagenet'
+))
+model.add(tf.keras.layers.GlobalAveragePooling2D())
+model.add(tf.keras.layers.Dense(100, activation='relu'))
+model.add(tf.keras.layers.Dense(100, activation='relu'))
+model.add(tf.keras.layers.Dense(NUM_CLASSES, activation='softmax'))
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
+
+model.compile(
+    optimizer=optimizer,
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy']
+)
 ```
 
+**Parameters:**  
+- **Total params:** 7.12M (27.17 MB)  
+- **Trainable params:** 2.36M (9.01 MB)  
+- **Non-trainable params:** 34.11K (133.25 KB)  
 
- Total params: 3,825,134 (14.59 MB) <br>
- Trainable params: 1,274,148 (4.86 MB) <br>
- Non-trainable params: 2,688 (10.50 KB) <br>
- Optimizer params: 2,548,298 (9.72 MB) <br>
 
-## Training Details
 
-Training was done using a batch size of 32 over 100 epochs. Data augmentation methods include horizontal/vertical flip (RandomFlip), rotation (RandomRotation), zooming (RandomZoom) and rescaling (Rescaling). Pixel values are 
-normalized to the range [0, 1] after loading.
+## 🛠️ Training Details  
 
-## Results
+- **Batch Size:** 32  
+- **Epochs:** 100 (reduced to 25 via early stopping)  
+- **Data Augmentation:** Not used (insufficient improvement in accuracy)  
+- **Normalization:** Pixel values normalized to [0, 1]  
 
-Our best model's performance has an average accuracy of roughly 30% on the validation set. This suggests potential overfitting towards the **ESCA** class. However, the model can identify key features that distinguish all classes: 
-marks on the leaves (fig.4).
 
-![Model Evaluation](./docs/images/model_evaluation.png)
 
-### Prediction Example 
+## 📊 Results  
 
-![Prediction](./docs/images/prediction.png)
+### **Performance:**  
+- **Validation Accuracy:** ~99.9%  
+- **Confusion Matrix Analysis:**  
+  - Model biased toward **ESCA** and **Healthy** classes.  
+  - Suspected causes:  
+    1. Original dataset imbalance  
+    2. Similar visual features across diseases  
 
-### Attribution Mask 
+![Model Evaluation](./docs/images/model_evaluation.png)  
 
-The attribution mask provides an insight into what features the model has learned to extract from each image, which can be seen in figure 4. This can help guide future work on improving disease detection and understanding how the 
-model is identifying key features for accurate classification.
+### **Prediction Example:**  
+![Prediction](./docs/images/prediction.png)  
 
-![Attribution Mask](./docs/images/attribition_mask.png)
+### **Attribution Mask:**  
+![Attribution Mask](./docs/images/attribution_mask.png)  
+- **Key Insight:** Model focuses on leaf shape rather than disease-specific features (e.g., black spots).  
 
-### ressources: 
 
+### 📚 ressources: 
+
+https://www.kaggle.com/code/ahmedmsaber/grape-leafs-diseases-mobilenetv2-val-acc-99 <br>
 https://www.tensorflow.org/tutorials/images/classification?hl=en <br>
 https://www.tensorflow.org/lite/convert?hl=en <br>
 https://www.tensorflow.org/tutorials/interpretability/integrated_gradients?hl=en <br>
 
-AI(s) : deepseek-coder:6.7b | deepseek-r1:8b
+🤖AI(s) : deepseek-coder:6.7b | deepseek-r1:8b
 
 
