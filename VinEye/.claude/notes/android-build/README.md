@@ -14,9 +14,21 @@
 
 ### Solution appliquée
 
-#### 1. `VinEye/android/app/build.gradle` — bloc `externalNativeBuild`
+> ⚠️ `android/` est gitignored (régénéré par `expo prebuild`). On ne peut PAS éditer `android/app/build.gradle` à la main et le commiter — la modification serait perdue au prochain prebuild. La solution est un **plugin Expo config** (`plugins/withCmakeFix.js`) qui ré-injecte le bloc à chaque prebuild.
 
-Ajouté dans `android.defaultConfig` :
+#### 1. Plugin Expo config — `VinEye/plugins/withCmakeFix.js`
+
+Plugin qui utilise `withAppBuildGradle` pour injecter le bloc `externalNativeBuild` dans `defaultConfig`. Idempotent grâce au marker `// CMAKE_FIX_INJECTED`.
+
+Référencé dans `app.json` :
+```json
+"plugins": [
+  "./plugins/withCmakeFix",
+  ...
+]
+```
+
+#### 2. Bloc injecté dans `android/app/build.gradle` (généré)
 
 ```gradle
 externalNativeBuild {
@@ -58,7 +70,17 @@ Pas besoin de télécharger — on pointe `CMAKE_MAKE_PROGRAM` directement dessu
 
 ---
 
-## Fix #2 — `react-native-nitro-modules` headers manquants (2026-04-30, en cours)
+## Fix #2 — `react-native-nitro-modules` headers manquants (2026-04-30, ✅ contourné)
+
+> **Décision finale** : `react-native-fast-tflite` et `react-native-nitro-modules` ont été **désinstallés**. Le mock JS dans `src/services/tflite/model.ts` continue de fournir des résultats simulés. Le `.tflite` reste dans `src/assets/models/` pour la réintégration future. Procédure de réintégration documentée en tête de `model.ts`.
+
+### Pourquoi ce contournement
+- Le modèle ML n'est pas encore prêt pour la prod (~30% précision sur dataset terrain)
+- Les builds Android C++ Nitro/fast-tflite sont fragiles sur Windows
+- Le mock TS suffit pour le développement UI/UX
+- Quand le `.tflite` sera prêt → réintégrer via **EAS Build** pour éviter les builds locaux Windows
+
+### Erreur historique (avant désinstall)
 
 ### Symptômes
 ```
@@ -79,7 +101,7 @@ CMake Error in CMakeLists.txt:
 4. **Vérifier la version** — incompatibilité possible entre `react-native-fast-tflite` et `react-native-nitro-modules` (vérifier les peerDependencies)
 
 ### Statut
-🟡 **En cours** — fix CMake/ninja passé, ce nouveau problème est sur la chaîne de dépendances Gradle.
+✅ **Résolu par contournement** — fast-tflite désinstallé, mock JS en place, builds C++ Nitro plus nécessaires.
 
 ---
 

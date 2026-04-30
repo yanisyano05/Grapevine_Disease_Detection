@@ -1,79 +1,47 @@
+/**
+ * MOCK TFLite Service
+ *
+ * Ce service retourne actuellement des résultats simulés (random pondéré).
+ * Les libs `react-native-fast-tflite` et `react-native-nitro-modules` ont été
+ * désinstallées temporairement car :
+ *   - Le modèle ML n'est pas encore exporté en .tflite final (précision insuffisante)
+ *   - Les builds Android C++ (CMake/Ninja + Nitro headers) étaient instables sur Windows
+ *
+ * L'interface publique reste identique :
+ *   - `loadModel(): Promise<boolean>` — retourne false (pas de modèle chargé)
+ *   - `runInference(imageUri?: string): Promise<Detection>` — renvoie un mock pondéré
+ *
+ * RÉINTÉGRATION DU VRAI MODÈLE (quand le .tflite sera prêt) :
+ *   1. pnpm add react-native-fast-tflite react-native-nitro-modules
+ *   2. Vérifier que `src/assets/models/grapevine_v1.tflite` est présent
+ *   3. Remplacer `runInference` ci-dessous par l'implémentation native :
+ *        const tflite = require('react-native-fast-tflite');
+ *        const asset = require('@/assets/models/grapevine_v1.tflite');
+ *        const model = await tflite.loadTensorflowModel(asset);
+ *        const input = await preprocessImage(imageUri);  // depuis services/ml/preprocessing
+ *        const outputs = model.runSync([input]);
+ *        // ... softmax/argmax → buildDetection
+ *   4. pnpm dlx expo prebuild --clean
+ *   5. pnpm dlx expo run:android (ou EAS Build pour éviter les soucis CMake Windows)
+ *
+ * Documentation : https://github.com/mrousavy/react-native-fast-tflite
+ */
+
 import type { Detection, DiseaseClass, ClassProbability } from '@/types/detection';
-import { ML_CLASSES, CLASS_TO_SLUG, CONFIDENCE_THRESHOLD_VINE, CONFIDENCE_THRESHOLD_UNCERTAIN } from '@/services/ml/classes';
-import { preprocessImage, argmax, softmax } from '@/services/ml/preprocessing';
-
-type FastTfliteModel = {
-  runSync: (inputs: (Float32Array | Int32Array | Uint8Array)[]) => (Float32Array | Int32Array | Uint8Array)[];
-};
-
-let cachedModel: FastTfliteModel | null = null;
-let modelLoadFailed = false;
-
-async function getModel(): Promise<FastTfliteModel | null> {
-  if (cachedModel) return cachedModel;
-  if (modelLoadFailed) return null;
-
-  try {
-    const tflite = require('react-native-fast-tflite');
-    const asset = require('@/assets/models/grapevine_v1.tflite');
-    cachedModel = await tflite.loadTensorflowModel(asset);
-    return cachedModel;
-  } catch (err) {
-    if (__DEV__) {
-      console.warn('[TFLite] Failed to load model — falling back to mock:', err);
-    }
-    modelLoadFailed = true;
-    return null;
-  }
-}
+import {
+  ML_CLASSES,
+  CLASS_TO_SLUG,
+  CONFIDENCE_THRESHOLD_VINE,
+  CONFIDENCE_THRESHOLD_UNCERTAIN,
+} from '@/services/ml/classes';
+import { argmax } from '@/services/ml/preprocessing';
 
 export async function loadModel(): Promise<boolean> {
-  const m = await getModel();
-  return m !== null;
+  return false;
 }
 
 export async function runInference(imageUri?: string): Promise<Detection> {
-  const timestamp = Date.now();
-
-  if (!imageUri) {
-    return mockDetection(timestamp);
-  }
-
-  const model = await getModel();
-  if (!model) {
-    return mockDetection(timestamp, imageUri);
-  }
-
-  try {
-    const input = await preprocessImage(imageUri);
-    const outputs = model.runSync([input]);
-    const raw = outputs[0];
-
-    const rawArr = raw instanceof Float32Array ? Array.from(raw) : Array.from(raw as ArrayLike<number>);
-    const probs = isProbabilityVector(rawArr) ? rawArr : softmax(rawArr);
-
-    const idx = argmax(probs);
-    const topClass = ML_CLASSES[idx];
-    const topProb = probs[idx];
-
-    const allProbabilities: ClassProbability[] = ML_CLASSES.map((cls, i) => ({
-      class: cls,
-      probability: probs[i],
-    }));
-
-    return buildDetection({
-      timestamp,
-      imageUri,
-      topClass,
-      topProb,
-      allProbabilities,
-    });
-  } catch (err) {
-    if (__DEV__) {
-      console.warn('[TFLite] Inference failed — falling back to mock:', err);
-    }
-    return mockDetection(timestamp, imageUri);
-  }
+  return mockDetection(Date.now(), imageUri);
 }
 
 function buildDetection(args: {
@@ -102,13 +70,6 @@ function buildDetection(args: {
     timestamp,
     imageUri,
   };
-}
-
-function isProbabilityVector(values: number[]): boolean {
-  if (values.length === 0) return false;
-  const sum = values.reduce((a, b) => a + b, 0);
-  if (Math.abs(sum - 1) > 0.05) return false;
-  return values.every((v) => v >= 0 && v <= 1);
 }
 
 function mockDetection(timestamp: number, imageUri?: string): Detection {

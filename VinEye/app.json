@@ -41,6 +41,7 @@
       "favicon": "./src/assets/images/icon.png"
     },
     "plugins": [
+      "./plugins/withCmakeFix",
       "expo-localization",
       [
         "expo-camera",

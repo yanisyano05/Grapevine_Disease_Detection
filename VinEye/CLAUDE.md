@@ -15,7 +15,7 @@ Cible des amateurs de vin/jardinage. Scan par camera, identification de maladies
 | Styling | **NativeWind v4** (Tailwind) prioritaire, StyleSheet pour ombres/gradients |
 | Icones | **lucide-react-native** (bottom bar) + **Ionicons** (reste de l'app) |
 | Animations | React Native Reanimated v4 |
-| IA | **react-native-fast-tflite** + MobileNetV2 (.tflite, 9.4 MB, 4 classes) |
+| IA | Mock JS pondéré (random 4 classes) — `react-native-fast-tflite` désinstallé temporairement, voir `services/tflite/model.ts` pour la procédure de réintégration |
 | Persistance | AsyncStorage |
 | i18n | i18next + react-i18next (FR + EN) |
 | Camera | expo-camera |
@@ -193,8 +193,11 @@ pnpm ios            # Build iOS
 
 ## ML / inference on-device
 
-Le modele MobileNetV2 (val_accuracy 99.93% — voir `docs/paper.md`) est embarque
-dans le bundle et execute en local via `react-native-fast-tflite`.
+> ⚠️ **2026-04-30** : `react-native-fast-tflite` et `react-native-nitro-modules` ont été **désinstallés temporairement**. Le service `services/tflite/model.ts` retourne actuellement un **mock JS pondéré** (random sur les 4 classes). Raisons : modèle pas encore exporté en `.tflite` final + builds Android C++ instables sur Windows (CMake/Nitro headers). Procédure de réintégration documentée en tête de `services/tflite/model.ts`.
+
+Le modele MobileNetV2 (val_accuracy 99.93% — voir `docs/paper.md`) est destiné
+à être embarqué dans le bundle et exécuté en local via `react-native-fast-tflite`
+une fois la lib réintégrée.
 
 ### Pipeline
 
@@ -270,5 +273,11 @@ le dev sans device natif.
 
 Détail complet : [`.claude/notes/android-build/README.md`](.claude/notes/android-build/README.md)
 
-- ✅ **CMake/Ninja path too long** — résolu via `externalNativeBuild.cmake.arguments` dans `android/app/build.gradle` (response files + ninja 1.12.1 + `CMAKE_OBJECT_PATH_MAX=1024`)
-- 🟡 **`react-native-nitro-modules` headers manquants** — survient au clean ; corriger en buildant Nitro avant fast-tflite, ou via `pnpm dlx expo prebuild --clean`
+- ✅ **CMake/Ninja path too long** — résolu via plugin Expo config `plugins/withCmakeFix.js` (référencé dans `app.json`) qui injecte response files + ninja 1.12.1 + `CMAKE_OBJECT_PATH_MAX=1024` à chaque prebuild
+- ✅ **`react-native-nitro-modules` headers manquants** — contourné en désinstallant `react-native-fast-tflite` (qui dépendait de Nitro). Mock JS en place. À réintégrer quand le `.tflite` sera prêt et idéalement via EAS Build pour éviter les soucis Windows.
+
+### Setup dev Windows recommandé
+
+- **Chemin court** : placer le projet dans `C:\dev\vineye\` plutôt que `C:\Users\Client\projet_web\...\VinEye\` — réduit ~50 chars sur tous les chemins de build CMake
+- **`LongPathsEnabled` registre** : `HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled = 1` (déjà actif sur ce poste)
+- **Git long paths** : `git config --system core.longpaths true` (en PowerShell admin)
