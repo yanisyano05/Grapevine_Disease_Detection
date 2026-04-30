@@ -115,6 +115,9 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 20,
   },
+  // Pas d'elevation sur Android : l'ombre native ne respecte pas l'opacité
+  // de FadeInDown du parent → flash "rectangle blanc + ombre" pendant l'anim.
+  // iOS shadow conservé : pas de soucis de composite layer là-bas.
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -128,7 +131,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.04,
         shadowRadius: 8,
       },
-      android: { elevation: 2 },
+      android: {},
     }),
   },
 });

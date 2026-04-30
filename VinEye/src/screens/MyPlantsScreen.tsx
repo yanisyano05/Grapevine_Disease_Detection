@@ -3,7 +3,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Alert,
   StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,17 +11,24 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { ScanLine } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Text } from '@/components/ui/text';
 import { DateGroupAccordion } from '@/components/my-plants/DateGroupAccordion';
 import { HeaderActionButtons } from '@/components/shared/HeaderActionButtons';
 import SearchBar from '@/components/shared/SearchBar';
+import { ScanListItemSkeleton } from '@/components/ui/Skeleton';
 import { useHistory } from '@/hooks/useHistory';
 import { groupScansByDate } from '@/utils/dateGrouping';
 import type { DateGroupKey, DateGroup } from '@/utils/dateGrouping';
 import { colors } from '@/theme/colors';
 import type { RootStackParamList } from '@/types/navigation';
 import type { ScanRecord } from '@/types/detection';
+
+const ENTER_DURATION = 380;
+function entering(delay: number) {
+  return FadeInDown.delay(delay).duration(ENTER_DURATION).springify().damping(18);
+}
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -65,19 +71,10 @@ export default function MyPlantsScreen() {
     navigation.navigate('ScanDetail', { scanId: scan.id });
   }
 
+  // ScanListItem gère déjà sa propre ConfirmDialog → on appelle directement
+  // deleteScan ici sans afficher un second modal.
   function handleDeleteScan(scanId: string) {
-    Alert.alert(
-      t('myPlants.actions.deleteConfirmTitle'),
-      t('myPlants.actions.deleteConfirmMessage'),
-      [
-        { text: t('myPlants.actions.cancel'), style: 'cancel' },
-        {
-          text: t('myPlants.actions.delete'),
-          style: 'destructive',
-          onPress: () => deleteScan(scanId),
-        },
-      ],
-    );
+    deleteScan(scanId);
   }
 
   async function handleRefresh() {
@@ -86,42 +83,63 @@ export default function MyPlantsScreen() {
     setRefreshing(false);
   }
 
-  function renderGroup({ item }: { item: DateGroup }) {
+  function renderGroup({ item, index }: { item: DateGroup; index: number }) {
     return (
-      <DateGroupAccordion
-        groupKey={item.key}
-        label={item.label}
-        scans={item.scans}
-        isOpen={openGroups.has(item.key)}
-        onToggle={() => toggleGroup(item.key)}
-        onPressScan={handlePressScan}
-        onToggleFavorite={(id) => toggleFavorite(id)}
-        onDeleteScan={handleDeleteScan}
-      />
+      <Animated.View entering={entering(index * 60)}>
+        <DateGroupAccordion
+          groupKey={item.key}
+          label={item.label}
+          scans={item.scans}
+          isOpen={openGroups.has(item.key)}
+          onToggle={() => toggleGroup(item.key)}
+          onPressScan={handlePressScan}
+          onToggleFavorite={(id) => toggleFavorite(id)}
+          onDeleteScan={handleDeleteScan}
+        />
+      </Animated.View>
     );
   }
 
   const isEmpty = history.length === 0 && !isLoading;
+  const showSkeleton = isLoading && history.length === 0;
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <Animated.View entering={entering(0)} style={styles.header}>
         <Text style={styles.title}>{t('myPlants.title')}</Text>
         <HeaderActionButtons />
-      </View>
+      </Animated.View>
 
       {/* Search bar (trigger global SearchScreen) */}
-      <View style={styles.searchContainer}>
+      <Animated.View entering={entering(60)} style={styles.searchContainer}>
         <SearchBar
           placeholder={t('myPlants.searchPlaceholder')}
           onTriggerPress={() => navigation.navigate('Search')}
         />
-      </View>
+      </Animated.View>
 
       {/* Content */}
-      {isEmpty ? (
-        <View style={styles.emptyContainer}>
+      {showSkeleton ? (
+        <Animated.View
+          entering={entering(120)}
+          style={styles.skeletonGroups}
+        >
+          {[0, 1].map((g) => (
+            <View key={g} style={styles.skeletonGroup}>
+              <View style={styles.skeletonGroupHeader}>
+                <View style={styles.skeletonHeaderBar} />
+              </View>
+              <View style={styles.skeletonGroupCard}>
+                <ScanListItemSkeleton showSeparator />
+                <ScanListItemSkeleton showSeparator />
+                <ScanListItemSkeleton />
+              </View>
+            </View>
+          ))}
+        </Animated.View>
+      ) : isEmpty ? (
+        <Animated.View entering={entering(120)} style={styles.emptyContainer}>
           <View style={styles.emptyIconWrapper}>
             <Image
               source={EMPTY_IMAGE}
@@ -139,7 +157,7 @@ export default function MyPlantsScreen() {
             <ScanLine size={18} color="#FFFFFF" />
             <Text style={styles.emptyCtaText}>{t('myPlants.empty.cta')}</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       ) : (
         <FlatList
           data={groups}
@@ -182,6 +200,35 @@ const styles = StyleSheet.create({
   // List
   listContent: {
     paddingBottom: 100,
+  },
+  // Skeleton (loading state)
+  skeletonGroups: {
+    paddingHorizontal: 0,
+    paddingBottom: 100,
+  },
+  skeletonGroup: {
+    marginBottom: 4,
+  },
+  skeletonGroupHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  skeletonHeaderBar: {
+    width: 130,
+    height: 16,
+    borderRadius: 6,
+    backgroundColor: '#E5E7EB',
+  },
+  skeletonGroupCard: {
+    marginHorizontal: 20,
+    marginTop: 8,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    backgroundColor: '#FFFFFF',
   },
   // Empty state
   emptyContainer: {

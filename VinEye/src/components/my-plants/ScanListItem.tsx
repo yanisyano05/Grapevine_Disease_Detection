@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { useRef, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
@@ -8,6 +8,7 @@ import { toast } from 'sonner-native';
 
 import { ConfidenceTile } from '@/components/my-plants/ConfidenceTile';
 import { StatusTag } from '@/components/my-plants/StatusTag';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { getCepageById } from '@/utils/cepages';
 import { hapticLight, hapticSuccess } from '@/services/haptics';
 import { colors } from '@/theme/colors';
@@ -58,6 +59,7 @@ export function ScanListItem({
 }: ScanListItemProps) {
   const { t } = useTranslation();
   const swipeableRef = useRef<Swipeable>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const isFav = scan.isFavorite === true;
   const status = getScanStatus(scan);
   const hasImage = !!scan.detection.imageUri;
@@ -70,23 +72,15 @@ export function ScanListItem({
   }
 
   function handleDelete() {
-    Alert.alert(
-      t('myPlants.actions.deleteConfirmTitle'),
-      t('myPlants.actions.deleteConfirmMessage'),
-      [
-        { text: t('myPlants.actions.cancel'), style: 'cancel' },
-        {
-          text: t('myPlants.actions.delete'),
-          style: 'destructive',
-          onPress: () => {
-            onDelete();
-            hapticSuccess();
-            toast.success(t('myPlants.toasts.deleted'));
-          },
-        },
-      ],
-    );
+    setConfirmOpen(true);
     swipeableRef.current?.close();
+  }
+
+  function handleConfirmDelete() {
+    setConfirmOpen(false);
+    onDelete();
+    hapticSuccess();
+    toast.success(t('myPlants.toasts.deleted'));
   }
 
   function renderRightActions() {
@@ -119,6 +113,7 @@ export function ScanListItem({
   }
 
   return (
+    <>
     <Swipeable
       ref={swipeableRef}
       renderRightActions={renderRightActions}
@@ -171,6 +166,18 @@ export function ScanListItem({
       </TouchableOpacity>
       {grouped && showSeparator && <View style={styles.separator} />}
     </Swipeable>
+
+    <ConfirmDialog
+      visible={confirmOpen}
+      title={t('myPlants.actions.deleteConfirmTitle')}
+      message={t('myPlants.actions.deleteConfirmMessage')}
+      confirmLabel={t('myPlants.actions.delete')}
+      cancelLabel={t('myPlants.actions.cancel')}
+      variant="destructive"
+      onConfirm={handleConfirmDelete}
+      onCancel={() => setConfirmOpen(false)}
+    />
+    </>
   );
 }
 
