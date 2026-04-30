@@ -20,7 +20,7 @@ export default function PracticalGuides({ guides, isLoading }: PracticalGuidesPr
 
   if (isLoading && items.length === 0) {
     return (
-      <View style={styles.card}>
+      <View style={styles.cardLoading}>
         <GuideListItemSkeleton />
         <GuideListItemSkeleton />
         <GuideListItemSkeleton />
@@ -59,5 +59,14 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
     }),
+  },
+  // Loading: pas de shadow / elevation → évite le flash "rectangle blanc + ombre"
+  // sur Android avant que les skeletons ne fadent in via FadeInDown du parent.
+  cardLoading: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
 });

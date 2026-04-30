@@ -69,6 +69,45 @@ export function GuideListItemSkeleton() {
   );
 }
 
+export function LargeDiseaseCardCompactSkeleton() {
+  return (
+    <View style={skeletonStyles.compactCard}>
+      <View style={skeletonStyles.compactHeader}>
+        <Skeleton width={70} height={22} borderRadius={999} />
+        <Skeleton width={36} height={36} borderRadius={999} />
+      </View>
+      <View style={{ gap: 8, marginTop: 16 }}>
+        <Skeleton width="80%" height={20} borderRadius={6} />
+        <Skeleton width="100%" height={12} borderRadius={4} />
+        <Skeleton width="70%" height={12} borderRadius={4} />
+      </View>
+      <View style={skeletonStyles.compactFooter}>
+        <Skeleton width={80} height={24} borderRadius={999} />
+        <Skeleton width={40} height={40} borderRadius={999} />
+      </View>
+    </View>
+  );
+}
+
+export function ScanListItemSkeleton({
+  showSeparator = false,
+}: { showSeparator?: boolean } = {}) {
+  return (
+    <View>
+      <View style={skeletonStyles.scanRow}>
+        <Skeleton width={64} height={64} borderRadius={16} />
+        <View style={{ flex: 1, marginLeft: 12, gap: 6 }}>
+          <Skeleton width="70%" height={16} borderRadius={6} />
+          <Skeleton width={70} height={20} borderRadius={999} />
+          <Skeleton width="40%" height={12} borderRadius={4} />
+        </View>
+        <Skeleton width={44} height={44} borderRadius={999} />
+      </View>
+      {showSeparator && <View style={skeletonStyles.separator} />}
+    </View>
+  );
+}
+
 const skeletonStyles = StyleSheet.create({
   listItem: {
     flexDirection: "row",
@@ -79,6 +118,41 @@ const skeletonStyles = StyleSheet.create({
   },
   listItemText: {
     flex: 1,
+  },
+  compactCard: {
+    width: "100%",
+    minHeight: 220,
+    borderRadius: 24,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#EEEEEE",
+    padding: 20,
+    justifyContent: "space-between",
+  },
+  compactHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  compactFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#F5F5F5",
+  },
+  scanRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#F0F0F0",
+    marginLeft: 92,
   },
 });
 

@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import LargeDiseaseCard from "@/components/guides/LargeDiseaseCard";
-import { CarouselCardSkeleton } from "@/components/ui/Skeleton";
+import { LargeDiseaseCardCompactSkeleton } from "@/components/ui/Skeleton";
 import type { Disease } from "@/data/diseases";
 import type { RootStackParamList } from "@/types/navigation";
 
@@ -24,10 +24,21 @@ export default function FrequentDiseasesHorizontal({
 
   if (isLoading && diseases.length === 0) {
     return (
-      <View className="flex-row gap-4 px-5">
-        <CarouselCardSkeleton />
-        <CarouselCardSkeleton />
-      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          gap: 12,
+          paddingVertical: 8,
+        }}
+      >
+        {[0, 1, 2].map((k) => (
+          <View key={k} style={{ width: CARD_WIDTH }}>
+            <LargeDiseaseCardCompactSkeleton />
+          </View>
+        ))}
+      </ScrollView>
     );
   }
 
