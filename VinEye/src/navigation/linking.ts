@@ -16,7 +16,7 @@ const linking: LinkingOptions<RootStackParamList> = {
         },
       },
       Result: 'result',
-      Notifications: 'notifications',
+      // Notifications: 'notifications', // TODO: réactiver quand la page Notifications sera de retour
       Profile: 'profile',
       Settings: 'settings',
       DiseaseDetail: 'disease/:diseaseId',

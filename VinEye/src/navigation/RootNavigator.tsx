@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import SplashScreen from '@/screens/SplashScreen';
 import ResultScreen from '@/screens/ResultScreen';
-import NotificationsScreen from '@/screens/NotificationsScreen';
+// import NotificationsScreen from '@/screens/NotificationsScreen'; // TODO: réactiver quand la page Notifications sera de retour
 import ProfileScreen from '@/screens/ProfileScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import DiseaseDetailScreen from '@/screens/DiseaseDetailScreen';
@@ -35,7 +35,7 @@ export default function RootNavigator() {
           component={ResultScreen}
           options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
         />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        {/* <Stack.Screen name="Notifications" component={NotificationsScreen} /> */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="DiseaseDetail" component={DiseaseDetailScreen} />

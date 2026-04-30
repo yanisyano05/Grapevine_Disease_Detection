@@ -13,7 +13,7 @@ export type RootStackParamList = {
   Splash: undefined;
   Main: NavigatorScreenParams<BottomTabParamList>;
   Result: { detection: Detection };
-  Notifications: undefined;
+  // Notifications: undefined; // TODO: réactiver quand la page Notifications sera de retour
   Profile: undefined;
   Settings: undefined;
   DiseaseDetail: { diseaseId: string };

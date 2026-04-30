@@ -16,9 +16,12 @@ export function HeaderActionButtons({
   showNotifBadge = true,
 }: HeaderActionButtonsProps) {
   const navigation = useNavigation<Nav>();
+  // suppress unused warning while the notif button is commented out
+  void showNotifBadge;
 
   return (
     <View style={styles.group}>
+      {/* TODO: réactiver quand la page Notifications sera de retour
       <TouchableOpacity
         style={styles.button}
         activeOpacity={0.7}
@@ -32,6 +35,7 @@ export function HeaderActionButtons({
         />
         {showNotifBadge && <View style={styles.badge} />}
       </TouchableOpacity>
+      */}
 
       <TouchableOpacity
         style={styles.button}
