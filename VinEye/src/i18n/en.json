@@ -173,6 +173,26 @@
       "part3": "Clusters (desiccation)",
       "spread": "Transmitted by the leafhopper Scaphoideus titanus"
     },
+    "leafBlight": {
+      "name": "Leaf Blight",
+      "description": "Leaf blight (Isariopsis Leaf Spot) is caused by the fungus Pseudocercospora vitis. It produces angular reddish-brown spots delimited by leaf veins.",
+      "symptom1": "Angular reddish-brown spots delimited by veins",
+      "symptom2": "Yellow halo around spots",
+      "symptom3": "Early defoliation in severe attacks",
+      "treatment": "Preventive copper or mancozeb-based fungicide treatment. Remove fallen leaves in autumn.",
+      "season": "July to September",
+      "condition1": "Prolonged high humidity",
+      "condition2": "Temperatures between 20 and 28°C",
+      "condition3": "Weakened or stressed vines",
+      "preventive1": "Preventive copper treatment",
+      "preventive2": "Remove infected leaves in autumn",
+      "preventive3": "Maintain good foliage ventilation",
+      "curative1": "Apply a mancozeb-based fungicide",
+      "curative2": "Remove severely affected leaves",
+      "part1": "Leaves",
+      "part2": "Shoots (rare)",
+      "spread": "Spores spread by rain and wind"
+    },
     "chlorose": {
       "name": "Iron chlorosis",
       "description": "Leaf yellowing due to iron deficiency, often linked to overly calcareous soil.",
@@ -375,6 +395,15 @@
     "vineDetected": "Vine detected!",
     "notVine": "This is not a vine",
     "uncertain": "Uncertain result",
+    "uncertainTitle": "Uncertain analysis",
+    "uncertainMessage": "The model is not confident enough. Take a sharper, well-lit photo centered on a leaf.",
+    "healthy": "Healthy vine",
+    "healthyTitle": "Healthy vine",
+    "healthyMessage": "No disease detected. Keep monitoring your vines regularly.",
+    "detectedDisease": "Disease detected",
+    "viewDiseaseDetail": "View disease details",
+    "allProbabilities": "Probabilities by class",
+    "confidence": "confidence",
     "grape": "Probable variety",
     "origin": "Origin",
     "characteristics": "Characteristics",
@@ -386,6 +415,9 @@
     "red": "Red",
     "white": "White",
     "rose": "Rosé"
+  },
+  "detection": {
+    "healthy": "Healthy vine"
   },
   "history": {
     "title": "History",
@@ -427,7 +459,10 @@
     "helpCenter": "Help Center",
     "terms": "Terms of Use",
     "referTitle": "Refer a friend",
-    "referBody": "Share VinEye and earn bonus XP for every friend you invite."
+    "referBody": "Share VinEye and earn bonus XP for every friend you invite.",
+    "developer": "Developer",
+    "seedTestData": "Add mock plants",
+    "seedDone": "5 mock plants added"
   },
   "achievements": {
     "firstScan": "First Scan",
@@ -458,5 +493,37 @@
     "cellarMaster": "Cellar Master",
     "level": "Level {{level}}",
     "xpToNext": "{{xp}} XP to next level"
+  },
+  "map": {
+    "searchPlaceholder": "Search a scanned plant...",
+    "scannedPlants": "Scanned plants",
+    "plantCount_one": "{{count}} plant",
+    "plantCount_other": "{{count}} plants",
+    "filters": {
+      "myLocation": "My location"
+    },
+    "regions": {
+      "bordeaux": "Bordeaux",
+      "burgundy": "Burgundy",
+      "champagne": "Champagne"
+    },
+    "empty": {
+      "title": "No geolocated plant yet",
+      "subtitle": "Enable location, then scan a plant to see it appear on the map.",
+      "cta": "Scan a plant"
+    },
+    "comingSoon": "Coming soon",
+    "regionLoadFailed": "Could not load region outline",
+    "rename": {
+      "title": "Rename plant",
+      "subtitle": "Give this plant a custom name so you can recognize it easily.",
+      "placeholder": "E.g. Garden vine",
+      "save": "Save"
+    }
+  },
+  "location": {
+    "permissionDenied": "Location access denied — your scans won't appear on the map",
+    "permissionDeniedTitle": "Location",
+    "settingsHint": "You can enable it in Settings"
   }
 }

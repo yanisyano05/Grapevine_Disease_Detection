@@ -173,6 +173,26 @@
       "part3": "Grappes (dessèchement)",
       "spread": "Transmis par la cicadelle Scaphoideus titanus"
     },
+    "leafBlight": {
+      "name": "Brûlure des feuilles",
+      "description": "La brûlure des feuilles (Isariopsis Leaf Spot) est causée par le champignon Pseudocercospora vitis. Elle provoque des taches angulaires brun-rougeâtre délimitées par les nervures.",
+      "symptom1": "Taches angulaires brun-rougeâtre délimitées par les nervures",
+      "symptom2": "Halo jaune autour des taches",
+      "symptom3": "Défoliation précoce en cas d'attaque sévère",
+      "treatment": "Traitement fongicide préventif à base de cuivre ou mancozèbe. Éliminer les feuilles tombées à l'automne.",
+      "season": "Juillet à septembre",
+      "condition1": "Humidité élevée prolongée",
+      "condition2": "Températures entre 20 et 28°C",
+      "condition3": "Vignes affaiblies ou stressées",
+      "preventive1": "Traitement cuivrique préventif",
+      "preventive2": "Éliminer les feuilles infectées à l'automne",
+      "preventive3": "Maintenir une bonne aération du feuillage",
+      "curative1": "Appliquer un fongicide à base de mancozèbe",
+      "curative2": "Retirer les feuilles sévèrement atteintes",
+      "part1": "Feuilles",
+      "part2": "Rameaux (rare)",
+      "spread": "Spores disséminées par la pluie et le vent"
+    },
     "chlorose": {
       "name": "Chlorose ferrique",
       "description": "Jaunissement des feuilles dû à une carence en fer, souvent lié à un sol trop calcaire.",
@@ -375,6 +395,15 @@
     "vineDetected": "Vigne détectée !",
     "notVine": "Ce n'est pas une vigne",
     "uncertain": "Résultat incertain",
+    "uncertainTitle": "Analyse incertaine",
+    "uncertainMessage": "Le modèle n'est pas suffisamment confiant. Prenez une photo plus nette, mieux éclairée, et centrée sur une feuille.",
+    "healthy": "Vigne saine",
+    "healthyTitle": "Vigne en bonne santé",
+    "healthyMessage": "Aucune maladie détectée. Continuez la surveillance régulière de vos vignes.",
+    "detectedDisease": "Maladie détectée",
+    "viewDiseaseDetail": "Voir le détail de la maladie",
+    "allProbabilities": "Probabilités par classe",
+    "confidence": "de confiance",
     "grape": "Cépage probable",
     "origin": "Origine",
     "characteristics": "Caractéristiques",
@@ -386,6 +415,9 @@
     "red": "Rouge",
     "white": "Blanc",
     "rose": "Rosé"
+  },
+  "detection": {
+    "healthy": "Vigne saine"
   },
   "history": {
     "title": "Historique",
@@ -427,7 +459,10 @@
     "helpCenter": "Centre d'aide",
     "terms": "Conditions d'utilisation",
     "referTitle": "Inviter un ami",
-    "referBody": "Partagez VinEye et gagnez des XP bonus pour chaque ami invité."
+    "referBody": "Partagez VinEye et gagnez des XP bonus pour chaque ami invité.",
+    "developer": "Développeur",
+    "seedTestData": "Ajouter des plantes fictives",
+    "seedDone": "5 plantes fictives ajoutées"
   },
   "achievements": {
     "firstScan": "Premier Scan",
@@ -458,5 +493,37 @@
     "cellarMaster": "Maître de Chai",
     "level": "Niveau {{level}}",
     "xpToNext": "{{xp}} XP pour le prochain niveau"
+  },
+  "map": {
+    "searchPlaceholder": "Rechercher une plante scannée...",
+    "scannedPlants": "Plantes scannées",
+    "plantCount_one": "{{count}} plante",
+    "plantCount_other": "{{count}} plantes",
+    "filters": {
+      "myLocation": "Ma position"
+    },
+    "regions": {
+      "bordeaux": "Bordeaux",
+      "burgundy": "Bourgogne",
+      "champagne": "Champagne"
+    },
+    "empty": {
+      "title": "Aucune plante géolocalisée",
+      "subtitle": "Activez la géolocalisation puis scannez une plante pour la voir apparaître sur la carte.",
+      "cta": "Scanner une plante"
+    },
+    "comingSoon": "Bientôt disponible",
+    "regionLoadFailed": "Impossible de charger les contours de la région",
+    "rename": {
+      "title": "Renommer la plante",
+      "subtitle": "Donnez un nom personnalisé à cette plante pour la retrouver plus facilement.",
+      "placeholder": "Ex. Vigne du jardin",
+      "save": "Enregistrer"
+    }
+  },
+  "location": {
+    "permissionDenied": "Géolocalisation refusée — vos scans n'apparaîtront pas sur la carte",
+    "permissionDeniedTitle": "Géolocalisation",
+    "settingsHint": "Vous pouvez l'activer dans les Réglages"
   }
 }
