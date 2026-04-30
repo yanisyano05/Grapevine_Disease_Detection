@@ -40,6 +40,7 @@ import { toast } from "sonner-native";
 import { Text } from "@/components/ui/text";
 import { EditNameBottomSheet } from "@/components/my-plants/EditNameBottomSheet";
 import { useScanDetail } from "@/hooks/useScanDetail";
+import { useScanLocation } from "@/hooks/useScanLocation";
 import { getCepageById } from "@/utils/cepages";
 import { hapticSuccess } from "@/services/haptics";
 import { colors } from "@/theme/colors";
@@ -96,9 +97,18 @@ export default function ScanDetailScreen({ route }: Props) {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { scan, loading, error, toggleFavorite, deleteScan, renameScan } =
-    useScanDetail(scanId);
+  const {
+    scan,
+    loading,
+    error,
+    toggleFavorite,
+    deleteScan,
+    renameScan,
+    setLocation,
+  } = useScanDetail(scanId);
   const [editingName, setEditingName] = useState(false);
+  const [addingLocation, setAddingLocation] = useState(false);
+  const { requestAndGetLocation } = useScanLocation();
 
   // Entry animation
   const contentY = useSharedValue(30);
@@ -183,6 +193,26 @@ export default function ScanDetailScreen({ route }: Props) {
     setEditingName(false);
     hapticSuccess();
     toast.success(t("myPlants.toasts.renamed"));
+  }
+
+  async function handleAddLocation() {
+    if (addingLocation) return;
+    setAddingLocation(true);
+    try {
+      const coords = await requestAndGetLocation();
+      if (!coords) {
+        toast.error(t("location.permissionDenied"));
+        return;
+      }
+      await setLocation({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      });
+      hapticSuccess();
+      toast.success(t("myPlants.toasts.locationAdded"));
+    } finally {
+      setAddingLocation(false);
+    }
   }
 
   async function handleToggleFavorite() {
@@ -426,17 +456,26 @@ export default function ScanDetailScreen({ route }: Props) {
                   {t("myPlants.detail.noLocation")}
                 </Text>
                 <TouchableOpacity
-                  style={styles.addLocationBtn}
-                  onPress={() =>
-                    console.warn(
-                      "[ScanDetail] add location — to be implemented in prompt 3",
-                    )
-                  }
+                  style={[
+                    styles.addLocationBtn,
+                    addingLocation && { opacity: 0.6 },
+                  ]}
+                  onPress={handleAddLocation}
+                  disabled={addingLocation}
                   activeOpacity={0.7}
                 >
-                  <MapPin size={14} color={colors.primary[700]} />
+                  {addingLocation ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primary[700]}
+                    />
+                  ) : (
+                    <MapPin size={14} color={colors.primary[700]} />
+                  )}
                   <Text style={styles.addLocationText}>
-                    {t("myPlants.detail.addLocation")}
+                    {addingLocation
+                      ? t("myPlants.detail.locating")
+                      : t("myPlants.detail.addLocation")}
                   </Text>
                 </TouchableOpacity>
               </View>

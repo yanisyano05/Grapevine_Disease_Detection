@@ -58,6 +58,44 @@ export function useScanDetail(scanId: string) {
     [scanId],
   );
 
+  const setLocation = useCallback(
+    async (coords: { latitude: number; longitude: number }) => {
+      const capturedAt = new Date().toISOString();
+      const all = await storage.get<ScanRecord[]>(storage.KEYS.SCAN_HISTORY);
+      if (!all) return;
+      const updated = all.map((s) =>
+        s.id === scanId
+          ? {
+              ...s,
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              locationCapturedAt: capturedAt,
+              location: {
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+              },
+            }
+          : s,
+      );
+      await storage.set(storage.KEYS.SCAN_HISTORY, updated);
+      setScan((prev) =>
+        prev
+          ? {
+              ...prev,
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              locationCapturedAt: capturedAt,
+              location: {
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+              },
+            }
+          : prev,
+      );
+    },
+    [scanId],
+  );
+
   return {
     scan,
     loading,
@@ -65,6 +103,7 @@ export function useScanDetail(scanId: string) {
     toggleFavorite,
     deleteScan,
     renameScan,
+    setLocation,
     refetch: load,
   };
 }

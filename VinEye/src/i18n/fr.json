@@ -304,7 +304,8 @@
       "favorited": "Ajouté aux favoris",
       "unfavorited": "Retiré des favoris",
       "deleted": "Scan supprimé",
-      "renamed": "Nom mis à jour"
+      "renamed": "Nom mis à jour",
+      "locationAdded": "Position ajoutée à la plante"
     },
     "status": {
       "healthy": "Saine",
@@ -330,6 +331,7 @@
       "location": "Localisation",
       "noLocation": "Aucune localisation enregistrée",
       "addLocation": "Ajouter ma position",
+      "locating": "Localisation en cours...",
       "share": "Partager",
       "delete": "Supprimer",
       "shareConfirmTitle": "Partager ce scan ?",
