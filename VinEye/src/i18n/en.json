@@ -39,6 +39,7 @@
     "startScanning": "Start scanning!",
     "tapToStart": "Tap to scan",
     "frequentDiseases": "Frequent diseases",
+    "recentScans": "My recent plants",
     "seasonAlert": {
       "title": "High downy mildew risk",
       "message": "Rain and heat expected this week. Keep an eye on your leaves."
@@ -275,7 +276,8 @@
     "toasts": {
       "favorited": "Added to favorites",
       "unfavorited": "Removed from favorites",
-      "deleted": "Scan deleted"
+      "deleted": "Scan deleted",
+      "renamed": "Name updated"
     },
     "status": {
       "healthy": "Healthy",
@@ -309,7 +311,11 @@
       "shareText": "My VinEye scan",
       "shareError": "Could not share the scan",
       "notFound": "Scan not found",
-      "goBack": "Go back"
+      "goBack": "Go back",
+      "renameTitle": "Rename plant",
+      "renameSubtitle": "Give this plant a custom name so you can recognize it easily.",
+      "renamePlaceholder": "E.g. Garden vine",
+      "renameSave": "Save"
     }
   },
   "guides": {
@@ -545,6 +551,10 @@
       "subtitle": "Give this plant a custom name so you can recognize it easily.",
       "placeholder": "E.g. Garden vine",
       "save": "Save"
+    },
+    "preview": {
+      "title": "Preview",
+      "tapHint": "Tap again to view details"
     }
   },
   "location": {

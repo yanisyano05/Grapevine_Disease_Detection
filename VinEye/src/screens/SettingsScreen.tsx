@@ -92,12 +92,12 @@ export default function SettingsScreen() {
       rightText: i18n.language === "fr" ? "Français" : "English",
       onPress: handleLanguageToggle,
     },
-    {
-      icon: "notifications-outline",
-      label: t("settings.notifications.label"),
-      toggleValue: notificationsEnabled,
-      onToggle: handleNotificationsToggle,
-    },
+    // {
+    //   icon: "notifications-outline",
+    //   label: t("settings.notifications.label"),
+    //   toggleValue: notificationsEnabled,
+    //   onToggle: handleNotificationsToggle,
+    // },
     {
       icon: "shield-outline",
       label: t("settings.privacy"),

@@ -15,8 +15,6 @@ import RootNavigator from '@/navigation/RootNavigator';
 export default function App() {
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setBackgroundColorAsync('transparent');
-      NavigationBar.setPositionAsync('absolute');
       NavigationBar.setButtonStyleAsync('dark');
     }
   }, []);

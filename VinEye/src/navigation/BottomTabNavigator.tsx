@@ -35,6 +35,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
         paddingBottom: insets.bottom,
         paddingTop: 6,
         alignItems: "flex-end",
+        overflow: "visible",
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -71,21 +72,24 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
               style={{
                 flex: 1,
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-end",
+                paddingBottom: 8,
+                overflow: "visible",
               }}
             >
               <View
                 style={{
+                  position: "absolute",
+                  bottom: 18,
                   width: 56,
                   height: 56,
                   borderRadius: 28,
                   backgroundColor: colors.primary[800],
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: -25,
                   shadowColor: colors.primary[900],
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.3,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
                   shadowRadius: 8,
                   elevation: 8,
                 }}

@@ -39,6 +39,7 @@
     "startScanning": "Commencez à scanner !",
     "tapToStart": "Appuyez pour scanner",
     "frequentDiseases": "Maladies fréquentes",
+    "recentScans": "Mes plantes récentes",
     "seasonAlert": {
       "title": "Risque mildiou élevé",
       "message": "Pluie et chaleur prévues cette semaine. Surveillez vos feuilles."
@@ -275,7 +276,8 @@
     "toasts": {
       "favorited": "Ajouté aux favoris",
       "unfavorited": "Retiré des favoris",
-      "deleted": "Scan supprimé"
+      "deleted": "Scan supprimé",
+      "renamed": "Nom mis à jour"
     },
     "status": {
       "healthy": "Saine",
@@ -309,7 +311,11 @@
       "shareText": "Mon scan VinEye",
       "shareError": "Impossible de partager le scan",
       "notFound": "Scan introuvable",
-      "goBack": "Retour"
+      "goBack": "Retour",
+      "renameTitle": "Renommer la plante",
+      "renameSubtitle": "Donnez un nom personnalisé à cette plante pour la retrouver plus facilement.",
+      "renamePlaceholder": "Ex. Vigne du jardin",
+      "renameSave": "Enregistrer"
     }
   },
   "guides": {
@@ -545,6 +551,10 @@
       "subtitle": "Donnez un nom personnalisé à cette plante pour la retrouver plus facilement.",
       "placeholder": "Ex. Vigne du jardin",
       "save": "Enregistrer"
+    },
+    "preview": {
+      "title": "Aperçu",
+      "tapHint": "Appuyez à nouveau pour voir les détails"
     }
   },
   "location": {
