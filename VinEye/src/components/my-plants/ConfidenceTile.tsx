@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { ProgressCircle } from '@/components/ui/ProgressCircle';
 
 interface ConfidenceTileProps {
+  /** Confidence as a 0–100 percentage (matches Detection.confidence convention). */
   confidence: number;
   fillColor: string;
   arcColor?: string;
@@ -17,7 +18,8 @@ export function ConfidenceTile({
   size = 64,
   scoreSize = 18,
 }: ConfidenceTileProps) {
-  const score = Math.round(confidence * 100);
+  const score = Math.round(confidence);
+  const progress = Math.min(1, Math.max(0, confidence / 100));
   const stroke = arcColor ?? darken(fillColor, 0.32);
 
   return (
@@ -31,7 +33,7 @@ export function ConfidenceTile({
         <ProgressCircle
           size={size}
           strokeWidth={Math.max(4, Math.round(size * 0.09))}
-          progress={confidence}
+          progress={progress}
           color={stroke}
           trackColor="rgba(255,255,255,0.35)"
         />

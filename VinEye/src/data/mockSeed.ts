@@ -20,7 +20,7 @@ export function buildMockScans(): ScanRecord[] {
       customName: 'Vigne du potager',
       detection: {
         result: 'vine',
-        confidence: 0.94,
+        confidence: 94,
         diseaseClass: 'healthy',
         cepageId: 'cabernet_sauvignon',
         timestamp: Date.now(),
@@ -41,7 +41,7 @@ export function buildMockScans(): ScanRecord[] {
       locationCapturedAt: isoMinusDays(1),
       detection: {
         result: 'vine',
-        confidence: 0.81,
+        confidence: 81,
         diseaseClass: 'esca',
         diseaseSlug: 'esca',
         cepageId: 'merlot',
@@ -64,7 +64,7 @@ export function buildMockScans(): ScanRecord[] {
       customName: 'Pinot du grand-père',
       detection: {
         result: 'vine',
-        confidence: 0.88,
+        confidence: 88,
         diseaseClass: 'healthy',
         cepageId: 'pinot_noir',
         timestamp: Date.now() - 2 * 86_400_000,
@@ -85,7 +85,7 @@ export function buildMockScans(): ScanRecord[] {
       locationCapturedAt: isoMinusDays(3),
       detection: {
         result: 'uncertain',
-        confidence: 0.55,
+        confidence: 55,
         diseaseClass: 'leaf_blight',
         diseaseSlug: 'leaf-blight',
         cepageId: 'chardonnay',
@@ -107,7 +107,7 @@ export function buildMockScans(): ScanRecord[] {
       locationCapturedAt: isoMinusDays(4),
       detection: {
         result: 'vine',
-        confidence: 0.76,
+        confidence: 76,
         diseaseClass: 'black_rot',
         diseaseSlug: 'black-rot',
         cepageId: 'cabernet_sauvignon',
