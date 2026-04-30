@@ -6,12 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  Text as RNText,
-} from "react-native";
+import { View, Pressable } from "react-native";
 import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetTextInput,
@@ -86,190 +81,226 @@ export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
       }
     }, [renamingScan, t]);
 
+    const trimmedDraft = draftName.trim();
+    const initialDraft = renamingScan
+      ? getScanDisplayName(renamingScan, t).trim()
+      : "";
+    const isDraftDirty =
+      trimmedDraft.length > 0 && trimmedDraft !== initialDraft;
+
     function handleStartRename(scan: ScanRecord) {
       setRenamingScan(scan);
-      // remonte à 85% pour bien voir l'input + boutons au-dessus du clavier
       internalRef.current?.snapToIndex(2);
     }
 
     function handleConfirmRename() {
+      if (!isDraftDirty) return;
       if (renamingScan) {
-        onRename?.(renamingScan.id, draftName);
+        onRename?.(renamingScan.id, trimmedDraft);
       }
       setRenamingScan(null);
       setDraftName("");
-      // redescend pour voir la map
       internalRef.current?.snapToIndex(0);
     }
 
     function handleCancelRename() {
       setRenamingScan(null);
       setDraftName("");
-      // redescend pour voir la map
       internalRef.current?.snapToIndex(0);
     }
 
     return (
-      <>
-        <BottomSheet
-          ref={internalRef}
-          index={defaultIndex}
-          snapPoints={snapPoints}
-          handleIndicatorStyle={styles.handleIndicator}
-          backgroundStyle={styles.background}
-          containerStyle={styles.sheetContainer}
-          enableDynamicSizing={false}
-          enablePanDownToClose={false}
-          keyboardBehavior="interactive"
-          keyboardBlurBehavior="restore"
-          android_keyboardInputMode="adjustResize"
-        >
-          {renamingScan ? (
-            <BottomSheetScrollView
-              contentContainerStyle={[
-                styles.renameWrap,
-                { paddingBottom: 24 },
-              ]}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={styles.renameHeader}>
-                <Pressable
-                  onPress={handleCancelRename}
-                  hitSlop={10}
-                  style={styles.backBtn}
-                >
-                  <ChevronLeft size={20} color={colors.neutral[700]} />
-                </Pressable>
-                <Text style={styles.title}>{t("map.rename.title")}</Text>
-                <View style={styles.backBtnPlaceholder} />
-              </View>
-              <Text style={styles.renameSubtitle}>
-                {t("map.rename.subtitle")}
+      <BottomSheet
+        ref={internalRef}
+        index={defaultIndex}
+        snapPoints={snapPoints}
+        handleIndicatorStyle={{
+          backgroundColor: colors.neutral[300],
+          width: 40,
+          height: 4,
+        }}
+        backgroundStyle={{
+          backgroundColor: "#FFFFFF",
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+        }}
+        containerStyle={{ zIndex: 100, elevation: 100 }}
+        enableDynamicSizing={false}
+        enablePanDownToClose={false}
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+      >
+        {renamingScan ? (
+          <BottomSheetScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+              paddingTop: 4,
+              paddingBottom: 24,
+              gap: 12,
+            }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="flex-row items-center justify-between">
+              <Pressable
+                onPress={handleCancelRename}
+                hitSlop={10}
+                className="w-9 h-9 rounded-full items-center justify-center bg-[#FAFAFA]"
+              >
+                <ChevronLeft size={20} color={colors.neutral[700]} />
+              </Pressable>
+              <Text className="text-lg font-bold text-[#1B1B1B]">
+                {t("map.rename.title")}
               </Text>
-              <BottomSheetTextInput
-                value={draftName}
-                onChangeText={setDraftName}
-                placeholder={t("map.rename.placeholder")}
-                placeholderTextColor={colors.neutral[400]}
-                autoFocus
-                maxLength={64}
-                returnKeyType="done"
-                onSubmitEditing={handleConfirmRename}
-                style={styles.renameInput}
+              <View className="w-9 h-9" />
+            </View>
+            <Text className="text-[13px] leading-[18px] text-[#6B6B6B] px-1">
+              {t("map.rename.subtitle")}
+            </Text>
+            <BottomSheetTextInput
+              value={draftName}
+              onChangeText={setDraftName}
+              placeholder={t("map.rename.placeholder")}
+              placeholderTextColor={colors.neutral[400]}
+              autoFocus
+              maxLength={64}
+              returnKeyType="done"
+              onSubmitEditing={handleConfirmRename}
+              style={{
+                borderWidth: 1,
+                borderColor: colors.neutral[300],
+                borderRadius: 14,
+                paddingHorizontal: 14,
+                paddingVertical: 14,
+                fontSize: 16,
+                color: colors.neutral[900],
+                backgroundColor: "#FAFAFA",
+              }}
+            />
+            <View className="flex-row pt-4 gap-3">
+              <Pressable
+                onPress={handleCancelRename}
+                className="flex-1 min-h-[56px] rounded-[14px] py-4 px-3 items-center justify-center bg-[#F5F5F5] border-[1.5px] border-[#BDBDBD] active:opacity-70"
+              >
+                <View className="flex-row items-center">
+                  <X size={18} color={colors.neutral[800]} strokeWidth={2.4} />
+                  <Text className="text-base font-bold text-[#2D2D2D] ml-2 tracking-[0.2px]">
+                    {t("common.cancel")}
+                  </Text>
+                </View>
+              </Pressable>
+              <Pressable
+                onPress={handleConfirmRename}
+                disabled={!isDraftDirty}
+                className={
+                  isDraftDirty
+                    ? "flex-1 min-h-[56px] rounded-[14px] py-4 px-3 items-center justify-center bg-primary active:opacity-85"
+                    : "flex-1 min-h-[56px] rounded-[14px] py-4 px-3 items-center justify-center bg-primary/40"
+                }
+              >
+                <View className="flex-row items-center">
+                  <Check
+                    size={18}
+                    color="#FFFFFF"
+                    strokeWidth={2.6}
+                    opacity={isDraftDirty ? 1 : 0.7}
+                  />
+                  <Text className="text-base font-bold text-white ml-2 tracking-[0.2px]">
+                    {t("map.rename.save")}
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+          </BottomSheetScrollView>
+        ) : previewScan ? (
+          <View>
+            <View className="flex-row items-center justify-between px-5 pt-2 pb-1">
+              <Text className="text-lg font-bold text-[#1B1B1B]">
+                {t("map.preview.title")}
+              </Text>
+              <Pressable
+                onPress={onPreviewClose}
+                hitSlop={10}
+                className="w-8 h-8 rounded-full items-center justify-center bg-[#FAFAFA]"
+              >
+                <X size={18} color={colors.neutral[600]} />
+              </Pressable>
+            </View>
+            <View className="px-5 pb-5 gap-2">
+              <ScanRow
+                scan={previewScan}
+                isLast
+                onPress={() => onScanPress?.(previewScan)}
+                onEdit={() => handleStartRename(previewScan)}
               />
-              <View style={styles.renameActions}>
-                <Pressable
-                  onPress={handleCancelRename}
-                  style={({ pressed }) => [
-                    styles.renameBtn,
-                    styles.renameBtnGhost,
-                    pressed && { opacity: 0.7 },
-                  ]}
-                >
-                  <View style={styles.renameBtnInner}>
-                    <X
-                      size={18}
-                      color={colors.neutral[800]}
-                      strokeWidth={2.4}
-                    />
-                    <RNText style={styles.renameBtnGhostLabel}>
-                      {t("common.cancel")}
-                    </RNText>
-                  </View>
-                </Pressable>
-                <Pressable
-                  onPress={handleConfirmRename}
-                  style={({ pressed }) => [
-                    styles.renameBtn,
-                    styles.renameBtnPrimary,
-                    pressed && { opacity: 0.85 },
-                  ]}
-                >
-                  <View style={styles.renameBtnInner}>
-                    <Check size={18} color="#FFFFFF" strokeWidth={2.6} />
-                    <RNText style={styles.renameBtnPrimaryLabel}>
-                      {t("map.rename.save")}
-                    </RNText>
-                  </View>
-                </Pressable>
-              </View>
-            </BottomSheetScrollView>
-          ) : previewScan ? (
-            <View>
-              <View style={styles.previewHeader}>
-                <Text style={styles.title}>{t("map.preview.title")}</Text>
-                <Pressable
-                  onPress={onPreviewClose}
-                  hitSlop={10}
-                  style={styles.previewCloseBtn}
-                >
-                  <X size={18} color={colors.neutral[600]} />
-                </Pressable>
-              </View>
-              <View style={styles.previewBody}>
-                <ScanRow
-                  scan={previewScan}
-                  isLast
-                  onPress={() => onScanPress?.(previewScan)}
-                  onEdit={() => handleStartRename(previewScan)}
-                />
-                <Text style={styles.previewHint}>
-                  {t("map.preview.tapHint")}
-                </Text>
-              </View>
+              <Text className="text-xs font-medium text-[#9E9E9E] text-center pt-1">
+                {t("map.preview.tapHint")}
+              </Text>
             </View>
-          ) : (
-            <>
-              <View style={styles.header}>
-                <Text style={styles.title}>{t("map.scannedPlants")}</Text>
-                <Text style={styles.count}>
-                  {t("map.plantCount", { count: scans.length })}
-                </Text>
-              </View>
+          </View>
+        ) : (
+          <>
+            <View className="flex-row items-baseline justify-between px-5 pt-2 pb-3">
+              <Text className="text-lg font-bold text-[#1B1B1B]">
+                {t("map.scannedPlants")}
+              </Text>
+              <Text className="text-[13px] font-medium text-[#9E9E9E]">
+                {t("map.plantCount", { count: scans.length })}
+              </Text>
+            </View>
 
-              {scans.length === 0 ? (
-            <View style={styles.emptyState}>
-              <View style={styles.emptyIconWrap}>
-                <MapPin size={32} color={colors.primary[800]} strokeWidth={2} />
+            {scans.length === 0 ? (
+              <View className="items-center px-8 py-6 gap-2">
+                <View className="w-16 h-16 rounded-2xl bg-[#E9F5EC] items-center justify-center mb-2">
+                  <MapPin
+                    size={32}
+                    color={colors.primary[800]}
+                    strokeWidth={2}
+                  />
+                </View>
+                <Text className="text-base font-bold text-[#1B1B1B] text-center">
+                  {t("map.empty.title")}
+                </Text>
+                <Text className="text-[13px] text-[#6B6B6B] text-center leading-[18px] mb-1">
+                  {t("map.empty.subtitle")}
+                </Text>
+                {onScanCta && (
+                  <Pressable
+                    onPress={onScanCta}
+                    className="flex-row items-center gap-2 bg-primary px-5 py-3 rounded-full mt-2 active:opacity-85"
+                  >
+                    <ScanLine size={18} color="#FFFFFF" strokeWidth={2.2} />
+                    <Text className="text-white text-sm font-semibold">
+                      {t("map.empty.cta")}
+                    </Text>
+                  </Pressable>
+                )}
               </View>
-              <Text style={styles.emptyTitle}>{t("map.empty.title")}</Text>
-              <Text style={styles.emptySubtitle}>{t("map.empty.subtitle")}</Text>
-              {onScanCta && (
-                <Pressable
-                  onPress={onScanCta}
-                  style={({ pressed }) => [
-                    styles.emptyCta,
-                    pressed && { opacity: 0.85 },
-                  ]}
-                >
-                  <ScanLine size={18} color="#FFFFFF" strokeWidth={2.2} />
-                  <Text style={styles.emptyCtaLabel}>{t("map.empty.cta")}</Text>
-                </Pressable>
-              )}
-            </View>
-          ) : (
-            <BottomSheetScrollView
-              contentContainerStyle={styles.listContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {scans.map((scan, index) => (
-                <ScanRow
-                  key={scan.id}
-                  scan={scan}
-                  isLast={index === scans.length - 1}
-                  onPress={() => onScanPress?.(scan)}
-                  onEdit={() => handleStartRename(scan)}
-                />
-              ))}
-            </BottomSheetScrollView>
-              )}
-            </>
-          )}
-        </BottomSheet>
-      </>
+            ) : (
+              <BottomSheetScrollView
+                contentContainerStyle={{
+                  paddingHorizontal: 20,
+                  paddingBottom: 24,
+                }}
+                showsVerticalScrollIndicator={false}
+              >
+                {scans.map((scan, index) => (
+                  <ScanRow
+                    key={scan.id}
+                    scan={scan}
+                    isLast={index === scans.length - 1}
+                    onPress={() => onScanPress?.(scan)}
+                    onEdit={() => handleStartRename(scan)}
+                  />
+                ))}
+              </BottomSheetScrollView>
+            )}
+          </>
+        )}
+      </BottomSheet>
     );
-  }
+  },
 );
 
 const STATUS_TINT: Record<ScanStatus, { bg: string; fg: string }> = {
@@ -301,23 +332,40 @@ function ScanRow({ scan, isLast, onPress, onEdit }: ScanRowProps) {
   });
 
   return (
-    <View style={[styles.row, !isLast && styles.rowBorder]}>
-      <Pressable onPress={onPress} style={styles.rowMain}>
-        <View style={[styles.iconBadge, { backgroundColor: tint.bg }]}>
+    <View
+      className={`flex-row items-center gap-2 py-3.5 ${
+        !isLast ? "border-b border-[#F5F5F5]" : ""
+      }`}
+    >
+      <Pressable
+        onPress={onPress}
+        className="flex-1 flex-row items-center gap-3.5"
+      >
+        <View
+          className="w-12 h-12 rounded-2xl items-center justify-center"
+          style={{ backgroundColor: tint.bg }}
+        >
           <Icon size={22} color={tint.fg} strokeWidth={2.2} />
         </View>
 
-        <View style={styles.rowText}>
-          <Text style={styles.location} numberOfLines={1}>
+        <View className="flex-1 gap-0.5">
+          <Text
+            className="text-[15px] font-bold text-[#1B1B1B]"
+            numberOfLines={1}
+          >
             {displayName}
           </Text>
-          <Text style={styles.region} numberOfLines={1}>
+          <Text className="text-[13px] text-[#6B6B6B]" numberOfLines={1}>
             {formattedDate}
           </Text>
         </View>
       </Pressable>
 
-      <Pressable onPress={onEdit} hitSlop={8} style={styles.editPencil}>
+      <Pressable
+        onPress={onEdit}
+        hitSlop={8}
+        className="w-8 h-8 rounded-full items-center justify-center bg-[#FAFAFA]"
+      >
         <Pencil size={16} color={colors.neutral[600]} strokeWidth={2} />
       </Pressable>
       <Pressable onPress={onPress} hitSlop={8}>
@@ -326,249 +374,3 @@ function ScanRow({ scan, isLast, onPress, onEdit }: ScanRowProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sheetContainer: {
-    zIndex: 100,
-    elevation: 100,
-  },
-  background: {
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 12,
-  },
-  handleIndicator: {
-    backgroundColor: colors.neutral[300],
-    width: 40,
-    height: 4,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  previewHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
-  previewCloseBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.neutral[100],
-  },
-  previewBody: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    gap: 8,
-  },
-  previewHint: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: colors.neutral[500],
-    textAlign: "center",
-    paddingTop: 4,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.neutral[900],
-  },
-  count: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: colors.neutral[500],
-  },
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 14,
-  },
-  rowBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[200],
-  },
-  rowMain: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  iconBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  rowText: {
-    flex: 1,
-    gap: 2,
-  },
-  location: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.neutral[900],
-  },
-  region: {
-    fontSize: 13,
-    color: colors.neutral[600],
-  },
-  editPencil: {
-    width: 32,
-    height: 32,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.neutral[100],
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingHorizontal: 32,
-    paddingVertical: 24,
-    gap: 8,
-  },
-  emptyIconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    backgroundColor: colors.primary[100],
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.neutral[900],
-    textAlign: "center",
-  },
-  emptySubtitle: {
-    fontSize: 13,
-    color: colors.neutral[600],
-    textAlign: "center",
-    lineHeight: 18,
-    marginBottom: 4,
-  },
-  emptyCta: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: colors.primary[800],
-    paddingHorizontal: 22,
-    paddingVertical: 12,
-    borderRadius: 999,
-    marginTop: 8,
-  },
-  emptyCtaLabel: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  // Rename inline form
-  renameWrap: {
-    paddingHorizontal: 20,
-    paddingTop: 4,
-    paddingBottom: 24,
-    gap: 12,
-  },
-  renameHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.neutral[100],
-  },
-  backBtnPlaceholder: {
-    width: 36,
-    height: 36,
-  },
-  renameSubtitle: {
-    fontSize: 13,
-    color: colors.neutral[600],
-    lineHeight: 18,
-    paddingHorizontal: 4,
-  },
-  renameInput: {
-    borderWidth: 1,
-    borderColor: colors.neutral[300],
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 16,
-    color: colors.neutral[900],
-    backgroundColor: "#FAFAFA",
-  },
-  renameActions: {
-    flexDirection: "row",
-    paddingTop: 16,
-    gap: 12,
-  },
-  renameBtn: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    minHeight: 56,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  renameBtnInner: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  renameBtnGhost: {
-    backgroundColor: colors.neutral[200],
-    borderWidth: 1.5,
-    borderColor: colors.neutral[400],
-  },
-  renameBtnGhostLabel: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.neutral[800],
-    letterSpacing: 0.2,
-    marginLeft: 8,
-  },
-  renameBtnPrimary: {
-    backgroundColor: colors.primary[800],
-    shadowColor: colors.primary[900],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  renameBtnPrimaryLabel: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    letterSpacing: 0.2,
-    marginLeft: 8,
-  },
-});
