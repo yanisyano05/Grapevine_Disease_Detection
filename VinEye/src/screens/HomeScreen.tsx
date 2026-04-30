@@ -10,10 +10,10 @@ import { useGuides } from "@/hooks/useGuides";
 import SearchHeader from "@/components/home/SearchHeader";
 import SearchSection from "@/components/home/SearchSection";
 import SectionHeader from "@/components/home/components/homeheader";
-import FrequentDiseases from "@/components/home/FrequentDiseases";
-import SeasonAlert from "@/components/home/SeasonAlert";
+import FrequentDiseasesHorizontal from "@/components/home/FrequentDiseasesHorizontal";
+// import SeasonAlert from "@/components/home/SeasonAlert"; // TODO: réactiver quand la page Notifications sera de retour
 import PracticalGuides from "@/components/home/PracticalGuides";
-import HeroScanner from "@/components/home/HomeCta";
+import RecentScans from "@/components/home/RecentScans";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
         <SearchSection />
 
-        <HeroScanner />
+        <RecentScans />
 
         {/* Frequent diseases carousel */}
         <View className="mb-6 gap-3">
@@ -44,11 +44,11 @@ export default function HomeScreen() {
               onViewAll={() => navigation.navigate("Main", { screen: "Guides" })}
             />
           </View>
-          <FrequentDiseases diseases={diseases} isLoading={diseasesLoading} />
+          <FrequentDiseasesHorizontal diseases={diseases} isLoading={diseasesLoading} />
         </View>
 
-        {/* Season alert */}
-        <SeasonAlert />
+        {/* Season alert — désactivé tant que la page Notifications n'est pas prête */}
+        {/* <SeasonAlert /> */}
 
         {/* Practical guides */}
         <View className="mx-5 mb-6 gap-3">
