@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import i18n from "@/i18n";
 
+import { toast } from "sonner-native";
+
 import { Text } from "@/components/ui/text";
 import { colors } from "@/theme/colors";
 import { useGameProgress } from "@/hooks/useGameProgress";
@@ -30,7 +32,12 @@ export default function SettingsScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { resetProgress } = useGameProgress();
-  const { clearHistory } = useHistory();
+  const { clearHistory, seedTestData } = useHistory();
+
+  async function handleSeed() {
+    await seedTestData();
+    toast.success(t("settings.seedDone"));
+  }
 
   function handleLanguageToggle() {
     const newLang = i18n.language === "fr" ? "en" : "fr";
@@ -92,6 +99,16 @@ export default function SettingsScreen() {
       label: t("settings.terms"),
     },
   ];
+
+  const devItems: MenuItem[] = __DEV__
+    ? [
+        {
+          icon: "flask-outline",
+          label: t("settings.seedTestData"),
+          onPress: handleSeed,
+        },
+      ]
+    : [];
 
   const dangerItems: MenuItem[] = [
     {
@@ -186,6 +203,13 @@ export default function SettingsScreen() {
             <Ionicons name="gift" size={28} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
+
+        {devItems.length > 0 && (
+          <>
+            <Text style={styles.sectionLabel}>{t("settings.developer")}</Text>
+            {renderMenuGroup(devItems)}
+          </>
+        )}
 
         {renderMenuGroup(dangerItems)}
 
