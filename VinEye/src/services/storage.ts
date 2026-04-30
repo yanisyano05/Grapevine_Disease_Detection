@@ -4,6 +4,7 @@ const KEYS = {
   GAME_PROGRESS: '@vineye:game_progress',
   SCAN_HISTORY: '@vineye:scan_history',
   LANGUAGE: '@vineye:language',
+  LOCATION_PERMISSION_ASKED: '@vineye:location-permission-asked',
 } as const;
 
 async function get<T>(key: string): Promise<T | null> {
