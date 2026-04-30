@@ -22,6 +22,33 @@
     "spreadMethod": "Spread method",
     "timeline": "Active period"
   },
+  "search": {
+    "placeholder": "What are you looking for?",
+    "placeholderMap": "Search one of my plants...",
+    "recentTitle": "Recent searches",
+    "clearAll": "Clear all",
+    "noRecent": "No recent searches yet. Type to get started.",
+    "resultsTitle": "Results",
+    "noResults": "No results found.",
+    "nearbyPlantsTitle": "Located plants",
+    "noPlants": "No geolocated plant yet. Scan with location enabled.",
+    "filter": {
+      "all": "All",
+      "diseases": "Diseases",
+      "guides": "Guides",
+      "plants": "My plants"
+    },
+    "section": {
+      "diseases": "Diseases",
+      "guides": "Practical guides",
+      "plants": "My plants"
+    },
+    "tag": {
+      "disease": "Disease",
+      "guide": "Guide",
+      "plant": "Plant"
+    }
+  },
   "home": {
     "greeting": "Hello, Winemaker!",
     "scanButton": "Scan a vine",

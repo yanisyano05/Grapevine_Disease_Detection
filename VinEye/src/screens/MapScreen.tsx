@@ -1,8 +1,13 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { toast } from "sonner-native";
@@ -20,9 +25,10 @@ import { useHistory } from "@/hooks/useHistory";
 import { useScanLocation } from "@/hooks/useScanLocation";
 import { getRegionById } from "@/data/wineRegions";
 import type { ScanRecord } from "@/types/detection";
-import type { RootStackParamList } from "@/types/navigation";
+import type { BottomTabParamList, RootStackParamList } from "@/types/navigation";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+type MapRoute = RouteProp<BottomTabParamList, "Map">;
 
 const DEFAULT_REGION: MapRegion = {
   latitude: 44.8378,
@@ -68,6 +74,7 @@ export default function MapScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
+  const route = useRoute<MapRoute>();
   const { history, renameScan, reload } = useHistory();
   const { requestAndGetLocation } = useScanLocation();
   const mapRef = useRef<VineyardMapHandle>(null);
@@ -87,6 +94,51 @@ export default function MapScreen() {
   const locatedScans = useMemo(() => history.filter(hasLocation), [history]);
   const initialRegion = useMemo(() => computeInitialRegion(history), [history]);
 
+  // React to focusScanId param (from SearchScreen) → animate + zoom + preview
+  const focusScanId = route.params?.focusScanId;
+  useEffect(() => {
+    if (!focusScanId) return;
+    const target = locatedScans.find((s) => s.id === focusScanId);
+    if (!target) return;
+    // Zoom progressif : étape large → étape proche pour effet de glissement + zoom
+    // Décale la caméra vers le sud (lat - delta * 0.18) pour que la plante
+    // apparaisse au-dessus du bottom sheet (qui occupe ~20% bas)
+    const FAR_DELTA = 0.08;
+    const CLOSE_DELTA = 0.012;
+    mapRef.current?.animateToRegion(
+      {
+        latitude: target.latitude - FAR_DELTA * 0.18,
+        longitude: target.longitude,
+        latitudeDelta: FAR_DELTA,
+        longitudeDelta: FAR_DELTA,
+      },
+      450,
+    );
+    const t1 = setTimeout(() => {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: target.latitude - CLOSE_DELTA * 0.18,
+          longitude: target.longitude,
+          latitudeDelta: CLOSE_DELTA,
+          longitudeDelta: CLOSE_DELTA,
+        },
+        500,
+      );
+    }, 480);
+    const t2 = setTimeout(() => {
+      setPreviewScan(target);
+      sheetRef.current?.snapToIndex(0);
+    }, 1000);
+
+    // Reset le param pour que ça ne re-trigger pas (ex. retour sur Map)
+    navigation.setParams({ focusScanId: undefined } as never);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [focusScanId, locatedScans, navigation]);
+
   function handleScanPress(scan: ScanRecord) {
     // 2nd click on the same scan in preview → open detail
     if (previewScan?.id === scan.id) {
@@ -96,12 +148,14 @@ export default function MapScreen() {
     }
 
     // 1st click (or click on a different scan) → preview mode
+    // Décalage caméra vers le sud pour ne pas être masqué par le sheet
     if (hasLocation(scan)) {
+      const delta = 0.04;
       mapRef.current?.animateToRegion({
-        latitude: scan.latitude,
+        latitude: scan.latitude - delta * 0.18,
         longitude: scan.longitude,
-        latitudeDelta: 0.04,
-        longitudeDelta: 0.04,
+        latitudeDelta: delta,
+        longitudeDelta: delta,
       });
     }
     setActiveFilter(null);

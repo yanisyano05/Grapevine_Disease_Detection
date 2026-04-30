@@ -1,6 +1,7 @@
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TextInput, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+import { Text } from "@/components/ui/text";
 import { colors } from "@/theme/colors";
 
 interface SearchBarProps {
@@ -8,7 +9,9 @@ interface SearchBarProps {
   value?: string;
   onChangeText?: (text: string) => void;
   onFilterPress?: () => void;
+  onTriggerPress?: () => void;
   showFilter?: boolean;
+  autoFocus?: boolean;
 }
 
 export default function SearchBar({
@@ -16,82 +19,76 @@ export default function SearchBar({
   value,
   onChangeText,
   onFilterPress,
-  showFilter = true,
+  onTriggerPress,
+  showFilter = false,
+  autoFocus = false,
 }: SearchBarProps) {
-  return (
-    <View style={styles.searchWrapper}>
-      <Ionicons
-        name="search"
-        size={20}
-        color={colors.neutral[400]}
-        style={styles.searchIcon}
-      />
+  const triggerMode = !!onTriggerPress;
+  const wrapperClass =
+    "flex-row items-center bg-white rounded-full px-4 h-[52px] border border-[#EAECEF]";
 
-      <TextInput
-        style={styles.input}
-        value={value}
-        multiline={false}
-        numberOfLines={1}
-        scrollEnabled={false}
-        onChangeText={onChangeText}
-        placeholder={placeholder ?? "Rechercher..."}
-        placeholderTextColor={colors.neutral[400]}
-        selectionColor={colors.primary[500]}
-        autoCorrect={false}
-      />
+  const content = (
+    <>
+      <Ionicons name="search" size={20} color={colors.neutral[400]} />
+
+      {triggerMode ? (
+        <Text
+          className="flex-1 ml-2.5 text-[15px] font-medium text-[#9CA3AF]"
+          numberOfLines={1}
+        >
+          {placeholder ?? "Rechercher..."}
+        </Text>
+      ) : (
+        <TextInput
+          className="flex-1 ml-2.5 text-[15px] font-medium text-[#1A1A1A] h-full"
+          style={{
+            paddingVertical: 0,
+            paddingHorizontal: 0,
+            textAlignVertical: "center",
+            includeFontPadding: false,
+          }}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder ?? "Rechercher..."}
+          placeholderTextColor={colors.neutral[400]}
+          selectionColor={colors.primary[500]}
+          autoCorrect={false}
+          autoFocus={autoFocus}
+          multiline={false}
+          numberOfLines={1}
+          scrollEnabled={false}
+        />
+      )}
 
       {showFilter && (
-        <TouchableOpacity
-          onPress={onFilterPress}
-          style={styles.filterButton}
-          activeOpacity={0.7}
+        <Pressable
+          onPress={(e) => {
+            e.stopPropagation?.();
+            onFilterPress?.();
+          }}
+          className="flex-row items-center pl-3 active:opacity-70"
         >
-          <View style={styles.divider} />
+          <View className="w-px h-5 bg-[#E2E4E7] mr-3" />
           <Ionicons
             name="options-outline"
             size={18}
             color={colors.primary[600]}
           />
-        </TouchableOpacity>
+        </Pressable>
       )}
-    </View>
+    </>
   );
-}
 
-const styles = StyleSheet.create({
-  searchWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    height: 52,
-    borderWidth: 1,
-    borderColor: "#EAECEF",
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: "500",
-    color: colors.neutral[900],
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    textAlignVertical: "center",
-    includeFontPadding: false,
-  },
-  filterButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 12,
-  },
-  divider: {
-    width: 1,
-    height: 20,
-    backgroundColor: "#E2E4E7",
-    marginRight: 12,
-  },
-});
+  if (triggerMode) {
+    return (
+      <Pressable
+        onPress={onTriggerPress}
+        className={`${wrapperClass} active:opacity-90`}
+      >
+        {content}
+      </Pressable>
+    );
+  }
+
+  return <View className={wrapperClass}>{content}</View>;
+}

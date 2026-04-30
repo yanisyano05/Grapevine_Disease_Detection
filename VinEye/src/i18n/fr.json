@@ -22,6 +22,33 @@
     "spreadMethod": "Propagation",
     "timeline": "Période d'activité"
   },
+  "search": {
+    "placeholder": "Que cherchez-vous ?",
+    "placeholderMap": "Rechercher une de mes plantes...",
+    "recentTitle": "Recherches récentes",
+    "clearAll": "Effacer tout",
+    "noRecent": "Aucune recherche récente. Tapez pour commencer.",
+    "resultsTitle": "Résultats",
+    "noResults": "Aucun résultat trouvé.",
+    "nearbyPlantsTitle": "Plantes localisées",
+    "noPlants": "Aucune plante géolocalisée. Scannez avec la position activée.",
+    "filter": {
+      "all": "Tout",
+      "diseases": "Maladies",
+      "guides": "Guides",
+      "plants": "Mes plantes"
+    },
+    "section": {
+      "diseases": "Maladies",
+      "guides": "Guides pratiques",
+      "plants": "Mes plantes"
+    },
+    "tag": {
+      "disease": "Maladie",
+      "guide": "Guide",
+      "plant": "Plante"
+    }
+  },
   "home": {
     "greeting": "Bonjour, Vigneron !",
     "scanButton": "Scanner une vigne",

@@ -6,13 +6,14 @@ export type BottomTabParamList = {
   Guides: undefined;
   Scanner: undefined;
   MyPlants: undefined;
-  Map: undefined;
+  Map: { focusScanId?: string } | undefined;
 };
 
 export type RootStackParamList = {
   Splash: undefined;
   Main: NavigatorScreenParams<BottomTabParamList>;
   Result: { detection: Detection };
+  Search: { fromMap?: boolean } | undefined;
   // Notifications: undefined; // TODO: réactiver quand la page Notifications sera de retour
   Profile: undefined;
   Settings: undefined;

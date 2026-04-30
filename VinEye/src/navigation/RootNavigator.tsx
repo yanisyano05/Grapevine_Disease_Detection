@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import SplashScreen from '@/screens/SplashScreen';
 import ResultScreen from '@/screens/ResultScreen';
+import SearchScreen from '@/screens/SearchScreen';
 // import NotificationsScreen from '@/screens/NotificationsScreen'; // TODO: réactiver quand la page Notifications sera de retour
 import ProfileScreen from '@/screens/ProfileScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
@@ -34,6 +35,15 @@ export default function RootNavigator() {
           name="Result"
           component={ResultScreen}
           options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
+        />
+        <Stack.Screen
+          name="Search"
+          component={SearchScreen}
+          options={({ route }) => ({
+            presentation: 'modal',
+            animation: route.params?.fromMap ? 'fade' : 'fade_from_bottom',
+            animationDuration: 250,
+          })}
         />
         {/* <Stack.Screen name="Notifications" component={NotificationsScreen} /> */}
         <Stack.Screen name="Profile" component={ProfileScreen} />

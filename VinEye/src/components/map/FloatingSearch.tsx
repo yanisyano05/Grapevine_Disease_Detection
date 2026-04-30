@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { View, ScrollView, Pressable, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { MapPin } from "lucide-react-native";
 
@@ -8,6 +9,9 @@ import SearchBar from "@/components/shared/SearchBar";
 import { HeaderActionButtons } from "@/components/shared/HeaderActionButtons";
 import { colors } from "@/theme/colors";
 import { WINE_REGIONS } from "@/data/wineRegions";
+import type { RootStackParamList } from "@/types/navigation";
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export type MapFilterId = "myLocation" | string;
 
@@ -21,7 +25,7 @@ export function FloatingSearch({
   onFilterPress,
 }: FloatingSearchProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const navigation = useNavigation<Nav>();
 
   const filters = [
     {
@@ -42,8 +46,9 @@ export function FloatingSearch({
         <View className="flex-1">
           <SearchBar
             placeholder={t("map.searchPlaceholder")}
-            value={query}
-            onChangeText={setQuery}
+            onTriggerPress={() =>
+              navigation.navigate("Search", { fromMap: true })
+            }
           />
         </View>
         <HeaderActionButtons />

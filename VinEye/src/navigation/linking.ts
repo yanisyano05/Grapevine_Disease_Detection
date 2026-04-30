@@ -16,6 +16,7 @@ const linking: LinkingOptions<RootStackParamList> = {
         },
       },
       Result: 'result',
+      Search: 'search',
       // Notifications: 'notifications', // TODO: réactiver quand la page Notifications sera de retour
       Profile: 'profile',
       Settings: 'settings',

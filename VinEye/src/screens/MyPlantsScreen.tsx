@@ -18,7 +18,6 @@ import { DateGroupAccordion } from '@/components/my-plants/DateGroupAccordion';
 import { HeaderActionButtons } from '@/components/shared/HeaderActionButtons';
 import SearchBar from '@/components/shared/SearchBar';
 import { useHistory } from '@/hooks/useHistory';
-import { getCepageById } from '@/utils/cepages';
 import { groupScansByDate } from '@/utils/dateGrouping';
 import type { DateGroupKey, DateGroup } from '@/utils/dateGrouping';
 import { colors } from '@/theme/colors';
@@ -38,7 +37,6 @@ export default function MyPlantsScreen() {
   const insets = useSafeAreaInsets();
   const { history, isLoading, deleteScan, toggleFavorite, reload } = useHistory();
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [openGroups, setOpenGroups] = useState<Set<DateGroupKey>>(
     new Set(DEFAULT_OPEN),
   );
@@ -51,34 +49,8 @@ export default function MyPlantsScreen() {
     }, [reload]),
   );
 
-  // Filter scans by search query
-  const filteredScans = useMemo(() => {
-    if (!searchQuery.trim()) return history;
-    const q = searchQuery.toLowerCase().trim();
-    return history.filter((scan) => {
-      // Search by cepage name
-      if (scan.detection.cepageId) {
-        const c = getCepageById(scan.detection.cepageId);
-        if (
-          c?.name.fr.toLowerCase().includes(q) ||
-          c?.name.en.toLowerCase().includes(q)
-        ) {
-          return true;
-        }
-      }
-      // Search by result label
-      const resultLabel =
-        scan.detection.result === 'vine'
-          ? t('result.vineDetected')
-          : scan.detection.result === 'uncertain'
-            ? t('result.uncertain')
-            : t('result.notVine');
-      return resultLabel.toLowerCase().includes(q);
-    });
-  }, [history, searchQuery, t]);
-
-  // Group filtered scans by date
-  const groups = useMemo(() => groupScansByDate(filteredScans), [filteredScans]);
+  // Group scans by date
+  const groups = useMemo(() => groupScansByDate(history), [history]);
 
   function toggleGroup(key: DateGroupKey) {
     setOpenGroups((prev) => {
@@ -139,12 +111,11 @@ export default function MyPlantsScreen() {
         <HeaderActionButtons />
       </View>
 
-      {/* Search bar */}
+      {/* Search bar (trigger global SearchScreen) */}
       <View style={styles.searchContainer}>
         <SearchBar
           placeholder={t('myPlants.searchPlaceholder')}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
+          onTriggerPress={() => navigation.navigate('Search')}
         />
       </View>
 
