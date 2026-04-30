@@ -8,7 +8,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { toast } from "sonner-native";
 import { useTranslation } from "react-i18next";
 
-import { VineyardMapView, type VineyardMapHandle, type MapRegion } from "@/components/map/MapView";
+import {
+  VineyardMapView,
+  type VineyardMapHandle,
+  type MapRegion,
+} from "@/components/map/MapView";
 import { FloatingSearch } from "@/components/map/FloatingSearch";
 import { FloatingActions } from "@/components/map/FloatingActions";
 import { MapBottomSheet } from "@/components/map/MapBottomSheet";
@@ -27,8 +31,12 @@ const DEFAULT_REGION: MapRegion = {
   longitudeDelta: 0.12,
 };
 
-function hasLocation(scan: ScanRecord): scan is ScanRecord & { latitude: number; longitude: number } {
-  return typeof scan.latitude === "number" && typeof scan.longitude === "number";
+function hasLocation(
+  scan: ScanRecord,
+): scan is ScanRecord & { latitude: number; longitude: number } {
+  return (
+    typeof scan.latitude === "number" && typeof scan.longitude === "number"
+  );
 }
 
 function computeInitialRegion(scans: ScanRecord[]): MapRegion {
@@ -67,18 +75,27 @@ export default function MapScreen() {
   const geojsonCache = useRef<Map<string, object>>(new Map());
   const activeFilterRef = useRef<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [previewScan, setPreviewScan] = useState<ScanRecord | null>(null);
   activeFilterRef.current = activeFilter;
 
   useFocusEffect(
     useCallback(() => {
       reload();
-    }, [reload])
+    }, [reload]),
   );
 
   const locatedScans = useMemo(() => history.filter(hasLocation), [history]);
   const initialRegion = useMemo(() => computeInitialRegion(history), [history]);
 
   function handleScanPress(scan: ScanRecord) {
+    // 2nd click on the same scan in preview → open detail
+    if (previewScan?.id === scan.id) {
+      setPreviewScan(null);
+      navigation.navigate("ScanDetail", { scanId: scan.id });
+      return;
+    }
+
+    // 1st click (or click on a different scan) → preview mode
     if (hasLocation(scan)) {
       mapRef.current?.animateToRegion({
         latitude: scan.latitude,
@@ -89,7 +106,12 @@ export default function MapScreen() {
     }
     setActiveFilter(null);
     mapRef.current?.highlightGeoJSON(null);
-    navigation.navigate("ScanDetail", { scanId: scan.id });
+    setPreviewScan(scan);
+    sheetRef.current?.snapToIndex(0);
+  }
+
+  function handlePreviewClose() {
+    setPreviewScan(null);
   }
 
   async function handleLocateUser() {
@@ -183,17 +205,11 @@ export default function MapScreen() {
         pointerEvents="box-none"
         collapsable={false}
       >
-        <FloatingSearch activeFilter={activeFilter} onFilterPress={handleFilterPress} />
+        <FloatingSearch
+          activeFilter={activeFilter}
+          onFilterPress={handleFilterPress}
+        />
       </View>
-
-      <MapBottomSheet
-        ref={sheetRef}
-        scans={locatedScans}
-        onScanPress={handleScanPress}
-        onRename={handleRename}
-        onScanCta={() => navigation.navigate("Main", { screen: "Scanner" })}
-        defaultIndex={isEmpty ? 1 : 0}
-      />
 
       <View
         style={styles.actionsSlot}
@@ -207,6 +223,17 @@ export default function MapScreen() {
           activeAction={activeFilter === "myLocation" ? "locate" : "layers"}
         />
       </View>
+
+      <MapBottomSheet
+        ref={sheetRef}
+        scans={locatedScans}
+        previewScan={previewScan}
+        onPreviewClose={handlePreviewClose}
+        onScanPress={handleScanPress}
+        onRename={handleRename}
+        onScanCta={() => navigation.navigate("Main", { screen: "Scanner" })}
+        defaultIndex={isEmpty ? 1 : 0}
+      />
     </View>
   );
 }
@@ -228,14 +255,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 16,
-    zIndex: 20,
-    elevation: 24,
   },
   actionsSlot: {
     position: "absolute",
     right: 16,
     top: "30%",
-    zIndex: 20,
-    elevation: 24,
+    zIndex: 1,
+    elevation: 1,
   },
 });

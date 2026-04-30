@@ -1,17 +1,25 @@
-import { forwardRef, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Pressable,
   StyleSheet,
-  Modal,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
+  Text as RNText,
 } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
 import { useTranslation } from "react-i18next";
 import {
   ChevronRight,
+  ChevronLeft,
   AlertTriangle,
   Leaf,
   Clock,
@@ -19,6 +27,7 @@ import {
   X,
   ScanLine,
   MapPin,
+  Check,
 } from "lucide-react-native";
 
 import { Text } from "@/components/ui/text";
@@ -29,6 +38,8 @@ import type { ScanRecord, ScanStatus } from "@/types/detection";
 
 interface MapBottomSheetProps {
   scans: ScanRecord[];
+  previewScan?: ScanRecord | null;
+  onPreviewClose?: () => void;
   onScanPress?: (scan: ScanRecord) => void;
   onRename?: (scanId: string, newName: string) => void;
   onScanCta?: () => void;
@@ -36,15 +47,49 @@ interface MapBottomSheetProps {
 }
 
 export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
-  function MapBottomSheet({ scans, onScanPress, onRename, onScanCta, defaultIndex = 0 }, ref) {
+  function MapBottomSheet(
+    {
+      scans,
+      previewScan,
+      onPreviewClose,
+      onScanPress,
+      onRename,
+      onScanCta,
+      defaultIndex = 0,
+    },
+    ref,
+  ) {
     const { t } = useTranslation();
     const snapPoints = useMemo(() => ["20%", "55%", "85%"], []);
+    const internalRef = useRef<BottomSheet>(null);
     const [renamingScan, setRenamingScan] = useState<ScanRecord | null>(null);
     const [draftName, setDraftName] = useState("");
 
+    useImperativeHandle(
+      ref,
+      () =>
+        ({
+          snapToIndex: (i: number) => internalRef.current?.snapToIndex(i),
+          snapToPosition: (p: number | string) =>
+            internalRef.current?.snapToPosition(p),
+          expand: () => internalRef.current?.expand(),
+          collapse: () => internalRef.current?.collapse(),
+          close: () => internalRef.current?.close(),
+          forceClose: () => internalRef.current?.forceClose(),
+        }) as BottomSheet,
+      [],
+    );
+
+    useEffect(() => {
+      if (renamingScan) {
+        setDraftName(getScanDisplayName(renamingScan, t));
+      }
+    }, [renamingScan, t]);
+
     function handleStartRename(scan: ScanRecord) {
       setRenamingScan(scan);
-      setDraftName(getScanDisplayName(scan, t));
+      // remonte à 85% pour bien voir l'input + boutons au-dessus du clavier
+      internalRef.current?.snapToIndex(2);
     }
 
     function handleConfirmRename() {
@@ -53,31 +98,137 @@ export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
       }
       setRenamingScan(null);
       setDraftName("");
+      // redescend pour voir la map
+      internalRef.current?.snapToIndex(0);
     }
 
     function handleCancelRename() {
       setRenamingScan(null);
       setDraftName("");
+      // redescend pour voir la map
+      internalRef.current?.snapToIndex(0);
     }
 
     return (
       <>
         <BottomSheet
-          ref={ref}
+          ref={internalRef}
           index={defaultIndex}
           snapPoints={snapPoints}
           handleIndicatorStyle={styles.handleIndicator}
           backgroundStyle={styles.background}
+          containerStyle={styles.sheetContainer}
+          enableDynamicSizing={false}
           enablePanDownToClose={false}
+          keyboardBehavior="interactive"
+          keyboardBlurBehavior="restore"
+          android_keyboardInputMode="adjustResize"
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>{t("map.scannedPlants")}</Text>
-            <Text style={styles.count}>
-              {t("map.plantCount", { count: scans.length })}
-            </Text>
-          </View>
+          {renamingScan ? (
+            <BottomSheetScrollView
+              contentContainerStyle={[
+                styles.renameWrap,
+                { paddingBottom: 24 },
+              ]}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.renameHeader}>
+                <Pressable
+                  onPress={handleCancelRename}
+                  hitSlop={10}
+                  style={styles.backBtn}
+                >
+                  <ChevronLeft size={20} color={colors.neutral[700]} />
+                </Pressable>
+                <Text style={styles.title}>{t("map.rename.title")}</Text>
+                <View style={styles.backBtnPlaceholder} />
+              </View>
+              <Text style={styles.renameSubtitle}>
+                {t("map.rename.subtitle")}
+              </Text>
+              <BottomSheetTextInput
+                value={draftName}
+                onChangeText={setDraftName}
+                placeholder={t("map.rename.placeholder")}
+                placeholderTextColor={colors.neutral[400]}
+                autoFocus
+                maxLength={64}
+                returnKeyType="done"
+                onSubmitEditing={handleConfirmRename}
+                style={styles.renameInput}
+              />
+              <View style={styles.renameActions}>
+                <Pressable
+                  onPress={handleCancelRename}
+                  style={({ pressed }) => [
+                    styles.renameBtn,
+                    styles.renameBtnGhost,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                >
+                  <View style={styles.renameBtnInner}>
+                    <X
+                      size={18}
+                      color={colors.neutral[800]}
+                      strokeWidth={2.4}
+                    />
+                    <RNText style={styles.renameBtnGhostLabel}>
+                      {t("common.cancel")}
+                    </RNText>
+                  </View>
+                </Pressable>
+                <Pressable
+                  onPress={handleConfirmRename}
+                  style={({ pressed }) => [
+                    styles.renameBtn,
+                    styles.renameBtnPrimary,
+                    pressed && { opacity: 0.85 },
+                  ]}
+                >
+                  <View style={styles.renameBtnInner}>
+                    <Check size={18} color="#FFFFFF" strokeWidth={2.6} />
+                    <RNText style={styles.renameBtnPrimaryLabel}>
+                      {t("map.rename.save")}
+                    </RNText>
+                  </View>
+                </Pressable>
+              </View>
+            </BottomSheetScrollView>
+          ) : previewScan ? (
+            <View>
+              <View style={styles.previewHeader}>
+                <Text style={styles.title}>{t("map.preview.title")}</Text>
+                <Pressable
+                  onPress={onPreviewClose}
+                  hitSlop={10}
+                  style={styles.previewCloseBtn}
+                >
+                  <X size={18} color={colors.neutral[600]} />
+                </Pressable>
+              </View>
+              <View style={styles.previewBody}>
+                <ScanRow
+                  scan={previewScan}
+                  isLast
+                  onPress={() => onScanPress?.(previewScan)}
+                  onEdit={() => handleStartRename(previewScan)}
+                />
+                <Text style={styles.previewHint}>
+                  {t("map.preview.tapHint")}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <>
+              <View style={styles.header}>
+                <Text style={styles.title}>{t("map.scannedPlants")}</Text>
+                <Text style={styles.count}>
+                  {t("map.plantCount", { count: scans.length })}
+                </Text>
+              </View>
 
-          {scans.length === 0 ? (
+              {scans.length === 0 ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIconWrap}>
                 <MapPin size={32} color={colors.primary[800]} strokeWidth={2} />
@@ -112,68 +263,10 @@ export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
                 />
               ))}
             </BottomSheetScrollView>
+              )}
+            </>
           )}
         </BottomSheet>
-
-        <Modal
-          visible={renamingScan !== null}
-          transparent
-          animationType="fade"
-          onRequestClose={handleCancelRename}
-        >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={styles.modalOverlay}
-          >
-            <Pressable style={styles.modalBackdrop} onPress={handleCancelRename} />
-            <View style={styles.modalCard}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>{t("map.rename.title")}</Text>
-                <Pressable onPress={handleCancelRename} hitSlop={10}>
-                  <X size={20} color={colors.neutral[600]} />
-                </Pressable>
-              </View>
-              <Text style={styles.modalSubtitle}>{t("map.rename.subtitle")}</Text>
-              <TextInput
-                style={styles.modalInput}
-                value={draftName}
-                onChangeText={setDraftName}
-                placeholder={t("map.rename.placeholder")}
-                placeholderTextColor={colors.neutral[400]}
-                autoFocus
-                maxLength={64}
-                returnKeyType="done"
-                onSubmitEditing={handleConfirmRename}
-              />
-              <View style={styles.modalActions}>
-                <Pressable
-                  onPress={handleCancelRename}
-                  style={({ pressed }) => [
-                    styles.modalButton,
-                    styles.modalButtonGhost,
-                    pressed && { opacity: 0.7 },
-                  ]}
-                >
-                  <Text style={styles.modalButtonGhostLabel}>
-                    {t("common.cancel")}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPress={handleConfirmRename}
-                  style={({ pressed }) => [
-                    styles.modalButton,
-                    styles.modalButtonPrimary,
-                    pressed && { opacity: 0.85 },
-                  ]}
-                >
-                  <Text style={styles.modalButtonPrimaryLabel}>
-                    {t("map.rename.save")}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </KeyboardAvoidingView>
-        </Modal>
       </>
     );
   }
@@ -235,6 +328,10 @@ function ScanRow({ scan, isLast, onPress, onEdit }: ScanRowProps) {
 }
 
 const styles = StyleSheet.create({
+  sheetContainer: {
+    zIndex: 100,
+    elevation: 100,
+  },
   background: {
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 28,
@@ -257,6 +354,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 12,
+  },
+  previewHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  previewCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.neutral[100],
+  },
+  previewBody: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    gap: 8,
+  },
+  previewHint: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: colors.neutral[500],
+    textAlign: "center",
+    paddingTop: 4,
   },
   title: {
     fontSize: 18,
@@ -359,75 +484,91 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.45)",
-  },
-  modalCard: {
-    width: "100%",
-    maxWidth: 400,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 20,
+  // Rename inline form
+  renameWrap: {
+    paddingHorizontal: 20,
+    paddingTop: 4,
+    paddingBottom: 24,
     gap: 12,
   },
-  modalHeader: {
+  renameHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.neutral[900],
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.neutral[100],
   },
-  modalSubtitle: {
+  backBtnPlaceholder: {
+    width: 36,
+    height: 36,
+  },
+  renameSubtitle: {
     fontSize: 13,
     color: colors.neutral[600],
     lineHeight: 18,
+    paddingHorizontal: 4,
   },
-  modalInput: {
+  renameInput: {
     borderWidth: 1,
     borderColor: colors.neutral[300],
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
+    paddingVertical: 14,
+    fontSize: 16,
     color: colors.neutral[900],
     backgroundColor: "#FAFAFA",
   },
-  modalActions: {
+  renameActions: {
     flexDirection: "row",
-    gap: 10,
-    marginTop: 4,
+    paddingTop: 16,
+    gap: 12,
   },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
+  renameBtn: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    minHeight: 56,
     alignItems: "center",
     justifyContent: "center",
   },
-  modalButtonGhost: {
-    backgroundColor: colors.neutral[100],
+  renameBtnInner: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  modalButtonGhostLabel: {
-    fontSize: 15,
-    fontWeight: "600",
+  renameBtnGhost: {
+    backgroundColor: colors.neutral[200],
+    borderWidth: 1.5,
+    borderColor: colors.neutral[400],
+  },
+  renameBtnGhostLabel: {
+    fontSize: 16,
+    fontWeight: "700",
     color: colors.neutral[800],
+    letterSpacing: 0.2,
+    marginLeft: 8,
   },
-  modalButtonPrimary: {
+  renameBtnPrimary: {
     backgroundColor: colors.primary[800],
+    shadowColor: colors.primary[900],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  modalButtonPrimaryLabel: {
-    fontSize: 15,
-    fontWeight: "600",
+  renameBtnPrimaryLabel: {
+    fontSize: 16,
+    fontWeight: "700",
     color: "#FFFFFF",
+    letterSpacing: 0.2,
+    marginLeft: 8,
   },
 });
