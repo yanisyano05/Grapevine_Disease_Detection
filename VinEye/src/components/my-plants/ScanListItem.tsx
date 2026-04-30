@@ -19,6 +19,8 @@ interface ScanListItemProps {
   onPress: () => void;
   onToggleFavorite: () => void;
   onDelete: () => void;
+  grouped?: boolean;
+  showSeparator?: boolean;
 }
 
 const STATUS_FILL: Record<ScanStatus, string> = {
@@ -46,7 +48,14 @@ function getPlantName(scan: ScanRecord, t: (key: string) => string): string {
   return t('result.notVine');
 }
 
-export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: ScanListItemProps) {
+export function ScanListItem({
+  scan,
+  onPress,
+  onToggleFavorite,
+  onDelete,
+  grouped = false,
+  showSeparator = false,
+}: ScanListItemProps) {
   const { t } = useTranslation();
   const swipeableRef = useRef<Swipeable>(null);
   const isFav = scan.isFavorite === true;
@@ -117,7 +126,7 @@ export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: Scan
       friction={2}
     >
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, grouped && styles.containerGrouped]}
         onPress={() => {
           hapticLight();
           onPress();
@@ -160,6 +169,7 @@ export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: Scan
           )}
         </View>
       </TouchableOpacity>
+      {grouped && showSeparator && <View style={styles.separator} />}
     </Swipeable>
   );
 }
@@ -175,6 +185,19 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     borderWidth: 1,
     borderColor: '#F0F0F0',
+  },
+  containerGrouped: {
+    borderRadius: 0,
+    marginHorizontal: 0,
+    marginVertical: 0,
+    borderWidth: 0,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginLeft: 92,
   },
   imageWrapper: {
     width: 64,

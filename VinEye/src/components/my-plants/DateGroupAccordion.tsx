@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -63,15 +63,19 @@ export function DateGroupAccordion({
       {/* Content */}
       {isOpen && (
         <View style={styles.content}>
-          {scans.map((scan) => (
-            <ScanListItem
-              key={scan.id}
-              scan={scan}
-              onPress={() => onPressScan(scan)}
-              onToggleFavorite={() => onToggleFavorite(scan.id)}
-              onDelete={() => onDeleteScan(scan.id)}
-            />
-          ))}
+          <View style={styles.card}>
+            {scans.map((scan, index) => (
+              <ScanListItem
+                key={scan.id}
+                scan={scan}
+                onPress={() => onPressScan(scan)}
+                onToggleFavorite={() => onToggleFavorite(scan.id)}
+                onDelete={() => onDeleteScan(scan.id)}
+                grouped
+                showSeparator={index < scans.length - 1}
+              />
+            ))}
+          </View>
         </View>
       )}
     </View>
@@ -107,7 +111,24 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
   },
   content: {
-    paddingTop: 4,
+    paddingTop: 8,
     paddingBottom: 8,
+    paddingHorizontal: 20,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+      },
+      android: { elevation: 2 },
+    }),
   },
 });
