@@ -15,7 +15,7 @@ Cible des amateurs de vin/jardinage. Scan par camera, identification de maladies
 | Styling | **NativeWind v4** (Tailwind) prioritaire, StyleSheet pour ombres/gradients |
 | Icones | **lucide-react-native** (bottom bar) + **Ionicons** (reste de l'app) |
 | Animations | React Native Reanimated v4 |
-| IA | TFLite mock (weighted random) |
+| IA | **react-native-fast-tflite** + MobileNetV2 (.tflite, 9.4 MB, 4 classes) |
 | Persistance | AsyncStorage |
 | i18n | i18next + react-i18next (FR + EN) |
 | Camera | expo-camera |
@@ -186,5 +186,89 @@ pnpm ios            # Build iOS
 
 ---
 
-**Version** : 2.0.0
-**Derniere mise a jour** : 2026-04-02
+**Version** : 2.1.0
+**Derniere mise a jour** : 2026-04-29
+
+---
+
+## ML / inference on-device
+
+Le modele MobileNetV2 (val_accuracy 99.93% — voir `docs/paper.md`) est embarque
+dans le bundle et execute en local via `react-native-fast-tflite`.
+
+### Pipeline
+
+```
+ScannerScreen.handleCapture()
+  └─ cameraRef.takePictureAsync({ quality: 0.85 })
+     └─ useDetection.analyze(uri)
+        └─ services/tflite/model.ts → runInference(uri)
+           ├─ services/ml/preprocessing.ts → preprocessImage(uri)
+           │   ├─ expo-image-manipulator: resize 224x224 + JPEG base64
+           │   └─ jpeg-js.decode → Float32Array RGB normalisee /255
+           └─ tflite.loadTensorflowModel(grapevine_v1.tflite).runSync([input])
+              └─ softmax/argmax → { class, confidence, allProbabilities }
+```
+
+### Mapping des 4 classes ML
+
+| Classe ML | Slug Prisma | Ecran cible |
+|-----------|-------------|-------------|
+| `healthy` | (aucun) | ResultScreen avec message "Vigne saine" |
+| `black_rot` | `black-rot` | DiseaseDetail |
+| `esca` | `esca` | DiseaseDetail |
+| `leaf_blight` | `leaf-blight` | DiseaseDetail |
+
+Source : `src/services/ml/classes.ts` (`CLASS_TO_SLUG`).
+
+### Seuils de confidence
+
+| Confidence | Result |
+|------------|--------|
+| >= 70% | `vine` (affiche la classe + CTA DiseaseDetail) |
+| 40 - 70% | `uncertain` (suggere de reprendre la photo) |
+| < 40% | `not_vine` |
+
+### Fichiers cles
+
+| Fichier | Role |
+|---------|------|
+| `src/assets/models/grapevine_v1.tflite` | Modele MobileNetV2 (9.4 MB, embarque) |
+| `src/services/ml/classes.ts` | Mapping classes ML → slugs Prisma + i18n keys |
+| `src/services/ml/preprocessing.ts` | Resize + decode JPEG + normalisation /255 |
+| `src/services/tflite/model.ts` | `loadModel()` + `runInference(uri)` (fallback mock si module absent) |
+| `src/hooks/useDetection.ts` | Hook React qui wrap `runInference` |
+| `src/screens/ScannerScreen.tsx` | Capture camera + appel inference |
+| `src/screens/ResultScreen.tsx` | Affichage classe + probabilites + CTA DiseaseDetail |
+| `metro.config.js` | Ajout `tflite` aux assetExts |
+| `vineye-admin/prisma/seed.ts` | Seed des slugs `black-rot`, `esca`, `leaf-blight` |
+
+### Prebuild requis
+
+`react-native-fast-tflite` est un module natif. Avant de builder/tester sur device :
+
+```bash
+cd VinEye
+pnpm dlx expo prebuild --clean
+pnpm dlx expo run:android  # ou run:ios
+```
+
+En Expo Go (sans prebuild) : le `runInference` detecte que le module n'est pas
+disponible et bascule automatiquement sur un **mock random pondere** (voir
+`mockDetection` dans `services/tflite/model.ts`). L'UI reste fonctionnelle pour
+le dev sans device natif.
+
+### Roadmap (option C — futur)
+
+- Persister chaque scan via `POST /api/mobile/scans` (Prisma `Scan` table existe deja)
+- Telemetry des classes les plus frequentes (pour priorisation re-entrainement)
+- A/B switch entre on-device et serveur d'inference (pour comparer perf)
+
+---
+
+## Build natif Android — fixes appliqués
+
+Détail complet : [`.claude/notes/android-build/README.md`](.claude/notes/android-build/README.md)
+
+- ✅ **CMake/Ninja path too long** — résolu via `externalNativeBuild.cmake.arguments` dans `android/app/build.gradle` (response files + ninja 1.12.1 + `CMAKE_OBJECT_PATH_MAX=1024`)
+- 🟡 **`react-native-nitro-modules` headers manquants** — survient au clean ; corriger en buildant Nitro avant fast-tflite, ou via `pnpm dlx expo prebuild --clean`

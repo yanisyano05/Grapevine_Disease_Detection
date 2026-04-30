@@ -9,7 +9,7 @@ import { Text } from "@/components/ui/text";
 import SearchHeader from "@/components/home/SearchHeader";
 import SearchSection from "@/components/home/SearchSection";
 import AnimatedSegmentedControl from "@/components/guides/AnimatedSegmentedControl";
-import SmallDiseaseCard from "@/components/ui/SmallDiseaseCard";
+import LargeDiseaseCard from "@/components/guides/LargeDiseaseCard";
 import GuideListItem from "@/components/ui/GuideListItem";
 import { DiseaseCardSkeleton, GuideListItemSkeleton } from "@/components/ui/Skeleton";
 import { useDiseases } from "@/hooks/useDiseases";
@@ -76,24 +76,20 @@ export default function GuidesScreen() {
         />
 
         {activeTab === 0 ? (
-          <View style={styles.grid}>
+          <View style={styles.diseaseList}>
             {showDiseasesSkeleton
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <View key={i} style={styles.gridItem}>
-                    <DiseaseCardSkeleton style={{ height: 160 }} />
-                  </View>
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <DiseaseCardSkeleton key={i} style={{ height: 260, borderRadius: 32 }} />
                 ))
               : diseases.map((disease, index) => (
-                  <View key={disease.id} style={styles.gridItem}>
-                    <SmallDiseaseCard
-                      disease={disease}
-                      onPress={() =>
-                        navigation.navigate("DiseaseDetail", { diseaseId: disease.id })
-                      }
-                      index={index}
-                      size="grid"
-                    />
-                  </View>
+                  <LargeDiseaseCard
+                    key={disease.id}
+                    disease={disease}
+                    onPress={() =>
+                      navigation.navigate("DiseaseDetail", { diseaseId: disease.id })
+                    }
+                    index={index}
+                  />
                 ))}
           </View>
         ) : (
@@ -124,16 +120,11 @@ export default function GuidesScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#F8F9FB",
+    backgroundColor: "#FAFAFA",
   },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-  gridItem: {
-    width: "48%",
+  diseaseList: {
+    paddingHorizontal: 20,
+    gap: 16,
   },
   guidesSection: {
     paddingHorizontal: 16,

@@ -277,6 +277,11 @@
       "unfavorited": "Removed from favorites",
       "deleted": "Scan deleted"
     },
+    "status": {
+      "healthy": "Healthy",
+      "infected": "Diseased",
+      "uncertain": "Uncertain"
+    },
     "empty": {
       "title": "No plants scanned yet",
       "subtitle": "Scan your first plant to start your collection",
@@ -315,6 +320,11 @@
       "critical": "Critical",
       "moderate": "Moderate",
       "low": "Low"
+    },
+    "riskLevel": {
+      "high": "High risk",
+      "medium": "Medium risk",
+      "low": "Low risk"
     },
     "healthyLeaf": {
       "title": "Recognizing a healthy leaf",
@@ -446,7 +456,18 @@
     "resetData": "Reset data",
     "resetConfirm": "Are you sure you want to reset all data?",
     "days": "days",
-    "xpTotal": "Total XP"
+    "xpTotal": "Total XP",
+    "level": "Level {{level}}",
+    "editTitle": "Edit profile",
+    "editButton": "Edit",
+    "saveButton": "Save",
+    "saved": "Profile saved",
+    "invalidEmail": "Invalid email",
+    "nameField": "Name",
+    "emailField": "Email",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "you@email.com",
+    "avatarLabel": "Avatar"
   },
   "settings": {
     "general": "General",
@@ -462,7 +483,12 @@
     "referBody": "Share VinEye and earn bonus XP for every friend you invite.",
     "developer": "Developer",
     "seedTestData": "Add mock plants",
-    "seedDone": "5 mock plants added"
+    "seedDone": "5 mock plants added",
+    "notifications": {
+      "label": "Push notifications",
+      "enabled": "Notifications enabled",
+      "disabled": "Notifications disabled"
+    }
   },
   "achievements": {
     "firstScan": "First Scan",

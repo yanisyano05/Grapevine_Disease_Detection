@@ -5,6 +5,8 @@ const KEYS = {
   SCAN_HISTORY: '@vineye:scan_history',
   LANGUAGE: '@vineye:language',
   LOCATION_PERMISSION_ASKED: '@vineye:location-permission-asked',
+  USER_PROFILE: '@vineye:user_profile',
+  NOTIFICATIONS_ENABLED: '@vineye:notifications_enabled',
 } as const;
 
 async function get<T>(key: string): Promise<T | null> {

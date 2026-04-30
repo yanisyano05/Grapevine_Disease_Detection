@@ -277,6 +277,11 @@
       "unfavorited": "Retiré des favoris",
       "deleted": "Scan supprimé"
     },
+    "status": {
+      "healthy": "Saine",
+      "infected": "Malade",
+      "uncertain": "Incertain"
+    },
     "empty": {
       "title": "Aucune plante scannée",
       "subtitle": "Scannez votre première plante pour commencer votre collection",
@@ -315,6 +320,11 @@
       "critical": "Critique",
       "moderate": "Modéré",
       "low": "Faible"
+    },
+    "riskLevel": {
+      "high": "Risque Élevé",
+      "medium": "Risque Modéré",
+      "low": "Risque Faible"
     },
     "healthyLeaf": {
       "title": "Reconnaître une feuille saine",
@@ -446,7 +456,18 @@
     "resetData": "Réinitialiser les données",
     "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser toutes les données ?",
     "days": "jours",
-    "xpTotal": "XP total"
+    "xpTotal": "XP total",
+    "level": "Niveau {{level}}",
+    "editTitle": "Modifier le profil",
+    "editButton": "Modifier",
+    "saveButton": "Enregistrer",
+    "saved": "Profil enregistré",
+    "invalidEmail": "Email invalide",
+    "nameField": "Nom",
+    "emailField": "Email",
+    "namePlaceholder": "Votre nom",
+    "emailPlaceholder": "votre@email.com",
+    "avatarLabel": "Avatar"
   },
   "settings": {
     "general": "Général",
@@ -462,7 +483,12 @@
     "referBody": "Partagez VinEye et gagnez des XP bonus pour chaque ami invité.",
     "developer": "Développeur",
     "seedTestData": "Ajouter des plantes fictives",
-    "seedDone": "5 plantes fictives ajoutées"
+    "seedDone": "5 plantes fictives ajoutées",
+    "notifications": {
+      "label": "Notifications push",
+      "enabled": "Notifications activées",
+      "disabled": "Notifications désactivées"
+    }
   },
   "achievements": {
     "firstScan": "Premier Scan",

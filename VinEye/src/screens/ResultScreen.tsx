@@ -17,38 +17,37 @@ import { ProgressCircle } from '@/components/ui/ProgressCircle';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/text';
 import { Badge } from '@/components/ui/Badge';
-import { getCepageById } from '@/utils/cepages';
 import { colors } from '@/theme/colors';
+import { CLASS_TO_LABEL_KEY, CLASS_TO_SLUG } from '@/services/ml/classes';
 import type { RootStackParamList } from '@/types/navigation';
-import type { DetectionResult } from '@/types/detection';
+import type { Detection, DetectionResult, DiseaseClass } from '@/types/detection';
 
 type ResultNav = NativeStackNavigationProp<RootStackParamList, 'Result'>;
 type ResultRoute = RouteProp<RootStackParamList, 'Result'>;
 
-function getResultColor(result: DetectionResult): string {
-  if (result === 'vine') return colors.success;
-  if (result === 'uncertain') return colors.warning;
-  return colors.danger;
+function getStatusColor(detection: Detection): string {
+  if (detection.diseaseClass === 'healthy' && detection.result === 'vine') return colors.success;
+  if (detection.result === 'vine') return colors.danger;
+  if (detection.result === 'uncertain') return colors.warning;
+  return colors.neutral[500];
 }
 
-function InfoCard({ icon, iconColor, label, value }: {
-  icon: keyof typeof Ionicons.glyphMap;
-  iconColor: string;
-  label: string;
-  value: string;
-}) {
-  return (
-    <View className="w-[48%] gap-1 rounded-[14px] bg-white p-[14px] shadow-sm" style={{ elevation: 1 }}>
-      <View
-        className="h-8 w-8 items-center justify-center rounded-lg"
-        style={{ backgroundColor: iconColor + '18' }}
-      >
-        <Ionicons name={icon} size={20} color={iconColor} />
-      </View>
-      <Text className="text-[11px] text-neutral-500">{label}</Text>
-      <Text className="text-[15px] font-semibold text-neutral-900">{value}</Text>
-    </View>
-  );
+function getStatusIcon(detection: Detection): keyof typeof Ionicons.glyphMap {
+  if (detection.diseaseClass === 'healthy' && detection.result === 'vine') return 'checkmark-circle';
+  if (detection.result === 'vine') return 'alert-circle';
+  if (detection.result === 'uncertain') return 'help-circle';
+  return 'close-circle';
+}
+
+function getStatusLabel(detection: Detection, t: (k: string) => string): string {
+  if (detection.diseaseClass === 'healthy' && detection.result === 'vine') {
+    return t('result.healthy');
+  }
+  if (detection.result === 'vine' && detection.diseaseClass) {
+    return t(CLASS_TO_LABEL_KEY[detection.diseaseClass]);
+  }
+  if (detection.result === 'uncertain') return t('result.uncertain');
+  return t('result.notVine');
 }
 
 export default function ResultScreen() {
@@ -57,8 +56,9 @@ export default function ResultScreen() {
   const route = useRoute<ResultRoute>();
   const { detection } = route.params;
 
-  const cepage = detection.cepageId ? getCepageById(detection.cepageId) : undefined;
-  const resultColor = getResultColor(detection.result);
+  const statusColor = getStatusColor(detection);
+  const statusIcon = getStatusIcon(detection);
+  const statusLabel = getStatusLabel(detection, t);
 
   const headerOpacity = useSharedValue(0);
   const headerScale = useSharedValue(0.8);
@@ -82,17 +82,18 @@ export default function ResultScreen() {
     transform: [{ translateY: cardTranslateY.value }],
   }));
 
-  const resultLabel =
-    detection.result === 'vine'
-      ? t('result.vineDetected')
-      : detection.result === 'uncertain'
-      ? t('result.uncertain')
-      : t('result.notVine');
+  const diseaseSlug = detection.diseaseSlug;
+  const showDiseaseCta = detection.result === 'vine' && diseaseSlug;
+  const showHealthy = detection.result === 'vine' && detection.diseaseClass === 'healthy';
+
+  function handleViewDisease() {
+    if (!diseaseSlug) return;
+    navigation.navigate('DiseaseDetail', { diseaseId: diseaseSlug.replace(/-/g, '_') });
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#FAFAFA]">
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-5 p-4 pb-12">
-        {/* Close button */}
         <TouchableOpacity
           className="h-8 w-8 items-center justify-center self-end rounded-full bg-neutral-200"
           onPress={() => navigation.goBack()}
@@ -100,91 +101,145 @@ export default function ResultScreen() {
           <Ionicons name="close" size={20} color={colors.neutral[700]} />
         </TouchableOpacity>
 
-        {/* Confidence circle */}
         <Animated.View className="items-center gap-3 py-4" style={headerStyle}>
           <ProgressCircle
             size={100}
             strokeWidth={8}
             progress={detection.confidence / 100}
-            color={resultColor}
-            trackColor={resultColor + '25'}
+            color={statusColor}
+            trackColor={statusColor + '25'}
           >
-            <Text className="text-[20px] font-extrabold" style={{ color: resultColor }}>
+            <Text className="text-[20px] font-extrabold" style={{ color: statusColor }}>
               {detection.confidence}%
             </Text>
           </ProgressCircle>
 
-          {/* Success message with checkmark */}
           <View className="flex-row items-center gap-1.5">
-            <Ionicons
-              name={detection.result === 'vine' ? 'checkmark-circle' : detection.result === 'uncertain' ? 'help-circle' : 'close-circle'}
-              size={20}
-              color={resultColor}
-            />
-            <Text className="text-[13px] font-medium" style={{ color: resultColor }}>
-              {resultLabel}
+            <Ionicons name={statusIcon} size={20} color={statusColor} />
+            <Text className="text-[13px] font-medium" style={{ color: statusColor }}>
+              {statusLabel}
             </Text>
           </View>
         </Animated.View>
 
-        {/* Plant name + tags + description + info grid */}
-        {cepage && detection.result === 'vine' && (
-          <Animated.View style={cardStyle}>
-            <Text className="mb-1 text-[24px] font-bold text-neutral-900">{cepage.name.fr}</Text>
-
-            {/* Tags */}
-            <View className="mb-5 flex-row flex-wrap gap-2">
-              <Badge
-                label={cepage.color === 'rouge' ? '🍷 Rouge' : cepage.color === 'blanc' ? '🥂 Blanc' : '🌸 Rosé'}
-                color="neutral"
-                size="sm"
-              />
-              {cepage.regions.slice(0, 2).map((r) => (
-                <Badge key={r} label={r} color="neutral" size="sm" />
-              ))}
-            </View>
-
-            {/* Description */}
-            <View className="mb-4 gap-1">
-              <Text className="text-[17px] font-semibold text-neutral-900">
-                {t('result.characteristics')}
-              </Text>
-              <Text className="text-[13px] leading-[22px] text-neutral-600">
-                {cepage.characteristics.fr}
-              </Text>
-            </View>
-
-            {/* 2x2 info grid */}
-            <View className="flex-row flex-wrap gap-[10px]">
-              <InfoCard icon="leaf" iconColor={colors.primary[700]} label={t('result.origin')} value={cepage.origin.fr} />
-              <InfoCard icon="water" iconColor="#2196F3" label={t('scanner.confidence')} value={`${detection.confidence}%`} />
-              <InfoCard icon="sunny" iconColor="#FF9800" label={t('result.regions')} value={cepage.regions[0] ?? '—'} />
-              <InfoCard icon="wine" iconColor="#E91E63" label="Type" value={cepage.color === 'rouge' ? 'Rouge' : cepage.color === 'blanc' ? 'Blanc' : 'Rosé'} />
-            </View>
+        {showHealthy && (
+          <Animated.View style={cardStyle} className="gap-2 rounded-[20px] bg-white p-5 shadow-sm">
+            <Text className="text-[20px] font-bold text-neutral-900">
+              {t('result.healthyTitle')}
+            </Text>
+            <Text className="text-[13px] leading-[22px] text-neutral-600">
+              {t('result.healthyMessage')}
+            </Text>
           </Animated.View>
         )}
 
-        {/* Action buttons */}
+        {showDiseaseCta && !showHealthy && (
+          <Animated.View style={cardStyle}>
+            <Text className="mb-1 text-[24px] font-bold text-neutral-900">
+              {statusLabel}
+            </Text>
+
+            <View className="mb-5 flex-row flex-wrap gap-2">
+              <Badge label={t('result.detectedDisease')} color="warning" size="sm" />
+              {detection.allProbabilities && (
+                <Badge
+                  label={`${detection.confidence}% ${t('result.confidence')}`}
+                  color="neutral"
+                  size="sm"
+                />
+              )}
+            </View>
+
+            {detection.allProbabilities && (
+              <View className="mb-4 gap-2 rounded-[14px] bg-white p-4 shadow-sm">
+                <Text className="text-[13px] font-semibold text-neutral-700">
+                  {t('result.allProbabilities')}
+                </Text>
+                {detection.allProbabilities
+                  .slice()
+                  .sort((a, b) => b.probability - a.probability)
+                  .map((p) => (
+                    <ProbabilityRow
+                      key={p.class}
+                      label={t(CLASS_TO_LABEL_KEY[p.class])}
+                      value={p.probability}
+                      isTop={p.class === detection.diseaseClass}
+                    />
+                  ))}
+              </View>
+            )}
+          </Animated.View>
+        )}
+
+        {detection.result === 'uncertain' && (
+          <Animated.View style={cardStyle} className="gap-2 rounded-[20px] bg-white p-5 shadow-sm">
+            <Text className="text-[20px] font-bold text-neutral-900">
+              {t('result.uncertainTitle')}
+            </Text>
+            <Text className="text-[13px] leading-[22px] text-neutral-600">
+              {t('result.uncertainMessage')}
+            </Text>
+          </Animated.View>
+        )}
+
         <Animated.View className="mt-2 gap-2" style={cardStyle}>
+          {showDiseaseCta && !showHealthy && (
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full rounded-[14px]"
+              onPress={handleViewDisease}
+            >
+              <Ionicons name="information-circle" size={18} color={colors.surface} />
+              <Text className="text-white">{t('result.viewDiseaseDetail')}</Text>
+            </Button>
+          )}
           <Button
-            variant="default"
+            variant={showDiseaseCta && !showHealthy ? 'ghost' : 'default'}
             size="lg"
             className="w-full rounded-[14px]"
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="scan" size={18} color={colors.surface} />
-            <Text className="text-white">{t('result.scanAgain')}</Text>
-          </Button>
-          <Button
-            variant="ghost"
-            size="lg"
-            className="w-full rounded-[14px]"
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={{ color: colors.primary[700] }}>{t('result.viewHistory')}</Text>
+            <Ionicons
+              name="scan"
+              size={18}
+              color={showDiseaseCta && !showHealthy ? colors.primary[700] : colors.surface}
+            />
+            <Text style={{ color: showDiseaseCta && !showHealthy ? colors.primary[700] : '#fff' }}>
+              {t('result.scanAgain')}
+            </Text>
           </Button>
         </Animated.View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function ProbabilityRow({ label, value, isTop }: { label: string; value: number; isTop: boolean }) {
+  const percent = Math.round(value * 100);
+  return (
+    <View className="gap-1">
+      <View className="flex-row items-center justify-between">
+        <Text
+          className={`text-[12px] ${isTop ? 'font-semibold text-neutral-900' : 'text-neutral-600'}`}
+        >
+          {label}
+        </Text>
+        <Text
+          className={`text-[12px] ${isTop ? 'font-semibold text-neutral-900' : 'text-neutral-500'}`}
+        >
+          {percent}%
+        </Text>
+      </View>
+      <View className="h-1.5 overflow-hidden rounded-full bg-neutral-200">
+        <View
+          className="h-full rounded-full"
+          style={{
+            width: `${percent}%`,
+            backgroundColor: isTop ? colors.primary[700] : colors.neutral[400],
+          }}
+        />
+      </View>
+    </View>
   );
 }

@@ -181,6 +181,7 @@ export default function MapScreen() {
       <View
         style={[styles.searchSlot, { paddingTop: insets.top + 8 }]}
         pointerEvents="box-none"
+        collapsable={false}
       >
         <FloatingSearch activeFilter={activeFilter} onFilterPress={handleFilterPress} />
       </View>
@@ -194,12 +195,16 @@ export default function MapScreen() {
         defaultIndex={isEmpty ? 1 : 0}
       />
 
-      <View style={styles.actionsSlot} pointerEvents="box-none">
+      <View
+        style={styles.actionsSlot}
+        pointerEvents="box-none"
+        collapsable={false}
+      >
         <FloatingActions
           onLocate={handleLocateUser}
           onLayers={handleComingSoon}
           onSatellite={handleComingSoon}
-          activeAction={activeFilter === "myLocation" ? "locate" : undefined}
+          activeAction={activeFilter === "myLocation" ? "locate" : "layers"}
         />
       </View>
     </View>
@@ -223,12 +228,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 16,
+    zIndex: 20,
+    elevation: 24,
   },
   actionsSlot: {
     position: "absolute",
     right: 16,
     top: "30%",
-    zIndex: 10,
-    elevation: 10,
+    zIndex: 20,
+    elevation: 24,
   },
 });

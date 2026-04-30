@@ -199,7 +199,7 @@ export const VineyardMapView = forwardRef<VineyardMapHandle, VineyardMapViewProp
     return (
       <WebView
         ref={webRef}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, { backgroundColor: "transparent" }]}
         originWhitelist={["*"]}
         source={{ html }}
         onMessage={handleMessage}

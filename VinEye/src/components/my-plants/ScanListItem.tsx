@@ -6,10 +6,13 @@ import { Image } from 'expo-image';
 import { Star, StarOff, Trash2 } from 'lucide-react-native';
 import { toast } from 'sonner-native';
 
+import { ConfidenceTile } from '@/components/my-plants/ConfidenceTile';
+import { StatusTag } from '@/components/my-plants/StatusTag';
 import { getCepageById } from '@/utils/cepages';
 import { hapticLight, hapticSuccess } from '@/services/haptics';
 import { colors } from '@/theme/colors';
-import type { ScanRecord } from '@/types/detection';
+import { getScanStatus } from '@/types/detection';
+import type { ScanRecord, ScanStatus } from '@/types/detection';
 
 interface ScanListItemProps {
   scan: ScanRecord;
@@ -18,12 +21,22 @@ interface ScanListItemProps {
   onDelete: () => void;
 }
 
+const STATUS_FILL: Record<ScanStatus, string> = {
+  healthy: colors.primary[700],
+  infected: '#E63946',
+  uncertain: '#F4A261',
+};
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const FALLBACK_IMAGE = require('../../../assets/logo.png');
+
 function formatTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 }
 
 function getPlantName(scan: ScanRecord, t: (key: string) => string): string {
+  if (scan.customName && scan.customName.trim().length > 0) return scan.customName.trim();
   if (scan.detection.cepageId) {
     const c = getCepageById(scan.detection.cepageId);
     if (c) return c.name.fr;
@@ -33,19 +46,12 @@ function getPlantName(scan: ScanRecord, t: (key: string) => string): string {
   return t('result.notVine');
 }
 
-function getStatusLabel(scan: ScanRecord, t: (key: string) => string): string {
-  if (scan.detection.result === 'vine') return t('result.vineDetected');
-  if (scan.detection.result === 'uncertain') return t('result.uncertain');
-  return t('result.notVine');
-}
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const FALLBACK_IMAGE = require('../../../assets/logo.png');
-
 export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: ScanListItemProps) {
   const { t } = useTranslation();
   const swipeableRef = useRef<Swipeable>(null);
   const isFav = scan.isFavorite === true;
+  const status = getScanStatus(scan);
+  const hasImage = !!scan.detection.imageUri;
 
   function handleFavorite() {
     onToggleFavorite();
@@ -118,12 +124,12 @@ export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: Scan
         }}
         activeOpacity={0.7}
       >
-        {/* Image */}
+        {/* Image (cover for real captures, contain for fallback) */}
         <View style={styles.imageWrapper}>
           <Image
-            source={scan.detection.imageUri ? { uri: scan.detection.imageUri } : FALLBACK_IMAGE}
-            style={styles.image}
-            contentFit={scan.detection.imageUri ? 'cover' : 'contain'}
+            source={hasImage ? { uri: scan.detection.imageUri } : FALLBACK_IMAGE}
+            style={hasImage ? styles.image : styles.fallbackImage}
+            contentFit={hasImage ? 'cover' : 'contain'}
             transition={200}
           />
         </View>
@@ -133,18 +139,26 @@ export function ScanListItem({ scan, onPress, onToggleFavorite, onDelete }: Scan
           <Text style={styles.plantName} numberOfLines={1}>
             {getPlantName(scan, t)}
           </Text>
-          <Text style={styles.status} numberOfLines={1}>
-            {getStatusLabel(scan, t)}
-          </Text>
+          <View style={styles.metaRow}>
+            <StatusTag status={status} />
+          </View>
           <Text style={styles.time}>{formatTime(scan.createdAt)}</Text>
         </View>
 
-        {/* Favorite star */}
-        {isFav && (
-          <View style={styles.starWrapper}>
-            <Star size={18} color="#FFB800" fill="#FFB800" />
-          </View>
-        )}
+        {/* Confidence score on the right */}
+        <View style={styles.rightSlot}>
+          <ConfidenceTile
+            confidence={scan.detection.confidence}
+            fillColor={STATUS_FILL[status]}
+            size={44}
+            scoreSize={13}
+          />
+          {isFav && (
+            <View style={styles.favStarMini}>
+              <Star size={14} color="#FFB800" fill="#FFB800" />
+            </View>
+          )}
+        </View>
       </TouchableOpacity>
     </Swipeable>
   );
@@ -168,33 +182,48 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#F8F9FB',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
+    width: 64,
+    height: 64,
+  },
+  fallbackImage: {
     width: 64,
     height: 64,
   },
   content: {
     flex: 1,
     marginLeft: 12,
-    gap: 2,
+    gap: 4,
   },
   plantName: {
     fontSize: 16,
     fontWeight: '700',
     color: '#1A1A1A',
   },
-  status: {
-    fontSize: 13,
-    color: '#8E8E93',
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   time: {
     fontSize: 12,
     color: '#8E8E93',
+    marginTop: 2,
   },
-  starWrapper: {
-    paddingLeft: 8,
+  rightSlot: {
+    alignItems: 'center',
+    gap: 4,
+    marginLeft: 8,
   },
-  // Swipe actions
+  favStarMini: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   actionsRow: {
     flexDirection: 'row',
     alignItems: 'center',

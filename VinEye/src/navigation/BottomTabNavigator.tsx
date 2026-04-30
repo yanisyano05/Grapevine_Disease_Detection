@@ -33,7 +33,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
         borderTopWidth: 1,
         borderTopColor: colors.neutral[300],
         paddingBottom: insets.bottom,
-        paddingTop: 8,
+        paddingTop: 6,
         alignItems: "flex-end",
       }}
     >
@@ -84,7 +84,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
                   justifyContent: "center",
                   marginTop: -25,
                   shadowColor: colors.primary[900],
-                  shadowOffset: { width: 0, height: 4 },
+                  shadowOffset: { width: 0, height: 0 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
                   elevation: 8,

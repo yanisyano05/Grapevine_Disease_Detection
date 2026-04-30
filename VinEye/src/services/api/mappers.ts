@@ -13,6 +13,7 @@ const DISEASE_SLUG_MAP: Record<string, string> = {
   botrytis: "botrytis",
   "flavescence-doree": "flavescence",
   "chlorose-ferrique": "chlorose",
+  "leaf-blight": "leafBlight",
 };
 
 const GUIDE_SLUG_MAP: Record<string, string> = {

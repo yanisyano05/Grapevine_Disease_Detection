@@ -7,6 +7,7 @@
 
 | Feature | Documentation | Status | Dernière MAJ |
 |---------|--------------|--------|-------------|
+| Build Android (CMake/Ninja) | [`android-build/`](android-build/README.md) | 🟡 Fix #1 ✅ / Fix #2 en cours | 2026-04-30 |
 
 
 ## Fichiers critiques globaux

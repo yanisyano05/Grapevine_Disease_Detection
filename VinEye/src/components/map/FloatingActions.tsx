@@ -19,7 +19,7 @@ export function FloatingActions({
   activeAction,
 }: FloatingActionsProps) {
   return (
-    <View style={styles.column}>
+    <View style={styles.column} collapsable={false}>
       <ActionButton active={activeAction === "layers"} onPress={onLayers}>
         <Layers
           size={22}
@@ -69,6 +69,7 @@ function ActionButton({ children, onPress, active }: ActionButtonProps) {
 const styles = StyleSheet.create({
   column: {
     gap: 12,
+    elevation: 24,
   },
   button: {
     width: 56,
@@ -80,12 +81,12 @@ const styles = StyleSheet.create({
   buttonInactive: {
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: "#E5E7EB",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 24,
   },
   buttonActive: {
     backgroundColor: colors.primary[900],
@@ -93,6 +94,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 24,
   },
 });

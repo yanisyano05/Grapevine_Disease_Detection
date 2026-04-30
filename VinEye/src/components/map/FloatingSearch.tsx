@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Search, MapPin } from "lucide-react-native";
 
 import { Text } from "@/components/ui/text";
+import { HeaderActionButtons } from "@/components/shared/HeaderActionButtons";
 import { colors } from "@/theme/colors";
 import { WINE_REGIONS } from "@/data/wineRegions";
 
@@ -21,33 +22,47 @@ interface FloatingSearchProps {
   onFilterPress?: (id: MapFilterId) => void;
 }
 
-export function FloatingSearch({ activeFilter, onFilterPress }: FloatingSearchProps) {
+export function FloatingSearch({
+  activeFilter,
+  onFilterPress,
+}: FloatingSearchProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
 
   const filters = [
-    { id: "myLocation", labelKey: "map.filters.myLocation", icon: "location" as const },
-    ...WINE_REGIONS.map((r) => ({ id: r.id, labelKey: r.labelKey, icon: undefined })),
+    {
+      id: "myLocation",
+      labelKey: "map.filters.myLocation",
+      icon: "location" as const,
+    },
+    ...WINE_REGIONS.map((r) => ({
+      id: r.id,
+      labelKey: r.labelKey,
+      icon: undefined,
+    })),
   ];
 
   return (
-    <View>
-      <View style={styles.searchBar}>
-        <Search size={20} color={colors.primary[800]} strokeWidth={2} />
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder={t("map.searchPlaceholder")}
-          placeholderTextColor={colors.neutral[500]}
-          style={styles.input}
-        />
-        <View style={styles.logoWrap}>
-          <Image
-            source={require("../../../assets/logo.png")}
-            style={styles.logo}
-            resizeMode="cover"
+    <View style={styles.root} collapsable={false}>
+      <View style={styles.searchRow}>
+        <View style={styles.searchBar}>
+          <Search size={20} color={colors.primary[800]} strokeWidth={2} />
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder={t("map.searchPlaceholder")}
+            placeholderTextColor={colors.neutral[500]}
+            style={styles.input}
           />
+          {/* <View style={styles.logoWrap}>
+            <Image
+              source={require("../../../assets/logo.png")}
+              style={styles.logo}
+              resizeMode="cover"
+            />
+          </View> */}
         </View>
+        <HeaderActionButtons />
       </View>
 
       <ScrollView
@@ -71,10 +86,7 @@ export function FloatingSearch({ activeFilter, onFilterPress }: FloatingSearchPr
                 />
               )}
               <Text
-                style={[
-                  styles.chipText,
-                  isActive && styles.chipTextActive,
-                ]}
+                style={[styles.chipText, isActive && styles.chipTextActive]}
               >
                 {t(filter.labelKey)}
               </Text>
@@ -87,11 +99,20 @@ export function FloatingSearch({ activeFilter, onFilterPress }: FloatingSearchPr
 }
 
 const styles = StyleSheet.create({
+  root: {
+    elevation: 24,
+  },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
   searchBar: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: 20,
+    borderRadius: 75,
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12,
@@ -99,7 +120,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 24,
     borderWidth: 1,
     borderColor: colors.neutral[200],
   },
@@ -140,13 +161,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
-    elevation: 2,
+    elevation: 24,
   },
   chipActive: {
     backgroundColor: colors.primary[800],
     borderColor: colors.primary[800],
     shadowOpacity: 0.12,
-    elevation: 4,
+    elevation: 24,
   },
   chipText: {
     fontSize: 13,

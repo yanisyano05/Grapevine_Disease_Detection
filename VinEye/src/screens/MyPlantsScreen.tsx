@@ -17,6 +17,7 @@ import { Search, ScanLine } from 'lucide-react-native';
 
 import { Text } from '@/components/ui/text';
 import { DateGroupAccordion } from '@/components/my-plants/DateGroupAccordion';
+import { HeaderActionButtons } from '@/components/shared/HeaderActionButtons';
 import { useHistory } from '@/hooks/useHistory';
 import { getCepageById } from '@/utils/cepages';
 import { groupScansByDate } from '@/utils/dateGrouping';
@@ -136,6 +137,7 @@ export default function MyPlantsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>{t('myPlants.title')}</Text>
+        <HeaderActionButtons />
       </View>
 
       {/* Search bar */}
@@ -205,9 +207,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FB',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 4,
+    gap: 12,
   },
   title: {
     fontSize: 28,
