@@ -15,15 +15,25 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vineye.app"
+      "bundleIdentifier": "com.vineye.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "VinEye needs camera access to detect grapevine diseases.",
+        "NSPhotoLibraryUsageDescription": "VinEye needs access to your photo library to import vine images."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#2D6A4F"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.vineye.app"
+      "package": "com.vineye.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./src/assets/images/icon.png"
@@ -33,7 +43,18 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "VinEye needs camera access to detect grapevines."
+          "cameraPermission": "VinEye needs camera access to detect grapevines.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "VinEye souhaite accéder à votre position pour géolocaliser vos scans sur la carte.",
+          "locationWhenInUsePermission": "VinEye souhaite accéder à votre position pour géolocaliser vos scans sur la carte.",
+          "isAndroidBackgroundLocationEnabled": false,
+          "isIosBackgroundLocationEnabled": false
         }
       ]
     ]
