@@ -1,16 +1,10 @@
 import { useState } from "react";
-import {
-  View,
-  TextInput,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Search, MapPin } from "lucide-react-native";
+import { MapPin } from "lucide-react-native";
 
 import { Text } from "@/components/ui/text";
+import SearchBar from "@/components/shared/SearchBar";
 import { HeaderActionButtons } from "@/components/shared/HeaderActionButtons";
 import { colors } from "@/theme/colors";
 import { WINE_REGIONS } from "@/data/wineRegions";
@@ -43,24 +37,14 @@ export function FloatingSearch({
   ];
 
   return (
-    <View style={styles.root} collapsable={false}>
-      <View style={styles.searchRow}>
-        <View style={styles.searchBar}>
-          <Search size={20} color={colors.primary[800]} strokeWidth={2} />
-          <TextInput
+    <View collapsable={false} style={styles.rootElevation}>
+      <View className="flex-row items-center gap-2.5">
+        <View className="flex-1">
+          <SearchBar
+            placeholder={t("map.searchPlaceholder")}
             value={query}
             onChangeText={setQuery}
-            placeholder={t("map.searchPlaceholder")}
-            placeholderTextColor={colors.neutral[500]}
-            style={styles.input}
           />
-          {/* <View style={styles.logoWrap}>
-            <Image
-              source={require("../../../assets/logo.png")}
-              style={styles.logo}
-              resizeMode="cover"
-            />
-          </View> */}
         </View>
         <HeaderActionButtons />
       </View>
@@ -68,7 +52,7 @@ export function FloatingSearch({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chipsRow}
+        contentContainerClassName="gap-2 pt-3 px-0.5 py-1"
       >
         {filters.map((filter) => {
           const isActive = activeFilter === filter.id;
@@ -76,17 +60,36 @@ export function FloatingSearch({
             <Pressable
               key={filter.id}
               onPress={() => onFilterPress?.(filter.id)}
-              style={[styles.chip, isActive && styles.chipActive]}
+              className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border"
+              style={[
+                styles.chipShadow,
+                isActive
+                  ? {
+                      backgroundColor: colors.primary[800],
+                      borderColor: colors.primary[800],
+                      shadowOpacity: 0.12,
+                      // elevation: 24,
+                    }
+                  : {
+                      backgroundColor: "#FFFFFF",
+                      borderColor: colors.primary[800],
+                    },
+              ]}
             >
               {filter.icon === "location" && (
                 <MapPin
-                  size={14}
-                  color={isActive ? "#FFFFFF" : colors.neutral[800]}
+                  size={16}
+                  color={isActive ? "#FFFFFF" : colors.primary[800]}
                   strokeWidth={2.2}
                 />
               )}
               <Text
-                style={[styles.chipText, isActive && styles.chipTextActive]}
+                className={
+                  isActive
+                    ? "text-[12px] font-semibold text-white"
+                    : "text-[12px] font-medium"
+                }
+                style={!isActive ? { color: colors.primary[800] } : undefined}
               >
                 {t(filter.labelKey)}
               </Text>
@@ -99,83 +102,13 @@ export function FloatingSearch({
 }
 
 const styles = StyleSheet.create({
-  root: {
+  rootElevation: {
     elevation: 24,
   },
-  searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 75,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 24,
-    borderWidth: 1,
-    borderColor: colors.neutral[200],
-  },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.neutral[900],
-    padding: 0,
-  },
-  logoWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: colors.primary[200],
-  },
-  logo: {
-    width: "100%",
-    height: "100%",
-  },
-  chipsRow: {
-    gap: 8,
-    paddingTop: 12,
-    paddingHorizontal: 2,
-  },
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#F0F0F0",
+  chipShadow: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
-    elevation: 24,
-  },
-  chipActive: {
-    backgroundColor: colors.primary[800],
-    borderColor: colors.primary[800],
-    shadowOpacity: 0.12,
-    elevation: 24,
-  },
-  chipText: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#2D2D2D",
-  },
-  chipTextActive: {
-    color: "#FFFFFF",
-    fontWeight: "600",
   },
 });

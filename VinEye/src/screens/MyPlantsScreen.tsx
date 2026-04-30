@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react';
 import {
   View,
   FlatList,
-  TextInput,
   TouchableOpacity,
   Alert,
   StyleSheet,
@@ -12,12 +11,12 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import { Search, ScanLine } from 'lucide-react-native';
+import { ScanLine } from 'lucide-react-native';
 
 import { Text } from '@/components/ui/text';
 import { DateGroupAccordion } from '@/components/my-plants/DateGroupAccordion';
 import { HeaderActionButtons } from '@/components/shared/HeaderActionButtons';
+import SearchBar from '@/components/shared/SearchBar';
 import { useHistory } from '@/hooks/useHistory';
 import { getCepageById } from '@/utils/cepages';
 import { groupScansByDate } from '@/utils/dateGrouping';
@@ -142,27 +141,11 @@ export default function MyPlantsScreen() {
 
       {/* Search bar */}
       <View style={styles.searchContainer}>
-        <View style={styles.searchWrapper}>
-          <Search size={20} color={colors.neutral[400]} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder={t('myPlants.searchPlaceholder')}
-            placeholderTextColor={colors.neutral[400]}
-            selectionColor={colors.primary[500]}
-            autoCorrect={false}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSearchQuery('')}
-              style={styles.clearBtn}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="close-circle" size={18} color={colors.neutral[400]} />
-            </TouchableOpacity>
-          )}
-        </View>
+        <SearchBar
+          placeholder={t('myPlants.searchPlaceholder')}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
       </View>
 
       {/* Content */}
@@ -224,28 +207,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 20,
     paddingVertical: 12,
-  },
-  searchWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F7F9',
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#EAECEF',
-    gap: 10,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '500',
-    color: colors.neutral[900],
-    paddingVertical: 0,
-    height: '100%',
-  },
-  clearBtn: {
-    padding: 4,
   },
   // List
   listContent: {
