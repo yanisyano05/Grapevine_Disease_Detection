@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
@@ -27,6 +27,7 @@ import {
   Share2,
   Trash2,
   AlertCircle,
+  Pencil,
 } from "lucide-react-native";
 import Animated, {
   useSharedValue,
@@ -37,6 +38,7 @@ import Animated, {
 import { toast } from "sonner-native";
 
 import { Text } from "@/components/ui/text";
+import { EditNameBottomSheet } from "@/components/my-plants/EditNameBottomSheet";
 import { useScanDetail } from "@/hooks/useScanDetail";
 import { getCepageById } from "@/utils/cepages";
 import { hapticSuccess } from "@/services/haptics";
@@ -94,8 +96,9 @@ export default function ScanDetailScreen({ route }: Props) {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { scan, loading, error, toggleFavorite, deleteScan } =
+  const { scan, loading, error, toggleFavorite, deleteScan, renameScan } =
     useScanDetail(scanId);
+  const [editingName, setEditingName] = useState(false);
 
   // Entry animation
   const contentY = useSharedValue(30);
@@ -160,11 +163,27 @@ export default function ScanDetailScreen({ route }: Props) {
   const isFav = scan.isFavorite === true;
   const hasImage = !!detection.imageUri;
 
-  const heroTitle = cepage
+  const fallbackTitle = cepage
     ? cepage.name.fr
     : detection.result === "vine"
       ? t("myPlants.detail.results.vine")
       : t("myPlants.detail.results.unidentified");
+  const heroTitle = scan.customName?.trim() || fallbackTitle;
+
+  function handleOpenRename() {
+    setEditingName(true);
+  }
+
+  function handleCloseRename() {
+    setEditingName(false);
+  }
+
+  async function handleRenameSave(newName: string) {
+    await renameScan(newName);
+    setEditingName(false);
+    hapticSuccess();
+    toast.success(t("myPlants.toasts.renamed"));
+  }
 
   async function handleToggleFavorite() {
     await toggleFavorite();
@@ -280,6 +299,13 @@ export default function ScanDetailScreen({ route }: Props) {
             color={isFav ? "#FFB800" : "#1A1A1A"}
             fill={isFav ? "#FFB800" : "none"}
           />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.floatingBtn, { top: insets.top + 8, right: 72 }]}
+          activeOpacity={0.8}
+          onPress={handleOpenRename}
+        >
+          <Pencil size={18} color="#1A1A1A" />
         </TouchableOpacity>
 
         {/* ── Content ── */}
@@ -440,6 +466,14 @@ export default function ScanDetailScreen({ route }: Props) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {editingName && (
+        <EditNameBottomSheet
+          initialName={scan.customName ?? ""}
+          onSave={handleRenameSave}
+          onClose={handleCloseRename}
+        />
+      )}
     </View>
   );
 }

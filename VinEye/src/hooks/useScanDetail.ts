@@ -38,5 +38,33 @@ export function useScanDetail(scanId: string) {
     await storage.set(storage.KEYS.SCAN_HISTORY, updated);
   }, [scanId]);
 
-  return { scan, loading, error, toggleFavorite, deleteScan, refetch: load };
+  const renameScan = useCallback(
+    async (newName: string) => {
+      const trimmed = newName.trim();
+      const all = await storage.get<ScanRecord[]>(storage.KEYS.SCAN_HISTORY);
+      if (!all) return;
+      const updated = all.map((s) =>
+        s.id === scanId
+          ? { ...s, customName: trimmed.length > 0 ? trimmed : undefined }
+          : s,
+      );
+      await storage.set(storage.KEYS.SCAN_HISTORY, updated);
+      setScan((prev) =>
+        prev
+          ? { ...prev, customName: trimmed.length > 0 ? trimmed : undefined }
+          : prev,
+      );
+    },
+    [scanId],
+  );
+
+  return {
+    scan,
+    loading,
+    error,
+    toggleFavorite,
+    deleteScan,
+    renameScan,
+    refetch: load,
+  };
 }
