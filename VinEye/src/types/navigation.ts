@@ -9,8 +9,15 @@ export type BottomTabParamList = {
   Map: { focusScanId?: string } | undefined;
 };
 
+export type OnboardingParamList = {
+  Welcome: undefined;
+  Terms: undefined;
+  AuthChoice: undefined;
+};
+
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: NavigatorScreenParams<OnboardingParamList>;
   Main: NavigatorScreenParams<BottomTabParamList>;
   Result: { detection: Detection };
   Search: { fromMap?: boolean } | undefined;

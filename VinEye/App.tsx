@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { PortalHost } from '@rn-primitives/portal';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { NetworkProvider } from '@/contexts/NetworkContext';
 import { NetworkToastWatcher } from '@/contexts/ToastContext';
 import RootNavigator from '@/navigation/RootNavigator';
@@ -22,14 +23,16 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <NetworkProvider>
-          <NetworkToastWatcher>
-            <StatusBar style="dark" translucent backgroundColor="transparent" />
-            <RootNavigator />
-            <PortalHost />
-            <Toaster position="bottom-center" offset={120} />
-          </NetworkToastWatcher>
-        </NetworkProvider>
+        <AuthProvider>
+          <NetworkProvider>
+            <NetworkToastWatcher>
+              <StatusBar style="dark" translucent backgroundColor="transparent" />
+              <RootNavigator />
+              <PortalHost />
+              <Toaster position="bottom-center" offset={120} />
+            </NetworkToastWatcher>
+          </NetworkProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

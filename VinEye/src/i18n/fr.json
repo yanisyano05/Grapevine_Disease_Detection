@@ -523,6 +523,76 @@
       "label": "Notifications push",
       "enabled": "Notifications activées",
       "disabled": "Notifications désactivées"
+    },
+    "language": {
+      "title": "Choisir la langue",
+      "subtitle": "Sélectionnez la langue de l'application."
+    },
+    "account": {
+      "sectionTitle": "Compte",
+      "guestBadge": "Invité",
+      "resetAction": "Recommencer avec un nouveau compte",
+      "resetConfirmTitle": "Recommencer ?",
+      "resetConfirmMessage": "Votre compte actuel sera supprimé. Vous serez redirigé vers l'écran de connexion pour créer un nouveau compte ou continuer en invité.",
+      "resetConfirmCancel": "Annuler",
+      "resetConfirmOk": "Oui, me déconnecter"
+    }
+  },
+  "auth": {
+    "errors": {
+      "nameTooShort": "Le nom doit faire au moins 2 caractères",
+      "nameTooLong": "Le nom est trop long (50 caractères max)",
+      "emailInvalid": "Email invalide"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue sur VinEye",
+      "subtitle": "L'IA au service de votre vigne. Identifiez les maladies en un scan.",
+      "feature1Title": "Scan rapide",
+      "feature1Desc": "Photographiez une feuille, obtenez un diagnostic en quelques secondes.",
+      "feature2Title": "Bibliothèque viticole",
+      "feature2Desc": "Maladies, cépages et conseils pratiques au creux de votre main.",
+      "feature3Title": "100% privé",
+      "feature3Desc": "Vos données restent sur votre téléphone, jamais envoyées sur internet.",
+      "cta": "Commencer"
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "checkboxLabel": "J'ai lu et j'accepte les conditions d'utilisation",
+      "continueButton": "Continuer",
+      "usage": {
+        "title": "1. Utilisation de l'application",
+        "body": "VinEye est une application d'aide à l'identification de maladies de la vigne. Les résultats fournis sont indicatifs et basés sur un modèle de vision par ordinateur. Ils ne remplacent pas un diagnostic professionnel par un œnologue ou un agronome certifié."
+      },
+      "dataCollected": {
+        "title": "2. Données collectées",
+        "body": "VinEye fonctionne 100% en local sur votre téléphone. Votre nom, email et historique de scans sont stockés uniquement sur votre appareil et ne sont jamais transmis sur internet. Si vous activez la géolocalisation lors d'un scan, ses coordonnées GPS sont enregistrées localement avec le scan pour vous permettre de retrouver vos plantes sur la carte."
+      },
+      "responsibility": {
+        "title": "3. Responsabilité",
+        "body": "Les diagnostics fournis par VinEye sont indicatifs. L'éditeur ne saurait être tenu responsable des décisions de traitement, d'arrachage, ou de gestion phytosanitaire prises sur la base de ces informations. Pour toute décision critique, consultez un professionnel."
+      },
+      "intellectualProperty": {
+        "title": "4. Propriété intellectuelle",
+        "body": "L'application VinEye, son design, ses textes, son modèle d'IA et son logo sont protégés par le droit de la propriété intellectuelle. Toute reproduction ou utilisation commerciale sans autorisation écrite est interdite."
+      },
+      "contact": {
+        "title": "5. Contact",
+        "body": "Pour toute question, suggestion ou signalement de bug, contactez l'équipe à l'adresse email indiquée dans la rubrique Aide. Les retours utilisateurs sont essentiels à l'amélioration continue de l'application."
+      }
+    },
+    "authChoice": {
+      "title": "Créez votre identité",
+      "subtitle": "Vos informations restent sur votre téléphone, elles ne sont pas envoyées sur internet.",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom ou pseudo",
+      "emailLabel": "Email",
+      "emailPlaceholder": "vous@exemple.com",
+      "createAccount": "Créer mon compte",
+      "or": "ou",
+      "continueAsGuest": "Continuer en invité",
+      "footerHint": "Vous pourrez changer d'identité plus tard dans les paramètres."
     }
   },
   "achievements": {

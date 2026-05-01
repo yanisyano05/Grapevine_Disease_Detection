@@ -523,6 +523,76 @@
       "label": "Push notifications",
       "enabled": "Notifications enabled",
       "disabled": "Notifications disabled"
+    },
+    "language": {
+      "title": "Choose language",
+      "subtitle": "Select the application language."
+    },
+    "account": {
+      "sectionTitle": "Account",
+      "guestBadge": "Guest",
+      "resetAction": "Restart with a new account",
+      "resetConfirmTitle": "Restart?",
+      "resetConfirmMessage": "Your current account will be deleted. You will be redirected to the login screen to create a new account or continue as a guest.",
+      "resetConfirmCancel": "Cancel",
+      "resetConfirmOk": "Yes, log me out"
+    }
+  },
+  "auth": {
+    "errors": {
+      "nameTooShort": "Name must be at least 2 characters",
+      "nameTooLong": "Name is too long (max 50 characters)",
+      "emailInvalid": "Invalid email"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to VinEye",
+      "subtitle": "AI for your vineyard. Identify diseases with a single scan.",
+      "feature1Title": "Quick scan",
+      "feature1Desc": "Photograph a leaf, get a diagnosis in seconds.",
+      "feature2Title": "Wine library",
+      "feature2Desc": "Diseases, grape varieties and practical guides at your fingertips.",
+      "feature3Title": "100% private",
+      "feature3Desc": "Your data stays on your phone, never sent to the internet.",
+      "cta": "Get started"
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "checkboxLabel": "I have read and accept the terms of use",
+      "continueButton": "Continue",
+      "usage": {
+        "title": "1. Use of the application",
+        "body": "VinEye is a tool to help identify grapevine diseases. Results are indicative and based on a computer vision model. They do not replace a professional diagnosis from a certified œnologist or agronomist."
+      },
+      "dataCollected": {
+        "title": "2. Data collected",
+        "body": "VinEye runs 100% locally on your phone. Your name, email and scan history are stored only on your device and are never transmitted to the internet. If you enable geolocation when scanning, the GPS coordinates are saved locally with the scan so you can find your plants on the map."
+      },
+      "responsibility": {
+        "title": "3. Responsibility",
+        "body": "Diagnostics provided by VinEye are indicative. The publisher cannot be held responsible for treatment, removal or phytosanitary management decisions made on the basis of this information. For critical decisions, consult a professional."
+      },
+      "intellectualProperty": {
+        "title": "4. Intellectual property",
+        "body": "The VinEye app, its design, texts, AI model and logo are protected by intellectual property law. Any reproduction or commercial use without written authorization is prohibited."
+      },
+      "contact": {
+        "title": "5. Contact",
+        "body": "For any question, suggestion or bug report, contact the team at the email address indicated in the Help section. User feedback is essential to the continuous improvement of the application."
+      }
+    },
+    "authChoice": {
+      "title": "Create your identity",
+      "subtitle": "Your information stays on your phone, it is not sent to the internet.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name or nickname",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "createAccount": "Create my account",
+      "or": "or",
+      "continueAsGuest": "Continue as guest",
+      "footerHint": "You can change your identity later in the settings."
     }
   },
   "achievements": {

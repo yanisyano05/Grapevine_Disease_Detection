@@ -1,3 +1,4 @@
+import { ActivityIndicator, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -11,16 +12,36 @@ import DiseaseDetailScreen from '@/screens/DiseaseDetailScreen';
 import GuideDetailScreen from '@/screens/GuideDetailScreen';
 import ScanDetailScreen from '@/screens/ScanDetailScreen';
 import BottomTabNavigator from './BottomTabNavigator';
+import OnboardingNavigator from './OnboardingNavigator';
 import linking from './linking';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors } from '@/theme/colors';
 import type { RootStackParamList } from '@/types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
+  const { isLoading, isOnboardingComplete } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#F8F9FB',
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary[700]} />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName={isOnboardingComplete ? 'Splash' : 'Onboarding'}
         screenOptions={{
           headerShown: false,
           animation: 'fade',
@@ -29,6 +50,9 @@ export default function RootNavigator() {
           gestureDirection: 'horizontal',
         }}
       >
+        {!isOnboardingComplete && (
+          <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
+        )}
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Main" component={BottomTabNavigator} />
         <Stack.Screen
