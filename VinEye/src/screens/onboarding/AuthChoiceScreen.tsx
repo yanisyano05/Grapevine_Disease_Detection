@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft } from 'lucide-react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { toast } from 'sonner-native';
 
 import { Text } from '@/components/ui/text';
 import { EmailNameForm } from '@/components/onboarding/EmailNameForm';
@@ -36,6 +37,10 @@ export default function AuthChoiceScreen() {
     try {
       await login(name, email);
       await completeOnboarding();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : t('auth.errors.network');
+      toast.error(t('auth.errors.signupFailed'), { description: message });
     } finally {
       setCreating(false);
     }

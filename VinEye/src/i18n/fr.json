@@ -439,7 +439,10 @@
     "frontWarningTitle": "Caméra avant activée",
     "frontWarningDescription": "Pour de meilleurs résultats, utilisez la caméra arrière.",
     "analyzingTitle": "Analyse en cours",
-    "analyzingSubtitle": "Identification de la plante…"
+    "analyzingSubtitle": "Identification de la plante…",
+    "pickFromGallery": "Choisir depuis la galerie",
+    "galleryComingSoonTitle": "Galerie bientôt disponible",
+    "galleryComingSoonDescription": "Cette fonctionnalité arrive dans une prochaine mise à jour."
   },
   "result": {
     "vineDetected": "Vigne détectée !",
@@ -547,7 +550,15 @@
     "errors": {
       "nameTooShort": "Le nom doit faire au moins 2 caractères",
       "nameTooLong": "Le nom est trop long (50 caractères max)",
-      "emailInvalid": "Email invalide"
+      "emailInvalid": "Email invalide",
+      "network": "Pas de connexion réseau",
+      "signupFailed": "Impossible de créer le compte"
+    },
+    "banned": {
+      "title": "Compte suspendu",
+      "description": "Votre compte a été suspendu : {{reason}}",
+      "descriptionNoReason": "Votre compte a été suspendu. Contactez l'administrateur pour plus d'informations.",
+      "cta": "Se déconnecter"
     }
   },
   "onboarding": {

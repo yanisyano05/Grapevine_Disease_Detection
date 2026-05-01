@@ -29,6 +29,16 @@ export async function getUser(): Promise<User | null> {
       email: typeof parsed.email === 'string' ? parsed.email : null,
       isGuest: parsed.isGuest,
       createdAt: parsed.createdAt,
+      role: parsed.role === 'ADMIN' ? 'ADMIN' : parsed.role === 'USER' ? 'USER' : undefined,
+      xp: typeof parsed.xp === 'number' ? parsed.xp : undefined,
+      level: typeof parsed.level === 'number' ? parsed.level : undefined,
+      banned: typeof parsed.banned === 'boolean' ? parsed.banned : undefined,
+      bannedReason:
+        typeof parsed.bannedReason === 'string'
+          ? parsed.bannedReason
+          : parsed.bannedReason === null
+            ? null
+            : undefined,
     };
   } catch {
     return null;

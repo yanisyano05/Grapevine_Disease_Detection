@@ -2,6 +2,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+import { BannedModal } from '@/components/auth/BannedModal';
 import SplashScreen from '@/screens/SplashScreen';
 import ResultScreen from '@/screens/ResultScreen';
 import SearchScreen from '@/screens/SearchScreen';
@@ -40,6 +41,7 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer linking={linking}>
+      <BannedModal />
       <Stack.Navigator
         initialRouteName={isOnboardingComplete ? 'Splash' : 'Onboarding'}
         screenOptions={{

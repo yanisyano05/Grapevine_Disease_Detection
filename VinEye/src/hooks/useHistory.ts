@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { storage } from '@/services/storage';
 import { buildMockScans } from '@/data/mockSeed';
+import { pushScan } from '@/services/api/scans';
 import type { ScanRecord } from '@/types/detection';
 
 export function useHistory() {
@@ -24,6 +25,10 @@ export function useHistory() {
       storage.set(storage.KEYS.SCAN_HISTORY, updated);
       return updated;
     });
+    // Best-effort sync to the backend so the scan shows up in the admin
+    // panel. Network errors are intentionally swallowed; the local state
+    // is the source of truth for the mobile UX.
+    void pushScan(record).catch(() => {});
   }, []);
 
   const deleteScan = useCallback(async (id: string) => {

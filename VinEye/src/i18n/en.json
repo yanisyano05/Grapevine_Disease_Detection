@@ -439,7 +439,10 @@
     "frontWarningTitle": "Front camera enabled",
     "frontWarningDescription": "For best results, use the rear camera.",
     "analyzingTitle": "Analyzing",
-    "analyzingSubtitle": "Identifying the plant…"
+    "analyzingSubtitle": "Identifying the plant…",
+    "pickFromGallery": "Pick from gallery",
+    "galleryComingSoonTitle": "Gallery coming soon",
+    "galleryComingSoonDescription": "This feature will be available in an upcoming update."
   },
   "result": {
     "vineDetected": "Vine detected!",
@@ -547,7 +550,15 @@
     "errors": {
       "nameTooShort": "Name must be at least 2 characters",
       "nameTooLong": "Name is too long (max 50 characters)",
-      "emailInvalid": "Invalid email"
+      "emailInvalid": "Invalid email",
+      "network": "No network connection",
+      "signupFailed": "Could not create account"
+    },
+    "banned": {
+      "title": "Account suspended",
+      "description": "Your account has been suspended: {{reason}}",
+      "descriptionNoReason": "Your account has been suspended. Please contact the administrator for more information.",
+      "cta": "Logout"
     }
   },
   "onboarding": {
