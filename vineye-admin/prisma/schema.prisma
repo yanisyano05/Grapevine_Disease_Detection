@@ -7,12 +7,12 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  // directUrl = connexion directe (port 5432) utilisée par `prisma migrate`.
-  // Le pooler Supabase (pgbouncer, port 6543) ne supporte pas certaines
-  // opérations DDL des migrations.
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  // Note Prisma 7+ : `url` et `directUrl` ne sont plus acceptés ici.
+  // - URL runtime (PrismaClient) : passée au constructeur dans lib/prisma.ts
+  //   via `new PrismaPg(process.env.DATABASE_URL!)` (driver adapter).
+  // - URL migrations (prisma migrate) : définie dans prisma.config.ts
+  //   via `datasource.url` (on y branche `DIRECT_URL` pour Supabase).
 }
 
 // ============================================
