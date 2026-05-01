@@ -1,9 +1,18 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" pour le dev local (Windows/macOS), "rhel-openssl-3.0.x" pour
+  // Vercel (Linux Lambda runtime). Sans ça, le client Prisma plante au runtime
+  // serverless avec "Could not find Query Engine binary".
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // directUrl = connexion directe (port 5432) utilisée par `prisma migrate`.
+  // Le pooler Supabase (pgbouncer, port 6543) ne supporte pas certaines
+  // opérations DDL des migrations.
+  directUrl = env("DIRECT_URL")
 }
 
 // ============================================
