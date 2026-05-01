@@ -18,6 +18,19 @@ human can audit usage and ban bad actors from a web dashboard.
 
 ---
 
+## Status
+
+| Platform | Status |
+|---|---|
+| **Android** | ✅ Working end-to-end on device (Samsung S23 validated). Native CMake build passes (~15 min), TFLite inference ~40 ms, scan-to-admin sync OK, ban handling OK, offline mode OK. |
+| **Android EAS Build** | ✅ Builds on Linux runners. The Windows-only `withCmakeFix` plugin auto-disables on `process.platform !== 'win32'` so it doesn't break cloud builds. |
+| **iOS** | ⚠️ Untested. Code is cross-platform (Expo + React Native) and `app.json` has the iOS permissions, but no `expo run:ios` or EAS iOS build has been done. Needs an Apple Developer account ($99/yr) for device testing. |
+| **Web** | ⛔ Not supported (uses native modules: TFLite, SecureStore, Camera). |
+
+Last validated: **2026-05-01**.
+
+---
+
 ## Quick start
 
 ### Prerequisites
@@ -193,6 +206,14 @@ workflow native builds for `VinEye`. See `~/.claude/rules/deployment.md` and
 - `VinEye`: build APK locally via `expo run:android --variant release` or
   use EAS Build. The on-device TFLite model is embedded in the bundle (no
   CDN cost, no network dependency for inference).
+- **EAS Build Android**: works out of the box. The Windows-specific
+  `withCmakeFix` plugin auto-skips on Linux runners. Run from inside the
+  `VinEye/` folder, NOT the monorepo root, otherwise EAS picks up the wrong
+  `slug`/`expo` config:
+  ```powershell
+  cd VinEye
+  npx eas-cli@latest build --platform android --profile preview
+  ```
 
 ---
 
