@@ -93,48 +93,10 @@ export default function ScannerScreen() {
     };
   }, []);
 
-  async function handleCapture() {
-    if (isAnalyzing) return;
-
-    if (!cameraRef.current) {
-      Alert.alert(t('common.error'), 'Camera not initialized');
-      return;
-    }
-    if (!isCameraReady) {
-      Alert.alert(t('common.error'), 'Camera is not ready yet — please wait.');
-      return;
-    }
-
-    await hapticLight();
-
-    shutterScale.value = withSequence(
-      withTiming(0.88, { duration: 100 }),
-      withTiming(1, { duration: 150 })
-    );
-
+  async function processImage(imageUri: string) {
     const interval = setInterval(() => {
       setLiveConfidence((prev) => Math.min(prev + Math.floor(Math.random() * 12), 85));
     }, 150);
-
-    let imageUri: string | undefined;
-    try {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.85,
-        skipProcessing: true,
-        exif: false,
-      });
-      imageUri = photo?.uri;
-      if (__DEV__) {
-        console.log('[Scanner] Captured photo:', imageUri);
-      }
-    } catch (err) {
-      clearInterval(interval);
-      setLiveConfidence(0);
-      const message = err instanceof Error ? err.message : String(err);
-      console.warn('[Scanner] takePictureAsync failed:', message);
-      Alert.alert(t('common.error'), `Capture failed: ${message}`);
-      return;
-    }
 
     const [detection, coords] = await Promise.all([
       analyze(imageUri),
@@ -170,6 +132,61 @@ export default function ScannerScreen() {
     await addScan(record);
     navigation.navigate('Result', { detection });
     setTimeout(() => setLiveConfidence(0), 500);
+  }
+
+  async function handleCapture() {
+    if (isAnalyzing) return;
+
+    if (!cameraRef.current) {
+      Alert.alert(t('common.error'), 'Camera not initialized');
+      return;
+    }
+    if (!isCameraReady) {
+      Alert.alert(t('common.error'), 'Camera is not ready yet — please wait.');
+      return;
+    }
+
+    await hapticLight();
+
+    shutterScale.value = withSequence(
+      withTiming(0.88, { duration: 100 }),
+      withTiming(1, { duration: 150 })
+    );
+
+    let imageUri: string | undefined;
+    try {
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.85,
+        skipProcessing: true,
+        exif: false,
+      });
+      imageUri = photo?.uri;
+      if (__DEV__) {
+        console.log('[Scanner] Captured photo:', imageUri);
+      }
+    } catch (err) {
+      setLiveConfidence(0);
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn('[Scanner] takePictureAsync failed:', message);
+      Alert.alert(t('common.error'), `Capture failed: ${message}`);
+      return;
+    }
+
+    if (!imageUri) {
+      setLiveConfidence(0);
+      return;
+    }
+
+    await processImage(imageUri);
+  }
+
+  async function handlePickFromGallery() {
+    // TODO: réactiver après rebuild natif Android (expo prebuild + run:android)
+    // pour ajouter `expo-image-picker` au build natif
+    await hapticLight();
+    toast.info(t('scanner.galleryComingSoonTitle'), {
+      description: t('scanner.galleryComingSoonDescription'),
+    });
   }
 
   if (!permission) {
@@ -252,12 +269,21 @@ export default function ScannerScreen() {
         )}
 
         <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between px-8 pb-12 pt-5">
-          <View
+          <TouchableOpacity
             className="h-11 w-11 items-center justify-center rounded-lg"
-            style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.15)',
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.3)',
+              opacity: isAnalyzing ? 0.4 : 1,
+            }}
+            onPress={handlePickFromGallery}
+            disabled={isAnalyzing}
+            accessibilityLabel={t('scanner.pickFromGallery')}
+            activeOpacity={0.7}
           >
-            <Ionicons name="image-outline" size={20} color="rgba(255,255,255,0.5)" />
-          </View>
+            <Ionicons name="image-outline" size={20} color={colors.surface} />
+          </TouchableOpacity>
 
           <Animated.View
             className="h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-white"

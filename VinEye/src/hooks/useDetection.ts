@@ -11,8 +11,21 @@ export function useDetection() {
     setIsAnalyzing(true);
     setError(null);
 
+    // Yield au scheduler pour que React commit le render `isAnalyzing=true`
+    // (le skeleton overlay) AVANT que runSync() ne bloque le JS thread ~500-1500ms.
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
+
+    const startedAt = Date.now();
     try {
       const detection = await runInference(imageUri);
+      // UX : maintenir le skeleton visible au moins 600ms pour éviter un flash
+      // perçu comme un bug ("rien ne se passe") quand l'inférence est très rapide.
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < 600) {
+        await new Promise((r) => setTimeout(r, 600 - elapsed));
+      }
       setLastDetection(detection);
       return detection;
     } catch (err) {
