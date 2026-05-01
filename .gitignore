@@ -4,10 +4,11 @@ __pycache__/
 *.egg-info/
 *.egg
 
-# Models (too large for git)
+# Models (too large for git) — except the production .tflite shipped with the app
 *.keras
 *.tflite
 *.h5
+!VinEye/src/assets/models/*.tflite
 
 # Environment
 .env
