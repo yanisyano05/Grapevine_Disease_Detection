@@ -34,6 +34,7 @@ const STATUS_COLOR: Record<ScanStatus, string> = {
   healthy: colors.primary[800],
   infected: "#E63946",
   uncertain: "#F4A261",
+  not_vine: "#9E9E9E",
 };
 
 interface MapMarker {

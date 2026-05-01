@@ -27,6 +27,12 @@ const STATUS_STYLE: Record<ScanStatus, { bg: string; fg: string; dot: string; la
     dot: '#F4A261',
     labelKey: 'myPlants.status.uncertain',
   },
+  not_vine: {
+    bg: '#EEEEEE',
+    fg: '#5A5A5A',
+    dot: '#9E9E9E',
+    labelKey: 'myPlants.status.notVine',
+  },
 };
 
 export function StatusTag({ status }: StatusTagProps) {

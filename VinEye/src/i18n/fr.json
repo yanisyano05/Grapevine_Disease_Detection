@@ -22,6 +22,14 @@
     "spreadMethod": "Propagation",
     "timeline": "Période d'activité"
   },
+  "network": {
+    "offlineToastTitle": "Mode hors-ligne",
+    "offlineToastDescription": "Données en cache utilisées",
+    "onlineToastTitle": "Connexion rétablie",
+    "homeOfflineModalTitle": "Aucune connexion",
+    "homeOfflineModalMessage": "Tu peux continuer à utiliser l'app avec les données locales. Pour des informations à jour (nouvelles maladies, guides…), reconnecte-toi à Internet.",
+    "homeOfflineModalAction": "Compris"
+  },
   "search": {
     "placeholder": "Que cherchez-vous ?",
     "placeholderMap": "Rechercher une de mes plantes...",
@@ -310,7 +318,8 @@
     "status": {
       "healthy": "Saine",
       "infected": "Malade",
-      "uncertain": "Incertain"
+      "uncertain": "Incertain",
+      "notVine": "Non vigne"
     },
     "empty": {
       "title": "Aucune plante scannée",
@@ -447,6 +456,8 @@
   "result": {
     "vineDetected": "Vigne détectée !",
     "notVine": "Ce n'est pas une vigne",
+    "notVineTitle": "Aucune vigne détectée",
+    "notVineMessage": "L'image ne semble pas montrer une vigne. Réessayez avec une feuille bien visible, nette et centrée.",
     "uncertain": "Résultat incertain",
     "uncertainTitle": "Analyse incertaine",
     "uncertainMessage": "Le modèle n'est pas suffisamment confiant. Prenez une photo plus nette, mieux éclairée, et centrée sur une feuille.",

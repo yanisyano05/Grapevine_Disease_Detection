@@ -28,6 +28,7 @@ const STATUS_FILL: Record<ScanStatus, string> = {
   healthy: colors.primary[700],
   infected: '#E63946',
   uncertain: '#F4A261',
+  not_vine: '#9E9E9E',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

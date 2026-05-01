@@ -91,6 +91,68 @@ export default function ResultScreen() {
     navigation.navigate('DiseaseDetail', { diseaseId: diseaseSlug.replace(/-/g, '_') });
   }
 
+  // Cas "pas une vigne" → layout centré verticalement avec message explicatif
+  if (detection.result === 'not_vine') {
+    return (
+      <SafeAreaView className="flex-1 bg-[#FAFAFA]">
+        <View className="flex-1 p-4">
+          <TouchableOpacity
+            className="h-8 w-8 items-center justify-center self-end rounded-full bg-neutral-200"
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="close" size={20} color={colors.neutral[700]} />
+          </TouchableOpacity>
+
+          <View className="flex-1 items-center justify-center gap-6">
+            <Animated.View className="items-center gap-3" style={headerStyle}>
+              <ProgressCircle
+                size={120}
+                strokeWidth={10}
+                progress={detection.confidence / 100}
+                color={statusColor}
+                trackColor={statusColor + '25'}
+              >
+                <Text className="text-[22px] font-extrabold" style={{ color: statusColor }}>
+                  {detection.confidence}%
+                </Text>
+              </ProgressCircle>
+              <View className="flex-row items-center gap-1.5">
+                <Ionicons name={statusIcon} size={20} color={statusColor} />
+                <Text className="text-[13px] font-medium" style={{ color: statusColor }}>
+                  {statusLabel}
+                </Text>
+              </View>
+            </Animated.View>
+
+            <Animated.View
+              style={cardStyle}
+              className="w-full max-w-[360px] gap-2 rounded-[20px] bg-white p-6 shadow-sm"
+            >
+              <Text className="text-center text-[20px] font-bold text-neutral-900">
+                {t('result.notVineTitle')}
+              </Text>
+              <Text className="text-center text-[13px] leading-[22px] text-neutral-600">
+                {t('result.notVineMessage')}
+              </Text>
+            </Animated.View>
+          </View>
+
+          <Animated.View style={cardStyle} className="pb-2">
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full rounded-[14px]"
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="scan" size={18} color={colors.surface} />
+              <Text className="text-white">{t('result.scanAgain')}</Text>
+            </Button>
+          </Animated.View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#FAFAFA]">
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-5 p-4 pb-12">

@@ -23,9 +23,11 @@ import {
   ScanLine,
   MapPin,
   Check,
+  HelpCircle,
 } from "lucide-react-native";
 
 import { Text } from "@/components/ui/text";
+import Skeleton from "@/components/ui/Skeleton";
 import { colors } from "@/theme/colors";
 import { getScanStatus } from "@/types/detection";
 import { getScanDisplayName } from "@/utils/scanDisplay";
@@ -33,6 +35,7 @@ import type { ScanRecord, ScanStatus } from "@/types/detection";
 
 interface MapBottomSheetProps {
   scans: ScanRecord[];
+  isLoading?: boolean;
   previewScan?: ScanRecord | null;
   onPreviewClose?: () => void;
   onScanPress?: (scan: ScanRecord) => void;
@@ -41,10 +44,28 @@ interface MapBottomSheetProps {
   defaultIndex?: number;
 }
 
+function ScanRowSkeleton({ isLast }: { isLast: boolean }) {
+  return (
+    <View
+      className={`flex-row items-center gap-3.5 py-3.5 ${
+        !isLast ? "border-b border-[#F5F5F5]" : ""
+      }`}
+    >
+      <Skeleton width={48} height={48} borderRadius={14} />
+      <View className="flex-1 gap-2">
+        <Skeleton width="70%" height={14} borderRadius={6} />
+        <Skeleton width="45%" height={11} borderRadius={5} />
+      </View>
+      <Skeleton width={32} height={32} borderRadius={999} />
+    </View>
+  );
+}
+
 export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
   function MapBottomSheet(
     {
       scans,
+      isLoading = false,
       previewScan,
       onPreviewClose,
       onScanPress,
@@ -245,12 +266,20 @@ export const MapBottomSheet = forwardRef<BottomSheet, MapBottomSheetProps>(
               <Text className="text-lg font-bold text-[#1B1B1B]">
                 {t("map.scannedPlants")}
               </Text>
-              <Text className="text-[13px] font-medium text-[#9E9E9E]">
-                {t("map.plantCount", { count: scans.length })}
-              </Text>
+              {!isLoading && (
+                <Text className="text-[13px] font-medium text-[#9E9E9E]">
+                  {t("map.plantCount", { count: scans.length })}
+                </Text>
+              )}
             </View>
 
-            {scans.length === 0 ? (
+            {isLoading && scans.length === 0 ? (
+              <View className="px-5">
+                {[0, 1, 2, 3].map((i) => (
+                  <ScanRowSkeleton key={i} isLast={i === 3} />
+                ))}
+              </View>
+            ) : scans.length === 0 ? (
               <View className="items-center px-8 py-6 gap-2">
                 <View className="w-16 h-16 rounded-2xl bg-[#E9F5EC] items-center justify-center mb-2">
                   <MapPin
@@ -307,6 +336,7 @@ const STATUS_TINT: Record<ScanStatus, { bg: string; fg: string }> = {
   healthy: { bg: colors.primary[100], fg: colors.primary[800] },
   infected: { bg: "#FCEBEB", fg: "#A32D2D" },
   uncertain: { bg: "#FAEEDA", fg: "#BA7517" },
+  not_vine: { bg: "#EEEEEE", fg: "#5A5A5A" },
 };
 
 interface ScanRowProps {
@@ -321,7 +351,13 @@ function ScanRow({ scan, isLast, onPress, onEdit }: ScanRowProps) {
   const status = getScanStatus(scan);
   const tint = STATUS_TINT[status];
   const Icon =
-    status === "healthy" ? Leaf : status === "infected" ? AlertTriangle : Clock;
+    status === "healthy"
+      ? Leaf
+      : status === "infected"
+        ? AlertTriangle
+        : status === "not_vine"
+          ? HelpCircle
+          : Clock;
 
   const displayName = getScanDisplayName(scan, t);
   const formattedDate = new Date(scan.createdAt).toLocaleDateString("fr-FR", {
@@ -374,3 +410,4 @@ function ScanRow({ scan, isLast, onPress, onEdit }: ScanRowProps) {
     </View>
   );
 }
+

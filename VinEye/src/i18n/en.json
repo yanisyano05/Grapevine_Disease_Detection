@@ -22,6 +22,14 @@
     "spreadMethod": "Spread method",
     "timeline": "Active period"
   },
+  "network": {
+    "offlineToastTitle": "Offline mode",
+    "offlineToastDescription": "Using cached data",
+    "onlineToastTitle": "Back online",
+    "homeOfflineModalTitle": "No connection",
+    "homeOfflineModalMessage": "You can keep using the app with local data. For up-to-date info (new diseases, guides…), reconnect to the Internet.",
+    "homeOfflineModalAction": "Got it"
+  },
   "search": {
     "placeholder": "What are you looking for?",
     "placeholderMap": "Search one of my plants...",
@@ -310,7 +318,8 @@
     "status": {
       "healthy": "Healthy",
       "infected": "Diseased",
-      "uncertain": "Uncertain"
+      "uncertain": "Uncertain",
+      "notVine": "Not a vine"
     },
     "empty": {
       "title": "No plants scanned yet",
@@ -447,6 +456,8 @@
   "result": {
     "vineDetected": "Vine detected!",
     "notVine": "This is not a vine",
+    "notVineTitle": "No grapevine detected",
+    "notVineMessage": "The image doesn't seem to show a grapevine. Try again with a clear, sharp, centered leaf.",
     "uncertain": "Uncertain result",
     "uncertainTitle": "Uncertain analysis",
     "uncertainMessage": "The model is not confident enough. Take a sharper, well-lit photo centered on a leaf.",

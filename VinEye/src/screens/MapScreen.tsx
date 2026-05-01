@@ -75,7 +75,7 @@ export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
   const route = useRoute<MapRoute>();
-  const { history, renameScan, reload } = useHistory();
+  const { history, isLoading: historyLoading, renameScan, reload } = useHistory();
   const { requestAndGetLocation } = useScanLocation();
   const mapRef = useRef<VineyardMapHandle>(null);
   const sheetRef = useRef<BottomSheet>(null);
@@ -281,6 +281,7 @@ export default function MapScreen() {
       <MapBottomSheet
         ref={sheetRef}
         scans={locatedScans}
+        isLoading={historyLoading}
         previewScan={previewScan}
         onPreviewClose={handlePreviewClose}
         onScanPress={handleScanPress}

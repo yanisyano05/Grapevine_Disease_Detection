@@ -35,9 +35,10 @@ export interface ScanRecord {
   } | null;
 }
 
-export type ScanStatus = 'healthy' | 'infected' | 'uncertain';
+export type ScanStatus = 'healthy' | 'infected' | 'uncertain' | 'not_vine';
 
 export function getScanStatus(scan: ScanRecord): ScanStatus {
+  if (scan.detection.result === 'not_vine') return 'not_vine';
   const cls = scan.detection.diseaseClass;
   if (cls === 'healthy') return 'healthy';
   if (cls === 'black_rot' || cls === 'esca' || cls === 'leaf_blight') return 'infected';
