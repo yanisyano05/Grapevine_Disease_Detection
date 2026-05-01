@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ScanLine, Trophy, Zap, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -45,6 +48,7 @@ const SEVERITY_STYLES: Record<string, string> = {
 
 export default function UserDetailClient({ user }: UserDetailProps) {
   const router = useRouter();
+  const [reasonDraft, setReasonDraft] = useState(user.bannedReason ?? "");
 
   async function handleUpdate(data: Record<string, unknown>) {
     try {
@@ -59,6 +63,13 @@ export default function UserDetailClient({ user }: UserDetailProps) {
     } catch {
       toast.error("Erreur lors de la mise a jour");
     }
+  }
+
+  async function handleReasonBlur() {
+    const trimmed = reasonDraft.trim();
+    const current = user.bannedReason ?? "";
+    if (trimmed === current) return;
+    await handleUpdate({ bannedReason: trimmed.length > 0 ? trimmed : null });
   }
 
   const STAT_ITEMS = [
@@ -164,6 +175,26 @@ export default function UserDetailClient({ user }: UserDetailProps) {
             onCheckedChange={(banned) => handleUpdate({ banned })}
           />
         </div>
+        {user.banned && (
+          <div className="space-y-2">
+            <Label htmlFor="bannedReason" className="text-[12px] text-stone-400">
+              Raison du bannissement
+            </Label>
+            <Textarea
+              id="bannedReason"
+              value={reasonDraft}
+              onChange={(e) => setReasonDraft(e.target.value)}
+              onBlur={handleReasonBlur}
+              placeholder="Visible par l&apos;utilisateur sur mobile"
+              maxLength={500}
+              rows={3}
+              className="bg-[oklch(0.12_0.005_60)] border-[oklch(0.22_0.005_60)] text-cream"
+            />
+            <p className="text-[11px] text-stone-600">
+              Affichee dans le mobile au prochain app boot. Maxi 500 caracteres.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Scan history */}
