@@ -69,6 +69,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
               activeOpacity={0.8}
               accessibilityRole="button"
               accessibilityLabel={label}
+              hitSlop={{ top: 50, bottom: 0, left: 12, right: 12 }}
               style={{
                 flex: 1,
                 alignItems: "center",
@@ -78,6 +79,7 @@ function MyCustomTabBar({ state, descriptors, navigation }: any) {
               }}
             >
               <View
+                pointerEvents="none"
                 style={{
                   position: "absolute",
                   bottom: 18,
