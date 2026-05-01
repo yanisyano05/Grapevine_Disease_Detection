@@ -1,5 +1,6 @@
+import { useCallback } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 
@@ -17,7 +18,17 @@ const MAX_RECENT = 3;
 export default function RecentScans() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
-  const { history, isLoading, toggleFavorite, deleteScan } = useHistory();
+  const { history, isLoading, toggleFavorite, deleteScan, reload } =
+    useHistory();
+
+  // useHistory() crée une instance state locale par consumer → l'addScan fait
+  // depuis Scanner ne remonte pas ici. On reload depuis AsyncStorage à chaque
+  // focus du tab Home pour récupérer les scans ajoutés ailleurs.
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload]),
+  );
 
   // Loading + pas encore de cache → skeleton
   if (isLoading && history.length === 0) {

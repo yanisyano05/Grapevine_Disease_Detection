@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   ScrollView,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,18 +27,33 @@ const { width } = Dimensions.get("window");
 const STAT_CARD_SIZE = (width - 56) / 2;
 
 const BENTO_STATS = [
-  { key: "scans", icon: "scan-outline", iconColor: "#F59E0B", label: "profile.totalScans" },
-  { key: "grapes", icon: "leaf-outline", iconColor: "#10B981", label: "profile.uniqueGrapes" },
-  { key: "streak", icon: "flame-outline", iconColor: "#EF4444", label: "profile.bestStreak" },
+  { key: "totalScans", icon: "scan-outline", iconColor: "#F59E0B", label: "profile.totalScans" },
+  { key: "uniqueGrapes", icon: "leaf-outline", iconColor: "#10B981", label: "profile.uniqueGrapes" },
+  { key: "bestStreak", icon: "flame-outline", iconColor: "#EF4444", label: "profile.bestStreak" },
   { key: "xp", icon: "star-outline", iconColor: "#6366F1", label: "profile.xpTotal" },
-];
+] as const;
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
-  const { progress } = useGameProgress();
-  const { profile, updateProfile } = useUserProfile();
+  const { progress, reload: reloadProgress } = useGameProgress();
+  const { profile, updateProfile, reload: reloadProfile } = useUserProfile();
   const [editing, setEditing] = useState(false);
+
+  // Refresh stats + profil quand le screen reprend le focus (post-scan, post-edit, etc.)
+  useFocusEffect(
+    useCallback(() => {
+      reloadProgress();
+      reloadProfile();
+    }, [reloadProgress, reloadProfile]),
+  );
+
+  const statValues: Record<string, number> = {
+    totalScans: progress.totalScans ?? 0,
+    uniqueGrapes: progress.uniqueGrapes?.length ?? 0,
+    bestStreak: progress.bestStreak ?? 0,
+    xp: progress.xp ?? 0,
+  };
 
   function handleBack() {
     if (navigation.canGoBack()) {
@@ -109,9 +124,7 @@ export default function ProfileScreen() {
                 <Ionicons name={stat.icon as keyof typeof Ionicons.glyphMap} size={22} color={stat.iconColor} />
               </View>
               <Text style={styles.statValue}>
-                {stat.key === "grapes"
-                  ? progress.uniqueGrapes?.length ?? 0
-                  : (progress[stat.key as keyof typeof progress] as number) ?? 0}
+                {statValues[stat.key] ?? 0}
               </Text>
               <Text style={styles.statLabel}>{t(stat.label)}</Text>
             </View>

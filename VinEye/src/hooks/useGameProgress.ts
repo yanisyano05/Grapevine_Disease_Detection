@@ -40,16 +40,16 @@ export function useGameProgress() {
   const [newlyUnlockedBadges, setNewlyUnlockedBadges] = useState<BadgeId[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadProgress();
-  }, []);
-
-  async function loadProgress() {
+  const loadProgress = useCallback(async () => {
     setIsLoading(true);
     const saved = await storage.get<GameProgress>(storage.KEYS.GAME_PROGRESS);
     setProgress(saved ?? INITIAL_PROGRESS);
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    loadProgress();
+  }, [loadProgress]);
 
   const processDetection = useCallback(async (detection: Detection): Promise<number> => {
     let xpEarned = 0;
