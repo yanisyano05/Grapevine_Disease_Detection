@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -8,6 +9,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import type { RootStackParamList } from "@/types/navigation";
 import { useDiseases } from "@/hooks/useDiseases";
 import { useGuides } from "@/hooks/useGuides";
+import { useNetwork } from "@/contexts/NetworkContext";
 import SearchHeader from "@/components/home/SearchHeader";
 import SearchSection from "@/components/home/SearchSection";
 import SectionHeader from "@/components/home/components/homeheader";
@@ -15,12 +17,19 @@ import FrequentDiseasesHorizontal from "@/components/home/FrequentDiseasesHorizo
 // import SeasonAlert from "@/components/home/SeasonAlert"; // TODO: réactiver quand la page Notifications sera de retour
 import PracticalGuides from "@/components/home/PracticalGuides";
 import RecentScans from "@/components/home/RecentScans";
+import { OfflineNoticeModal } from "@/components/ui/OfflineNoticeModal";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const ENTER_DURATION = 420;
+// Reanimated v4 : un `entering` avec delay 0 sur un nœud fraîchement monté peut
+// rester invisible (l'anim démarre avant que le layout soit prêt). On garantit
+// au minimum 60ms pour que la 1re vue rende toujours.
 function entering(delay: number) {
-  return FadeInDown.delay(delay).duration(ENTER_DURATION).springify().damping(16);
+  return FadeInDown.delay(Math.max(delay, 60))
+    .duration(ENTER_DURATION)
+    .springify()
+    .damping(16);
 }
 
 export default function HomeScreen() {
@@ -28,6 +37,28 @@ export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { data: diseases, isLoading: diseasesLoading } = useDiseases();
   const { data: guides, isLoading: guidesLoading } = useGuides();
+  const { isConnected } = useNetwork();
+
+  // Modal "Connexion requise" affichée 1× par session offline.
+  // Reset du flag quand l'utilisateur se reconnecte → si il repart offline,
+  // la modal se réaffichera la prochaine fois qu'il atteint Home.
+  const [offlineModalOpen, setOfflineModalOpen] = useState(false);
+  const dismissedThisOfflineSessionRef = useRef(false);
+
+  useEffect(() => {
+    if (isConnected) {
+      dismissedThisOfflineSessionRef.current = false;
+      return;
+    }
+    if (!dismissedThisOfflineSessionRef.current) {
+      setOfflineModalOpen(true);
+    }
+  }, [isConnected]);
+
+  function handleCloseOfflineModal() {
+    setOfflineModalOpen(false);
+    dismissedThisOfflineSessionRef.current = true;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#FAFAFA]" edges={["top"]}>
@@ -76,6 +107,11 @@ export default function HomeScreen() {
 
         <View className="h-8" />
       </ScrollView>
+
+      <OfflineNoticeModal
+        visible={offlineModalOpen}
+        onClose={handleCloseOfflineModal}
+      />
     </SafeAreaView>
   );
 }

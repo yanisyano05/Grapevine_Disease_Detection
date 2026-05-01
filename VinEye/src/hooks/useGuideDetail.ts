@@ -3,6 +3,7 @@ import { fetchGuideBySlug } from "@/services/api/guides";
 import { mapApiGuideToLocal } from "@/services/api/mappers";
 import { cacheGet, cacheSet } from "@/services/cache/cacheManager";
 import { getGuideById, type Guide } from "@/data/guides";
+import { useNetwork } from "@/contexts/NetworkContext";
 
 type DataSource = "api" | "cache" | "local";
 
@@ -14,6 +15,7 @@ interface UseGuideDetailResult {
 }
 
 export function useGuideDetail(guideId: string): UseGuideDetailResult {
+  const { isConnected } = useNetwork();
   const [guide, setGuide] = useState<Guide | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,22 @@ export function useGuideDetail(guideId: string): UseGuideDetailResult {
         setIsLoading(false);
       }
 
-      // 2. Fetch from API
+      // 2. Si offline → on n'attaque pas le réseau (sinon timeout 10s = "infinite loading"
+      // perçu par l'utilisateur). Fallback immédiat sur le cache déjà set ci-dessus,
+      // ou les données locales bundlées si pas de cache.
+      if (!isConnected) {
+        if (!cached && mountedRef.current) {
+          const local = getGuideById(guideId);
+          if (local) {
+            setGuide(local);
+            setSource("local");
+          }
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      // 3. Fetch from API (en ligne uniquement)
       const slug = guideId.replace(/_/g, "-");
       const result = await fetchGuideBySlug(slug);
 
@@ -60,7 +77,7 @@ export function useGuideDetail(guideId: string): UseGuideDetailResult {
 
     load();
     return () => { mountedRef.current = false; };
-  }, [guideId]);
+  }, [guideId, isConnected]);
 
   return { guide, isLoading, error, source };
 }
