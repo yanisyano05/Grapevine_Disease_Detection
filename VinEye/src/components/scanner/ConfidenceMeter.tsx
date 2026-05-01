@@ -23,6 +23,7 @@ function getConfidenceColor(confidence: number): string {
 export function ConfidenceMeter({ confidence }: ConfidenceMeterProps) {
   const { t } = useTranslation();
   const animatedWidth = useSharedValue(0);
+  const barColor = getConfidenceColor(confidence);
 
   useEffect(() => {
     animatedWidth.value = withTiming(confidence / 100, { duration: 500 });
@@ -30,16 +31,14 @@ export function ConfidenceMeter({ confidence }: ConfidenceMeterProps) {
 
   const barStyle = useAnimatedStyle(() => ({
     width: `${animatedWidth.value * 100}%`,
-    backgroundColor: getConfidenceColor(confidence),
+    backgroundColor: barColor,
   }));
 
   return (
     <View style={styles.container}>
       <View style={styles.labelRow}>
         <Text style={styles.label}>{t('scanner.confidence')}</Text>
-        <Text style={[styles.value, { color: getConfidenceColor(confidence) }]}>
-          {confidence}%
-        </Text>
+        <Text style={[styles.value, { color: barColor }]}>{confidence}%</Text>
       </View>
       <View style={styles.track}>
         <Animated.View style={[styles.bar, barStyle]} />

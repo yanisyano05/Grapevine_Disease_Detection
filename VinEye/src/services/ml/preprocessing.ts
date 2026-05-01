@@ -1,7 +1,9 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as jpeg from 'jpeg-js';
 
-export const MODEL_INPUT_SIZE = 224;
+// Le modèle Python a été entraîné en 256×256 (MobileNetV2).
+// Toute modification doit rester synchronisée avec l'export TFLite.
+export const MODEL_INPUT_SIZE = 256;
 
 export async function preprocessImage(uri: string): Promise<Float32Array> {
   const resized = await manipulateAsync(

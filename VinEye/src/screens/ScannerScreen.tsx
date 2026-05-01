@@ -12,11 +12,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner-native';
 
 import { CameraOverlay } from '@/components/scanner/CameraOverlay';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/Button';
+import Skeleton from '@/components/ui/Skeleton';
 import { useDetection } from '@/hooks/useDetection';
+import { loadModel } from '@/services/tflite/model';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import { useHistory } from '@/hooks/useHistory';
 import { useScanLocation } from '@/hooks/useScanLocation';
@@ -41,7 +44,20 @@ export default function ScannerScreen() {
   const { requestAndGetLocation } = useScanLocation();
   const [liveConfidence, setLiveConfidence] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [facing, setFacing] = useState<'back' | 'front'>('back');
   const cameraRef = useRef<CameraView>(null);
+
+  async function handleToggleFacing() {
+    if (isAnalyzing) return;
+    await hapticLight();
+    const next = facing === 'back' ? 'front' : 'back';
+    setFacing(next);
+    if (next === 'front') {
+      toast.info(t('scanner.frontWarningTitle'), {
+        description: t('scanner.frontWarningDescription'),
+      });
+    }
+  }
 
   const shutterScale = useSharedValue(1);
   const shutterStyle = useAnimatedStyle(() => ({
@@ -53,6 +69,29 @@ export default function ScannerScreen() {
       requestPermission();
     }
   }, [permission, requestPermission]);
+
+  // Préchargement du modèle TFLite dès le mount du Scanner — évite de bloquer
+  // la 1ère capture par le download/decode du modèle (~1-2s).
+  useEffect(() => {
+    let cancelled = false;
+    loadModel()
+      .then((ok) => {
+        if (cancelled) return;
+        if (!ok) {
+          console.warn('[Scanner] Model preload failed — fallback mock will be used');
+        } else if (__DEV__) {
+          console.log('[Scanner] Model preloaded');
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.warn('[Scanner] Model preload error:', err);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleCapture() {
     if (isAnalyzing) return;
@@ -164,7 +203,7 @@ export default function ScannerScreen() {
         ref={cameraRef}
         className="flex-1"
         style={{ flex: 1 }}
-        facing="back"
+        facing={facing}
         onCameraReady={() => setIsCameraReady(true)}
         onMountError={(e) => {
           console.warn('[Scanner] Camera mount error:', e);
@@ -190,6 +229,27 @@ export default function ScannerScreen() {
         </SafeAreaView>
 
         <CameraOverlay isScanning={isAnalyzing} confidence={liveConfidence} />
+
+        {isAnalyzing && (
+          <View
+            className="absolute inset-0 z-20 items-center justify-center px-8"
+            style={{ backgroundColor: 'rgba(20,20,20,0.96)' }}
+          >
+            <View className="w-full max-w-[320px] items-center gap-4">
+              <Skeleton width={120} height={120} borderRadius={24} />
+              <Skeleton width="80%" height={24} borderRadius={8} />
+              <Skeleton width="60%" height={16} borderRadius={6} />
+            </View>
+            <View className="mt-8 items-center gap-1.5">
+              <Text className="text-white text-lg font-bold">
+                {t('scanner.analyzingTitle')}
+              </Text>
+              <Text className="text-white/70 text-sm">
+                {t('scanner.analyzingSubtitle')}
+              </Text>
+            </View>
+          </View>
+        )}
 
         <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between px-8 pb-12 pt-5">
           <View
@@ -224,7 +284,14 @@ export default function ScannerScreen() {
 
           <TouchableOpacity
             className="h-11 w-11 items-center justify-center rounded-full"
-            style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              opacity: isAnalyzing ? 0.4 : 1,
+            }}
+            onPress={handleToggleFacing}
+            disabled={isAnalyzing}
+            accessibilityLabel={t('scanner.flipCamera')}
+            activeOpacity={0.7}
           >
             <Ionicons name="camera-reverse-outline" size={24} color={colors.surface} />
           </TouchableOpacity>

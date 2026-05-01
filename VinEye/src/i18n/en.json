@@ -434,7 +434,12 @@
     "permissionRequired": "Camera permission required",
     "permissionMessage": "VinEye needs camera access to detect grapevines.",
     "grantPermission": "Grant camera access",
-    "identify": "Identify the plant"
+    "identify": "Identify the plant",
+    "flipCamera": "Flip camera",
+    "frontWarningTitle": "Front camera enabled",
+    "frontWarningDescription": "For best results, use the rear camera.",
+    "analyzingTitle": "Analyzing",
+    "analyzingSubtitle": "Identifying the plant…"
   },
   "result": {
     "vineDetected": "Vine detected!",
@@ -535,7 +540,7 @@
       "resetConfirmTitle": "Restart?",
       "resetConfirmMessage": "Your current account will be deleted. You will be redirected to the login screen to create a new account or continue as a guest.",
       "resetConfirmCancel": "Cancel",
-      "resetConfirmOk": "Yes, log me out"
+      "resetConfirmOk": "Logout"
     }
   },
   "auth": {

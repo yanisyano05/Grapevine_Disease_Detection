@@ -434,7 +434,12 @@
     "permissionRequired": "Permission caméra requise",
     "permissionMessage": "VinEye nécessite l'accès à votre caméra pour détecter les vignes.",
     "grantPermission": "Autoriser la caméra",
-    "identify": "Identifier la plante"
+    "identify": "Identifier la plante",
+    "flipCamera": "Inverser la caméra",
+    "frontWarningTitle": "Caméra avant activée",
+    "frontWarningDescription": "Pour de meilleurs résultats, utilisez la caméra arrière.",
+    "analyzingTitle": "Analyse en cours",
+    "analyzingSubtitle": "Identification de la plante…"
   },
   "result": {
     "vineDetected": "Vigne détectée !",
@@ -535,7 +540,7 @@
       "resetConfirmTitle": "Recommencer ?",
       "resetConfirmMessage": "Votre compte actuel sera supprimé. Vous serez redirigé vers l'écran de connexion pour créer un nouveau compte ou continuer en invité.",
       "resetConfirmCancel": "Annuler",
-      "resetConfirmOk": "Oui, me déconnecter"
+      "resetConfirmOk": "Logout"
     }
   },
   "auth": {

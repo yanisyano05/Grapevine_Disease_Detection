@@ -42,6 +42,7 @@
     },
     "plugins": [
       "./plugins/withCmakeFix",
+      "react-native-fast-tflite",
       "expo-localization",
       [
         "expo-camera",
