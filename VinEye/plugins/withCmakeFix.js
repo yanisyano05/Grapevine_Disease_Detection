@@ -71,6 +71,21 @@ function injectRootSubprojectsFix(buildGradle) {
 }
 
 module.exports = function withCmakeFix(config) {
+  // The fix is Windows-only: it hardcodes a Windows ninja.exe path and
+  // injects response-file flags that work around the Win32 MAX_PATH limit.
+  // On EAS Build (Linux) or macOS there's no path-too-long issue and the
+  // hardcoded ninja path doesn't exist, so we MUST skip the plugin.
+  if (process.platform !== "win32") {
+    if (process.env.EAS_BUILD || process.env.CI) {
+      console.log(
+        "[withCmakeFix] Skipping on non-Windows platform (" +
+          process.platform +
+          "). Native ninja from PATH will be used."
+      );
+    }
+    return config;
+  }
+
   config = withAppBuildGradle(config, (config) => {
     config.modResults.contents = injectAppCmakeFix(config.modResults.contents);
     return config;
