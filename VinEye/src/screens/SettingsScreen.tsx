@@ -18,9 +18,12 @@ import { toast } from "sonner-native";
 import i18n from "@/i18n";
 
 import { Text } from "@/components/ui/text";
+import { LanguagePickerModal, type LanguageCode } from "@/components/ui/LanguagePickerModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { colors } from "@/theme/colors";
 import { useGameProgress } from "@/hooks/useGameProgress";
 import { useHistory } from "@/hooks/useHistory";
+import { useAuth } from "@/contexts/AuthContext";
 import { storage } from "@/services/storage";
 import type { RootStackParamList } from "@/types/navigation";
 
@@ -42,8 +45,11 @@ export default function SettingsScreen() {
   const navigation = useNavigation<Nav>();
   const { progress, resetProgress } = useGameProgress();
   const { clearHistory, seedTestData } = useHistory();
+  const { user, resetAccount } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [langPickerOpen, setLangPickerOpen] = useState(false);
+  const [resetAccountOpen, setResetAccountOpen] = useState(false);
 
   useEffect(() => {
     storage
@@ -66,9 +72,15 @@ export default function SettingsScreen() {
     toast.success(t("settings.seedDone"));
   }
 
-  function handleLanguageToggle() {
-    const newLang = i18n.language === "fr" ? "en" : "fr";
-    i18n.changeLanguage(newLang);
+  function handleLanguagePress() {
+    setLangPickerOpen(true);
+  }
+
+  function handleLanguageSelect(code: LanguageCode) {
+    if (i18n.language !== code) {
+      i18n.changeLanguage(code);
+    }
+    setLangPickerOpen(false);
   }
 
   function handleReset() {
@@ -85,12 +97,29 @@ export default function SettingsScreen() {
     ]);
   }
 
+  function handleResetAccount() {
+    setResetAccountOpen(true);
+  }
+
+  async function handleConfirmReset() {
+    setResetAccountOpen(false);
+    await resetAccount();
+    // Le RootNavigator re-render avec le screen Onboarding monté ;
+    // on attend la frame suivante avant de reset la stack.
+    setTimeout(() => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Onboarding" }],
+      });
+    }, 50);
+  }
+
   const generalItems: MenuItem[] = [
     {
       icon: "globe-outline",
       label: t("profile.language"),
       rightText: i18n.language === "fr" ? "Français" : "English",
-      onPress: handleLanguageToggle,
+      onPress: handleLanguagePress,
     },
     // {
     //   icon: "notifications-outline",
@@ -280,6 +309,49 @@ export default function SettingsScreen() {
         </TouchableOpacity>
         */}
 
+        {/* Compte (current user + reset account) */}
+        <Text style={styles.sectionLabel}>{t("settings.account.sectionTitle")}</Text>
+        <View style={styles.menuCard}>
+          <View style={styles.accountRow}>
+            <View style={[styles.iconBox, { backgroundColor: "#E8F5E9" }]}>
+              <Ionicons name="person" size={20} color={colors.primary[700]} />
+            </View>
+            <View style={styles.accountInfo}>
+              <Text style={styles.accountName} numberOfLines={1}>
+                {user?.name ?? "—"}
+              </Text>
+              {user?.email ? (
+                <Text style={styles.accountEmail} numberOfLines={1}>
+                  {user.email}
+                </Text>
+              ) : null}
+            </View>
+            {user?.isGuest ? (
+              <View style={styles.guestBadge}>
+                <Text style={styles.guestBadgeText}>
+                  {t("settings.account.guestBadge")}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+          <View style={styles.divider} />
+          <TouchableOpacity
+            style={styles.menuRow}
+            activeOpacity={0.5}
+            onPress={handleResetAccount}
+          >
+            <View style={[styles.iconBox, { backgroundColor: "#FEF2F2" }]}>
+              <Ionicons name="refresh-outline" size={20} color="#EF4444" />
+            </View>
+            <Text style={[styles.menuLabel, styles.menuLabelDanger]}>
+              {t("settings.account.resetAction")}
+            </Text>
+            <View style={styles.menuRight}>
+              <ChevronRight size={16} color="#D1D1D6" strokeWidth={2} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
         {devItems.length > 0 && (
           <>
             <Text style={styles.sectionLabel}>{t("settings.developer")}</Text>
@@ -292,6 +364,24 @@ export default function SettingsScreen() {
         <Text style={styles.versionText}>VinEye • Version 1.0.0</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <LanguagePickerModal
+        visible={langPickerOpen}
+        current={i18n.language === "fr" ? "fr" : "en"}
+        onSelect={handleLanguageSelect}
+        onClose={() => setLangPickerOpen(false)}
+      />
+
+      <ConfirmDialog
+        visible={resetAccountOpen}
+        title={t("settings.account.resetConfirmTitle")}
+        message={t("settings.account.resetConfirmMessage")}
+        confirmLabel={t("settings.account.resetConfirmOk")}
+        cancelLabel={t("settings.account.resetConfirmCancel")}
+        variant="destructive"
+        onConfirm={handleConfirmReset}
+        onCancel={() => setResetAccountOpen(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -420,6 +510,39 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#F5F5F5",
     marginLeft: 60,
+  },
+  // Account section
+  accountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  accountInfo: {
+    flex: 1,
+  },
+  accountName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1A1A1A",
+  },
+  accountEmail: {
+    marginTop: 2,
+    fontSize: 12,
+    color: "#8E8E93",
+  },
+  guestBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: "#FFF4E5",
+  },
+  guestBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#E67E22",
+    letterSpacing: 0.3,
   },
   /* Styles du Referral card — gardés au cas où on réactive */
   referCard: {
