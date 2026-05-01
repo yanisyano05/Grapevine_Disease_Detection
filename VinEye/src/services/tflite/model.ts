@@ -29,10 +29,27 @@ import {
   softmax,
 } from '@/services/ml/preprocessing';
 
+type TensorDataType =
+  | 'float32'
+  | 'float16'
+  | 'int32'
+  | 'int64'
+  | 'uint8'
+  | 'int8'
+  | 'bool';
+
+type TensorInfo = {
+  name?: string;
+  dataType: TensorDataType;
+  shape: number[];
+};
+
+type TensorInput = Float32Array | Int32Array | Uint8Array | Int8Array;
+
 type FastTfliteModel = {
-  runSync: (
-    inputs: (Float32Array | Int32Array | Uint8Array)[],
-  ) => (Float32Array | Int32Array | Uint8Array)[];
+  inputs: TensorInfo[];
+  outputs: TensorInfo[];
+  runSync: (inputs: TensorInput[]) => TensorInput[];
 };
 
 let cachedModel: FastTfliteModel | null = null;
@@ -49,9 +66,17 @@ async function getModel(): Promise<FastTfliteModel | null> {
     // Path RELATIF (pas '@/') car require runtime ne résout pas les alias TS.
     const tflite = require('react-native-fast-tflite');
     const asset = require('../../assets/models/grapevine_v1.tflite');
-    const loaded: FastTfliteModel = await tflite.loadTensorflowModel(asset);
+    // 2e arg `delegates` OBLIGATOIRE même pour CPU (sinon native reçoit
+    // `undefined` et plante avec "Value is undefined, expected an Object").
+    const loaded: FastTfliteModel = await tflite.loadTensorflowModel(asset, []);
     cachedModel = loaded;
     console.log(`[TFLite] Model loaded in ${Date.now() - start}ms`);
+    try {
+      console.log('[TFLite] Inputs:', JSON.stringify(loaded.inputs));
+      console.log('[TFLite] Outputs:', JSON.stringify(loaded.outputs));
+    } catch {
+      // some versions expose these as getters that may not stringify
+    }
     return loaded;
   } catch (err) {
     console.error('[TFLite] Failed to load model:', err);
@@ -81,11 +106,14 @@ export async function runInference(imageUri?: string): Promise<Detection> {
 
   try {
     const t0 = Date.now();
-    const input = await preprocessImage(imageUri);
+    const inputType = model.inputs?.[0]?.dataType ?? 'float32';
+    const input = await preprocessImage(imageUri, inputType);
     const t1 = Date.now();
-    console.log(`[TFLite] Preprocess: ${t1 - t0}ms`);
+    console.log(
+      `[TFLite] Preprocess: ${t1 - t0}ms (dtype=${inputType}, len=${input.length})`,
+    );
 
-    const outputs = model.runSync([input]);
+    const outputs = runSyncWithFallbacks(model, input);
     const t2 = Date.now();
     console.log(
       `[TFLite] Inference: ${t2 - t1}ms (total: ${t2 - t0}ms)`,
@@ -96,10 +124,8 @@ export async function runInference(imageUri?: string): Promise<Detection> {
     }
 
     const raw = outputs[0];
-    const rawArr =
-      raw instanceof Float32Array
-        ? Array.from(raw)
-        : Array.from(raw as ArrayLike<number>);
+    const outputType = model.outputs?.[0]?.dataType ?? 'float32';
+    const rawArr = dequantizeOutput(raw, outputType);
     const probs = isProbabilityVector(rawArr) ? rawArr : softmax(rawArr);
 
     const idx = argmax(probs);
@@ -122,6 +148,61 @@ export async function runInference(imageUri?: string): Promise<Detection> {
     console.error('[TFLite] Inference failed:', err);
     return mockDetection(timestamp, imageUri);
   }
+}
+
+function runSyncWithFallbacks(
+  model: FastTfliteModel,
+  input: TensorInput,
+): TensorInput[] {
+  // react-native-fast-tflite v3 (Nitro) binds inputs through JSI as raw
+  // ArrayBuffers — passing a TypedArray view triggers
+  //   "TfliteModel.runSync(...): Object \"<dump>\""
+  // The underlying buffer works. Keep TypedArray as a fallback in case the
+  // binding ever flips back.
+  const attempts: { label: string; build: () => unknown }[] = [
+    { label: 'array-buffer', build: () => input.buffer },
+    { label: 'typed-array', build: () => input },
+  ];
+
+  let lastError: unknown = null;
+  for (const attempt of attempts) {
+    try {
+      const candidate = attempt.build();
+      return model.runSync([candidate as TensorInput]);
+    } catch (err) {
+      lastError = err;
+      if (__DEV__) {
+        console.warn(
+          `[TFLite] runSync attempt "${attempt.label}" failed:`,
+          err instanceof Error ? err.message : String(err),
+        );
+      }
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('runSync failed with all fallbacks');
+}
+
+function dequantizeOutput(
+  raw: TensorInput,
+  dtype: TensorDataType,
+): number[] {
+  // float outputs are already in [0,1] (after softmax) or logits.
+  if (dtype === 'float32' || dtype === 'float16') {
+    return Array.from(raw as Float32Array);
+  }
+  // Quantized outputs need a rough rescale. Without scale/zeroPoint metadata
+  // exposed we approximate: uint8 → /255, int8 → (v + 128)/255. Good enough
+  // for argmax (the relative order is preserved).
+  if (dtype === 'uint8') {
+    return Array.from(raw as Uint8Array, (v) => v / 255);
+  }
+  if (dtype === 'int8') {
+    return Array.from(raw as Int8Array, (v) => (v + 128) / 255);
+  }
+  return Array.from(raw as ArrayLike<number>);
 }
 
 function isProbabilityVector(values: number[]): boolean {

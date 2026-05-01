@@ -1,11 +1,24 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as jpeg from 'jpeg-js';
 
-// Le modèle Python a été entraîné en 256×256 (MobileNetV2).
-// Toute modification doit rester synchronisée avec l'export TFLite.
-export const MODEL_INPUT_SIZE = 256;
+// Le .tflite exporté attend [1, 224, 224, 3] (la shape par défaut MobileNetV2,
+// confirmée par model.inputs[0].shape sur device). Si tu réexportes le modèle
+// avec une autre shape, mets à jour cette constante en miroir — sinon le
+// preprocess produit un buffer de mauvaise taille et l'inférence tourne sur
+// des données décadrées (= prédictions aléatoires sans erreur visible).
+export const MODEL_INPUT_SIZE = 224;
 
-export async function preprocessImage(uri: string): Promise<Float32Array> {
+export type TfliteInputDType = 'float32' | 'float16' | 'uint8' | 'int8';
+
+export type TfliteInputArray =
+  | Float32Array
+  | Uint8Array
+  | Int8Array;
+
+export async function preprocessImage(
+  uri: string,
+  dtype: TfliteInputDType | string = 'float32',
+): Promise<TfliteInputArray> {
   const resized = await manipulateAsync(
     uri,
     [{ resize: { width: MODEL_INPUT_SIZE, height: MODEL_INPUT_SIZE } }],
@@ -27,15 +40,38 @@ export async function preprocessImage(uri: string): Promise<Float32Array> {
 
   const rgba = decoded.data;
   const pixelCount = MODEL_INPUT_SIZE * MODEL_INPUT_SIZE;
-  const input = new Float32Array(pixelCount * 3);
 
-  for (let i = 0; i < pixelCount; i++) {
-    input[i * 3 + 0] = rgba[i * 4 + 0] / 255;
-    input[i * 3 + 1] = rgba[i * 4 + 1] / 255;
-    input[i * 3 + 2] = rgba[i * 4 + 2] / 255;
+  // Quantized models keep the original 0-255 byte range.
+  if (dtype === 'uint8') {
+    const out = new Uint8Array(pixelCount * 3);
+    for (let i = 0; i < pixelCount; i++) {
+      out[i * 3 + 0] = rgba[i * 4 + 0];
+      out[i * 3 + 1] = rgba[i * 4 + 1];
+      out[i * 3 + 2] = rgba[i * 4 + 2];
+    }
+    return out;
   }
 
-  return input;
+  if (dtype === 'int8') {
+    const out = new Int8Array(pixelCount * 3);
+    for (let i = 0; i < pixelCount; i++) {
+      // shift to [-128, 127]
+      out[i * 3 + 0] = rgba[i * 4 + 0] - 128;
+      out[i * 3 + 1] = rgba[i * 4 + 1] - 128;
+      out[i * 3 + 2] = rgba[i * 4 + 2] - 128;
+    }
+    return out;
+  }
+
+  // Default float32 path: normalised to [0, 1] (matches the Keras
+  // preprocess_input used during training when rescale=1./255).
+  const out = new Float32Array(pixelCount * 3);
+  for (let i = 0; i < pixelCount; i++) {
+    out[i * 3 + 0] = rgba[i * 4 + 0] / 255;
+    out[i * 3 + 1] = rgba[i * 4 + 1] / 255;
+    out[i * 3 + 2] = rgba[i * 4 + 2] / 255;
+  }
+  return out;
 }
 
 function base64ToBytes(base64: string): Uint8Array {
