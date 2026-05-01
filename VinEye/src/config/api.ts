@@ -7,7 +7,7 @@ import { Platform } from "react-native";
 
 function getBaseUrl(): string {
   if (!__DEV__) {
-    return "https://vineye-api.example.com/api/mobile";
+    return "https://vineye-api.yuxdev.fr/api/mobile";
   }
 
   // Expo expose l'IP du PC dev via hostUri (ex: "192.168.1.42:8081")
