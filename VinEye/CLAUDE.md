@@ -15,7 +15,7 @@ Cible des amateurs de vin/jardinage. Scan par camera, identification de maladies
 | Styling | **NativeWind v4** (Tailwind) prioritaire, StyleSheet pour ombres/gradients |
 | Icones | **lucide-react-native** (bottom bar) + **Ionicons** (reste de l'app) |
 | Animations | React Native Reanimated v4 |
-| IA | Mock JS pondéré (random 4 classes) — `react-native-fast-tflite` désinstallé temporairement, voir `services/tflite/model.ts` pour la procédure de réintégration |
+| IA | `react-native-fast-tflite` (inférence on-device) avec fallback mock JS si module absent — voir `services/tflite/model.ts` |
 | Persistance | AsyncStorage |
 | i18n | i18next + react-i18next (FR + EN) |
 | Camera | expo-camera |
@@ -193,11 +193,12 @@ pnpm ios            # Build iOS
 
 ## ML / inference on-device
 
-> ⚠️ **2026-04-30** : `react-native-fast-tflite` et `react-native-nitro-modules` ont été **désinstallés temporairement**. Le service `services/tflite/model.ts` retourne actuellement un **mock JS pondéré** (random sur les 4 classes). Raisons : modèle pas encore exporté en `.tflite` final + builds Android C++ instables sur Windows (CMake/Nitro headers). Procédure de réintégration documentée en tête de `services/tflite/model.ts`.
+> ✅ **2026-05-01** : `react-native-fast-tflite` + `react-native-nitro-modules` **réintégrés et build natif Android validé** (15m 17s, 0 erreur). Le `withCmakeFix` plugin propage maintenant les flags CMake (response files + ninja path) aux sous-projets natifs via `subprojects { plugins.withId('com.android.library') { ... } }` dans `android/build.gradle`. Voir `plugins/withCmakeFix.js`.
 
-Le modele MobileNetV2 (val_accuracy 99.93% — voir `docs/paper.md`) est destiné
-à être embarqué dans le bundle et exécuté en local via `react-native-fast-tflite`
-une fois la lib réintégrée.
+Le modele MobileNetV2 256×256 (4 classes — voir `docs/paper.md`) est embarqué
+dans `src/assets/models/grapevine_v1.tflite` et exécuté on-device via
+`react-native-fast-tflite`. Si le module natif est absent (Expo Go par ex.),
+fallback automatique sur un mock JS pondéré pour ne pas casser l'UX.
 
 ### Pipeline
 
@@ -273,8 +274,8 @@ le dev sans device natif.
 
 Détail complet : [`.claude/notes/android-build/README.md`](.claude/notes/android-build/README.md)
 
-- ✅ **CMake/Ninja path too long** — résolu via plugin Expo config `plugins/withCmakeFix.js` (référencé dans `app.json`) qui injecte response files + ninja 1.12.1 + `CMAKE_OBJECT_PATH_MAX=1024` à chaque prebuild
-- ✅ **`react-native-nitro-modules` headers manquants** — contourné en désinstallant `react-native-fast-tflite` (qui dépendait de Nitro). Mock JS en place. À réintégrer quand le `.tflite` sera prêt et idéalement via EAS Build pour éviter les soucis Windows.
+- ✅ **CMake/Ninja path too long sur `:app`** — résolu via plugin `plugins/withCmakeFix.js` qui injecte les flags response files + ninja 1.12.1 + `CMAKE_OBJECT_PATH_MAX=1024` dans `android/app/build.gradle.defaultConfig.externalNativeBuild`
+- ✅ **CMake/Ninja path too long sur les sous-projets natifs** (`react-native-fast-tflite`, `react-native-nitro-modules`, etc.) — résolu en étendant `withCmakeFix` pour modifier aussi `android/build.gradle` racine via `withProjectBuildGradle`. Le bloc injecté itère sur `subprojects` avec `plugins.withId('com.android.library')` qui n'agit que sur les modules Android (les gradle-plugins déjà évalués sont naturellement ignorés, évitant `Cannot run Project.afterEvaluate(Closure) when the project is already evaluated`).
 
 ### Setup dev Windows recommandé
 

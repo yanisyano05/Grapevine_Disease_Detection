@@ -37,7 +37,7 @@ Public cible : amateurs de vin, viticulteurs, jardiniers.
 | Base de donnees | AsyncStorage (local) | PostgreSQL via Prisma 7.6 | — |
 | Auth | — (local only) | Better Auth (JWT + sessions) | — |
 | Forms | — | Zod validation | — |
-| IA | TFLite (mock actuel) | — | CNN 4 blocs conv, 3.8M params |
+| IA | Mock JS (intégration TFLite native échouée — build CMake Windows) | — | CNN MobileNetV2, 256×256 |
 
 ---
 
@@ -72,7 +72,7 @@ Public cible : amateurs de vin, viticulteurs, jardiniers.
 | i18n (FR + EN) | Done | Toutes les cles traduites (maladies enrichies + guides sections + tips) |
 | Notifications | Partiel | UI uniquement, pas de push notifs |
 | Carte/Map | Partiel | Placeholder, geoloc non implementee |
-| Inference IA reelle | A faire | Mock actuellement (weighted random) |
+| Inference IA reelle | Bloque | Code mobile pret + libs installees, mais build CMake echoue sur Windows (path-too-long sur node_modules/react-native-fast-tflite). Voir Points critiques. |
 
 ### Dashboard admin — 95% complete
 
@@ -96,23 +96,34 @@ Public cible : amateurs de vin, viticulteurs, jardiniers.
 | Dataset | Done | 9 027 images, 4 classes (Black Rot, ESCA, Healthy, Leaf Blight) |
 | Entrainement | Done | 100 epochs, Adam lr=0.001, augmentation |
 | Precision modele | A ameliorer | ~30% (surapprentissage probable vers ESCA) |
-| Export TFLite | A faire | Conversion pour inference mobile |
-| Integration mobile | A faire | Remplacer le mock dans `services/tflite/model.ts` |
+| Export TFLite | Done | grapevine_v1.tflite (9 MB) embarque dans assets mobile |
+| Integration mobile | Bloque | Code mobile pret + libs installees, mais build CMake natif echoue (Windows path-too-long sur le sous-projet react-native-fast-tflite) |
 
 ---
 
 ## Points critiques
 
-### 1. Inference IA — BLOQUANT
+### 1. Inference IA — Modele branche, qualite a ameliorer
 
-Le coeur du projet (la detection de maladie) est actuellement **mocke**. Le fichier `VinEye/src/services/tflite/model.ts` retourne des resultats aleatoires ponderes (70% vigne, 20% incertain, 10% non-vigne).
+**Status** : modele branche et fonctionnel via `react-native-fast-tflite`. MAIS le
+modele actuel a ~25% de validation accuracy (overfitting massif diagnostique).
+Les predictions sont donc souvent erronees en conditions reelles.
 
-**Actions requises :**
-- Ameliorer la precision du modele (actuellement ~30%)
-- Exporter le modele en TFLite
-- Integrer les poids reels dans l'app mobile
-- Tester la performance sur device (latence, memoire)
-- Eventuellement : quantization / pruning pour optimiser
+**Stack mobile** :
+- `react-native-fast-tflite ^3.0.1` + `react-native-nitro-modules ^0.35.6`
+- Modele : `VinEye/src/assets/models/grapevine_v1.tflite` (9 MB, MobileNetV2 256x256, 4 classes)
+- Plugin Expo `withCmakeFix` pour les flags CMake (response files + ninja path)
+  qui evitent le bug "path too long" sur Windows lors du build C++ Nitro
+- Fallback gracieux : si chargement modele echoue, le service tombe sur
+  `mockDetection()` (random pondere) + log error console
+
+**Prochaines actions** :
+- Retrainer le modele (data augmentation, regularization, fix data leakage,
+  fine-tuning progressif de MobileNetV2)
+- Voir `docs/audit_report.md` (a produire) pour le diagnostic complet
+- Quand un nouveau .tflite sera pret, juste remplacer le fichier dans
+  `assets/models/grapevine_v1.tflite` (interface du service inchangee)
+- Eventuellement : quantization int8 post-training pour passer de 9 MB a ~2.5 MB
 
 ### 2. Stockage images — PARTIELLEMENT RESOLU
 
