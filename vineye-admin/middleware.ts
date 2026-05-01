@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -31,7 +32,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/users") ||
     pathname.startsWith("/alerts")
   ) {
-    const sessionCookie = request.cookies.get("better-auth.session_token");
+    // better-auth posts the cookie as `better-auth.session_token` over HTTP
+    // and `__Secure-better-auth.session_token` over HTTPS. Their helper
+    // resolves both variants for us.
+    const sessionCookie = getSessionCookie(request);
     if (!sessionCookie) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
