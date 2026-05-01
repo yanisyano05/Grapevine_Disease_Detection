@@ -30,20 +30,23 @@ type FetchOpts = {
 async function buildHeaders(
   base: HeadersInit,
   withAuth: boolean,
-): Promise<Headers> {
+): Promise<{ headers: Headers; tokenSent: boolean }> {
   const headers = new Headers(base);
+  let tokenSent = false;
   if (withAuth) {
     const token = await getToken();
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
+      tokenSent = true;
     }
   }
-  return headers;
+  return { headers, tokenSent };
 }
 
 async function handleResponse<T>(
   res: Response,
   opts: FetchOpts,
+  tokenSent: boolean,
 ): Promise<ApiResponse<T>> {
   if (!res.ok) {
     // Try to parse the body for richer error info (banned/bannedReason).
@@ -54,7 +57,10 @@ async function handleResponse<T>(
       // ignore
     }
 
-    if (res.status === 401) {
+    // Only treat 401 as "session lost" when we actually tried to authenticate.
+    // A 401 on an anonymous request is just the backend rejecting the call —
+    // it must not log the local user out (they may legitimately be a guest).
+    if (res.status === 401 && tokenSent) {
       emitAuthEvent({ type: "unauthorized" });
     } else if (
       res.status === 403 &&
@@ -127,13 +133,17 @@ export async function apiGet<T>(
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 
   try {
+    const { headers, tokenSent } = await buildHeaders(
+      { Accept: "application/json" },
+      !!opts.auth,
+    );
     const res = await fetch(url.toString(), {
       method: "GET",
-      headers: await buildHeaders({ Accept: "application/json" }, !!opts.auth),
+      headers,
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
-    return handleResponse<T>(res, opts);
+    return handleResponse<T>(res, opts, tokenSent);
   } catch (err) {
     clearTimeout(timeoutId);
     return { success: false, error: asApiError(err) };
@@ -150,17 +160,18 @@ export async function apiPost<T>(
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 
   try {
+    const { headers, tokenSent } = await buildHeaders(
+      { Accept: "application/json", "Content-Type": "application/json" },
+      !!opts.auth,
+    );
     const res = await fetch(url, {
       method: "POST",
-      headers: await buildHeaders(
-        { Accept: "application/json", "Content-Type": "application/json" },
-        !!opts.auth,
-      ),
+      headers,
       body: JSON.stringify(body),
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
-    return handleResponse<T>(res, opts);
+    return handleResponse<T>(res, opts, tokenSent);
   } catch (err) {
     clearTimeout(timeoutId);
     return { success: false, error: asApiError(err) };

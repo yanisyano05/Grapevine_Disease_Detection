@@ -1,5 +1,5 @@
 import { apiPost } from '@/services/api/client';
-import { getDeviceId } from '@/services/auth/tokenStorage';
+import { getDeviceId, getToken } from '@/services/auth/tokenStorage';
 import type { ScanRecord } from '@/types/detection';
 
 interface PushScanResponse {
@@ -17,6 +17,11 @@ interface PushScanResponse {
 // never blocks on this — failures are silent (offline, no account, etc.).
 // Confidence on the device is 0-100; the backend stores 0-1.
 export async function pushScan(record: ScanRecord) {
+  // Guests have no server account → no token → don't even try. Avoids
+  // spamming the backend with 401s and keeps the mobile UX silent.
+  const token = await getToken();
+  if (!token) return null;
+
   const deviceId = await getDeviceId();
 
   const body = {
