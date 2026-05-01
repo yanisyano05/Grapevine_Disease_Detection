@@ -90,7 +90,24 @@ export const scanSchema = z.object({
   deviceId: z.string().optional().nullable(),
 });
 
+// Mobile-specific schemas
+export const mobileAuthSyncSchema = z.object({
+  name: z.string().min(2).max(50).trim(),
+  email: z.string().email().max(255).toLowerCase().trim(),
+  deviceId: z.string().max(128).trim().optional().nullable(),
+});
+
+export const mobileScanCreateSchema = z.object({
+  confidence: z.number().min(0).max(1),
+  diseaseSlug: z.string().max(100).trim().optional().nullable(),
+  latitude: z.number().min(-90).max(90).optional().nullable(),
+  longitude: z.number().min(-180).max(180).optional().nullable(),
+  deviceId: z.string().max(128).trim().optional().nullable(),
+});
+
 export type DiseaseInput = z.infer<typeof diseaseSchema>;
 export type GuideInput = z.infer<typeof guideSchema>;
 export type AlertInput = z.infer<typeof alertSchema>;
 export type ScanInput = z.infer<typeof scanSchema>;
+export type MobileAuthSyncInput = z.infer<typeof mobileAuthSyncSchema>;
+export type MobileScanCreateInput = z.infer<typeof mobileScanCreateSchema>;
