@@ -231,6 +231,11 @@ embarqué dans `src/assets/models/grapevine_v1.tflite` et exécuté on-device vi
 `react-native-fast-tflite`. Si le module natif est absent (Expo Go par ex.),
 fallback automatique sur un mock JS pondéré pour ne pas casser l'UX.
 
+> **Note 2026-05-01** : le `.tflite` embarqué est l'export du `2026-03-23_11-55-09`
+> (5.1 MB), nettement plus précis sur des feuilles réelles que l'export initial
+> de 9.4 MB. Voir `src/assets/models/CHANGELOG.md` pour l'historique des swaps
+> et la procédure de rollback.
+
 ### Pipeline
 
 ```
