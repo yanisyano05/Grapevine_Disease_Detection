@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { ArrowRight, AlertTriangle } from "lucide-react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 import { Text } from "@/components/ui/text";
 import { colors } from "@/theme/colors";
@@ -48,6 +55,26 @@ export default function LargeDiseaseCard({
   const type = TYPE_TINT[disease.type];
   const severity = SEVERITY_TINT[disease.severity];
 
+  // Anim manuelle (useSharedValue + useEffect) plutôt que `entering={FadeInDown}`,
+  // car Reanimated v4 a un bug où la 1re anim entering d'une liste fraîchement
+  // re-renderée (skeleton → data) ne s'applique pas et le card reste invisible.
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+
+  useEffect(() => {
+    const delay = 60 + index * 90;
+    opacity.value = withDelay(delay, withTiming(1, { duration: 450 }));
+    translateY.value = withDelay(
+      delay,
+      withSpring(0, { damping: 16, stiffness: 120 }),
+    );
+  }, []);
+
+  const animStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   const cardRadius = compact ? 24 : 32;
   const cardClassName = compact
     ? "bg-white p-5 min-h-[220px] justify-between"
@@ -83,12 +110,7 @@ export default function LargeDiseaseCard({
   const arrowIconSize = compact ? 18 : 20;
 
   return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 90)
-        .duration(550)
-        .springify()
-        .damping(16)}
-    >
+    <Animated.View style={animStyle}>
       <Pressable
         onPress={onPress}
         className={cardClassName}

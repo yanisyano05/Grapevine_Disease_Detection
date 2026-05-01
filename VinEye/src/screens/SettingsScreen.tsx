@@ -23,6 +23,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { colors } from "@/theme/colors";
 import { useGameProgress } from "@/hooks/useGameProgress";
 import { useHistory } from "@/hooks/useHistory";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { storage } from "@/services/storage";
 import type { RootStackParamList } from "@/types/navigation";
@@ -40,11 +41,44 @@ interface MenuItem {
   onToggle?: (value: boolean) => void;
 }
 
+function StatTile({
+  icon,
+  tint,
+  value,
+  label,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  tint: string;
+  value: number;
+  label: string;
+}) {
+  return (
+    <View className="flex-1 bg-white rounded-2xl border border-[#F2F2F2] p-3 items-center gap-1.5">
+      <View
+        className="w-8 h-8 rounded-full items-center justify-center"
+        style={{ backgroundColor: `${tint}15` }}
+      >
+        <Ionicons name={icon} size={16} color={tint} />
+      </View>
+      <Text className="text-[18px] font-bold text-[#1A1A1A] leading-6">
+        {value}
+      </Text>
+      <Text
+        className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-wider text-center"
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
+    </View>
+  );
+}
+
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const { progress, resetProgress } = useGameProgress();
   const { clearHistory, seedTestData } = useHistory();
+  const { profile } = useUserProfile();
   const { user, resetAccount } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -250,6 +284,13 @@ export default function SettingsScreen() {
 
   const userLevel = progress?.level ?? 1;
   const userXp = progress?.xp ?? 0;
+  const totalScans = progress?.totalScans ?? 0;
+  const uniqueGrapes = progress?.uniqueGrapes?.length ?? 0;
+  const bestStreak = progress?.bestStreak ?? 0;
+  const heroName =
+    profile?.displayName?.trim() ||
+    user?.name?.trim() ||
+    t("settings.editProfile");
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
@@ -277,11 +318,17 @@ export default function SettingsScreen() {
           onPress={() => navigation.navigate("Profile")}
         >
           <View style={styles.avatarWrap}>
-            <Ionicons name="person" size={28} color="#FFFFFF" />
+            {profile?.avatar ? (
+              <Text style={styles.avatarEmoji}>{profile.avatar}</Text>
+            ) : (
+              <Ionicons name="person" size={28} color="#FFFFFF" />
+            )}
           </View>
           <View style={styles.profileText}>
-            <Text style={styles.profileName}>{t("settings.editProfile")}</Text>
-            <Text style={styles.profileMeta}>
+            <Text style={styles.profileName} numberOfLines={1}>
+              {heroName}
+            </Text>
+            <Text style={styles.profileMeta} numberOfLines={1}>
               {t("profile.level", { level: userLevel })} · {userXp} XP
             </Text>
           </View>
@@ -289,6 +336,28 @@ export default function SettingsScreen() {
             <ChevronRight size={20} color={colors.primary[800]} strokeWidth={2.4} />
           </View>
         </TouchableOpacity>
+
+        {/* Stats row — chiffres réels du joueur */}
+        <View className="flex-row gap-3 mb-6">
+          <StatTile
+            icon="scan-outline"
+            tint="#F59E0B"
+            value={totalScans}
+            label={t("profile.totalScans")}
+          />
+          <StatTile
+            icon="leaf-outline"
+            tint="#10B981"
+            value={uniqueGrapes}
+            label={t("profile.uniqueGrapes")}
+          />
+          <StatTile
+            icon="flame-outline"
+            tint="#EF4444"
+            value={bestStreak}
+            label={t("profile.bestStreak")}
+          />
+        </View>
 
         <Text style={styles.sectionLabel}>{t("settings.general")}</Text>
         {renderMenuGroup(generalItems)}
@@ -442,6 +511,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary[800],
     alignItems: "center",
     justifyContent: "center",
+  },
+  avatarEmoji: {
+    fontSize: 28,
+    lineHeight: 34,
+    textAlign: "center",
+    includeFontPadding: false,
   },
   profileText: { flex: 1, gap: 2 },
   profileName: {
