@@ -174,11 +174,13 @@ export default function BottomTabNavigator() {
         component={MyPlantsScreen}
         options={{ tabBarLabel: t("myPlants.tabLabel") }}
       />
-      <Tab.Screen
-        name="Map"
-        component={MapScreen}
-        options={{ tabBarLabel: t("common.map") }}
-      />
+      {Platform.OS !== "web" && (
+        <Tab.Screen
+          name="Map"
+          component={MapScreen}
+          options={{ tabBarLabel: t("common.map") }}
+        />
+      )}
     </Tab.Navigator>
   );
 }

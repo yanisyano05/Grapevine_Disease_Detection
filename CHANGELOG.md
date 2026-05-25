@@ -8,6 +8,7 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### Ajouté
+- **PWA VinEye** : export web de l'app Expo (MVP scanner). Inférence via `/api/mobile/predict`, carte masquée sur web, mode invité, manifest + service worker. Déploiement Vercel statique (`VinEye/PWA.md`).
 - **API `/api/mobile/predict`** : inférence ML serveur (ONNX/onnxruntime-node) pour la future PWA. Reçoit une image base64, renvoie `{ status, class, slug, confidence, probabilities }`. Public + rate-limit IP (Upstash). Mobile inchangé (reste on-device).
 - Script `venv/src/export_onnx.py` : conversion du `.tflite` embarqué → ONNX avec test de parité.
 

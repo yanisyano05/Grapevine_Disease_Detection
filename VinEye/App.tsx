@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { PortalHost } from '@rn-primitives/portal';
+import { registerPWA } from '@/pwa/registerPWA';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NetworkProvider } from '@/contexts/NetworkContext';
 import { NetworkToastWatcher } from '@/contexts/ToastContext';
@@ -15,6 +16,7 @@ import RootNavigator from '@/navigation/RootNavigator';
 
 export default function App() {
   useEffect(() => {
+    registerPWA();
     if (Platform.OS === 'android') {
       NavigationBar.setButtonStyleAsync('dark');
     }
