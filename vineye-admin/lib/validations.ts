@@ -105,9 +105,19 @@ export const mobileScanCreateSchema = z.object({
   deviceId: z.string().max(128).trim().optional().nullable(),
 });
 
+export const mobilePredictSchema = z.object({
+  image: z
+    .string()
+    .regex(
+      /^data:image\/[a-zA-Z+]+;base64,.+$/,
+      "Format image attendu : data-URI base64",
+    ),
+});
+
 export type DiseaseInput = z.infer<typeof diseaseSchema>;
 export type GuideInput = z.infer<typeof guideSchema>;
 export type AlertInput = z.infer<typeof alertSchema>;
 export type ScanInput = z.infer<typeof scanSchema>;
 export type MobileAuthSyncInput = z.infer<typeof mobileAuthSyncSchema>;
 export type MobileScanCreateInput = z.infer<typeof mobileScanCreateSchema>;
+export type MobilePredictInput = z.infer<typeof mobilePredictSchema>;
