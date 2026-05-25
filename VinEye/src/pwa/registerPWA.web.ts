@@ -9,10 +9,17 @@ export function registerPWA(): void {
   }
 
   if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {
-        // enregistrement best-effort : ne jamais casser l'app si le SW échoue
-      });
-    });
+    // best-effort : ne jamais casser l'app si le SW échoue.
+    const register = () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    };
+    // registerPWA() est appelé depuis un useEffect : l'événement `load` est
+    // souvent déjà passé → enregistrer tout de suite si le document est prêt,
+    // sinon attendre `load`. (Sans ça, le SW ne s'enregistrait jamais.)
+    if (document.readyState === 'complete') {
+      register();
+    } else {
+      window.addEventListener('load', register);
+    }
   }
 }
