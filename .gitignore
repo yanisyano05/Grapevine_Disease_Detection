@@ -27,6 +27,7 @@ VinEye/android/
 
 # Virtual environment
 venv/
+.venv-ml/
 
 # Dependencies
 node_modules/
