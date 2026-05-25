@@ -9,7 +9,7 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
 ### Ajouté
 - **API `/api/mobile/predict`** : inférence ML serveur (ONNX/onnxruntime-node) pour la future PWA. Reçoit une image base64, renvoie `{ status, class, slug, confidence, probabilities }`. Public + rate-limit IP (Upstash). Mobile inchangé (reste on-device).
-- Script `venv/src/export_onnx.py` : conversion `model.keras` → ONNX avec test de parité.
+- Script `venv/src/export_onnx.py` : conversion du `.tflite` embarqué → ONNX avec test de parité.
 
 ## [1.0.0] - 2026-05-01
 
