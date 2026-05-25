@@ -95,97 +95,43 @@ git commit -m "chore(ml): add onnxruntime/sharp/upstash deps + vitest setup"
 
 ---
 
-## Task 1: Conversion du modèle Keras → ONNX (Python)
+## Task 1: Conversion du modèle `.tflite` → ONNX (Python) — ✅ DÉJÀ FAITE
 
-**Files:**
-- Create: `venv/src/export_onnx.py`
-- Create: `vineye-admin/lib/ml/grapevine_v1.onnx` (output du script)
+> **Réalisée pendant la session de préparation.** Le `.keras` ne se convertit PAS (couches
+> d'augmentation random → ONNX invalide rejeté par onnxruntime). La conversion part donc du
+> `.tflite` (inference-only, validé mobile). Script `venv/src/export_onnx.py` écrit, exécuté,
+> parité TFLite↔ONNX = ~1.5e-4, et `vineye-admin/lib/ml/grapevine_v1.onnx` (4.9 MB) en place.
+>
+> **Le modèle sort des LOGITS** (pas de softmax) → le softmax est appliqué dans `inference.ts` (Task 4).
 
-- [ ] **Step 1: Installer tf2onnx dans le venv**
+**Files (déjà créés) :**
+- `venv/src/export_onnx.py` — script de conversion `tf2onnx --tflite` + parité.
+- `vineye-admin/lib/ml/grapevine_v1.onnx` — modèle ONNX embarqué (4.9 MB).
 
-Depuis `venv/` (activer le venv d'abord si besoin) :
+- [ ] **Step 1: Vérifier la présence et la validité du modèle ONNX**
+
+Depuis `vineye-admin/` :
 ```bash
-pip install tf2onnx onnx onnxruntime
+ls -lh lib/ml/grapevine_v1.onnx
 ```
-> Si TensorFlow n'est plus installé (site-packages non versionné) : `pip install tensorflow` (version compatible avec celle d'entraînement). En cas d'échec d'import du `.keras`, vérifier la version de Keras.
+Expected: fichier présent, ~4.9 MB. (Le `.onnx` charge dans onnxruntime — vérifié pendant la conversion ; re-validé par le test de Task 4.)
 
-- [ ] **Step 2: Écrire le script de conversion + parité**
+- [ ] **Step 2: (si le `.onnx` manque) Régénérer**
 
-Create `venv/src/export_onnx.py` :
-```python
-"""Convertit model.keras -> model.onnx et vérifie la parité des sorties.
-
-Usage : python export_onnx.py
-Sortie : ../models/<latest>/model.onnx + copie vers vineye-admin/lib/ml/grapevine_v1.onnx
-"""
-import os
-import shutil
-import numpy as np
-import tensorflow as tf
-import tf2onnx
-import onnxruntime as ort
-
-HERE = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(HERE, "..", "models", "2026-03-23_11-55-09")
-KERAS_PATH = os.path.join(MODEL_DIR, "model.keras")
-ONNX_PATH = os.path.join(MODEL_DIR, "model.onnx")
-BACKEND_DEST = os.path.join(
-    HERE, "..", "..", "vineye-admin", "lib", "ml", "grapevine_v1.onnx"
-)
-IMG_SIZE = 224
-OPSET = 13
-
-def main():
-    model = tf.keras.models.load_model(KERAS_PATH)
-    model.build([None, IMG_SIZE, IMG_SIZE, 3])
-
-    spec = (tf.TensorSpec((None, IMG_SIZE, IMG_SIZE, 3), tf.float32, name="input"),)
-    tf2onnx.convert.from_keras(
-        model, input_signature=spec, opset=OPSET, output_path=ONNX_PATH
-    )
-    print(f"ONNX écrit : {ONNX_PATH}")
-
-    # Parité : 3 entrées aléatoires, écart absolu max < 1e-4
-    sess = ort.InferenceSession(ONNX_PATH, providers=["CPUExecutionProvider"])
-    onnx_in = sess.get_inputs()[0].name
-    max_diff = 0.0
-    for _ in range(3):
-        x = np.random.rand(1, IMG_SIZE, IMG_SIZE, 3).astype(np.float32)
-        keras_out = model.predict(x, verbose=0)
-        onnx_out = sess.run(None, {onnx_in: x})[0]
-        max_diff = max(max_diff, float(np.abs(keras_out - onnx_out).max()))
-    print(f"Écart max Keras/ONNX : {max_diff:.2e}")
-    assert max_diff < 1e-4, f"Parité échouée : {max_diff}"
-
-    os.makedirs(os.path.dirname(BACKEND_DEST), exist_ok=True)
-    shutil.copyfile(ONNX_PATH, BACKEND_DEST)
-    print(f"Copié vers : {BACKEND_DEST}")
-
-if __name__ == "__main__":
-    main()
-```
-
-- [ ] **Step 3: Exécuter la conversion**
-
-Depuis `venv/src/` :
+Depuis `venv/src/` avec le venv de conversion `.venv-ml` :
 ```bash
-python export_onnx.py
+../../.venv-ml/Scripts/python.exe export_onnx.py
 ```
-Expected: affiche "ONNX écrit", "Écart max Keras/ONNX : X.XXe-0X" (< 1e-4), "Copié vers ...". Le fichier `vineye-admin/lib/ml/grapevine_v1.onnx` existe.
+Expected: "Écart max TFLite/ONNX : ~1.5e-04", "Copié vers ...".
 
-- [ ] **Step 4: Vérifier la taille du fichier produit**
+- [ ] **Step 3: Commit (modèle + script)**
 
-Run: `ls -lh ../../vineye-admin/lib/ml/grapevine_v1.onnx`
-Expected: fichier présent, ~9-15 MB.
-
-- [ ] **Step 5: Commit (script + modèle)**
-
-Depuis la racine du monorepo :
+Depuis la racine du monorepo (le `.onnx` n'est pas gitignored ; le script est sous `venv/` ignoré → `-f`) :
 ```bash
-git add venv/src/export_onnx.py vineye-admin/lib/ml/grapevine_v1.onnx
-git commit -m "feat(ml): export model.keras to ONNX + embed in vineye-admin"
+git add vineye-admin/lib/ml/grapevine_v1.onnx
+git add -f venv/src/export_onnx.py
+git commit -m "feat(ml): convert embedded .tflite to ONNX + embed in vineye-admin"
 ```
-> Si `venv/` est gitignored, ne committer que le `.onnx` et garder le script via `git add -f venv/src/export_onnx.py`.
 
 ---
 
@@ -507,7 +453,18 @@ function getSession(): Promise<ort.InferenceSession> {
   return sessionPromise;
 }
 
-/** Exécute le modèle sur un tenseur NHWC déjà normalisé → tableau de probabilités. */
+/** Softmax numériquement stable : logits → probabilités sommant à 1. */
+export function softmax(logits: number[]): number[] {
+  const max = Math.max(...logits);
+  const exps = logits.map((v) => Math.exp(v - max));
+  const sum = exps.reduce((a, b) => a + b, 0);
+  return exps.map((v) => v / sum);
+}
+
+/**
+ * Exécute le modèle sur un tenseur NHWC normalisé → LOGITS bruts (4 valeurs).
+ * ⚠️ Le modèle sort des logits, PAS des probabilités — softmax appliqué dans predict().
+ */
 export async function runModel(input: Float32Array): Promise<number[]> {
   const session = await getSession();
   const tensor = new ort.Tensor("float32", input, [1, MODEL_INPUT_SIZE, MODEL_INPUT_SIZE, 3]);
@@ -517,14 +474,15 @@ export async function runModel(input: Float32Array): Promise<number[]> {
   return Array.from(result.data as Float32Array);
 }
 
-/** Pipeline complet : data-URI → preprocessing → inférence → classification. */
+/** Pipeline complet : data-URI → preprocessing → inférence → softmax → classification. */
 export async function predict(dataUri: string): Promise<Prediction> {
   const buffer = dataUriToBuffer(dataUri);
   const input = await preprocessImage(buffer);
-  const probabilities = await runModel(input);
-  if (probabilities.length !== ML_CLASSES.length) {
-    throw new Error(`Model returned ${probabilities.length} outputs`);
+  const logits = await runModel(input);
+  if (logits.length !== ML_CLASSES.length) {
+    throw new Error(`Model returned ${logits.length} outputs`);
   }
+  const probabilities = softmax(logits);
   return classify(probabilities);
 }
 ```

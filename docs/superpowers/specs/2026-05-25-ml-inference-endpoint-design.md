@@ -15,7 +15,7 @@ Décision produit : la PWA suppose une **connexion internet permanente** (pas d'
 On déplace donc l'inférence **côté serveur** : un endpoint dans `vineye-admin` reçoit une image,
 exécute le modèle et renvoie la classification. La PWA n'a qu'à envoyer l'image et afficher le résultat.
 
-Le modèle source Keras (`model.keras`) est disponible → conversion propre en ONNX.
+Le modèle est converti une fois en ONNX **depuis le `.tflite`** (artefact inference-only validé sur mobile) — voir §3 et §5.1 pour la raison.
 
 ---
 
@@ -28,24 +28,27 @@ Le modèle source Keras (`model.keras`) est disponible → conversion propre en 
 | 3 | Format image | **Base64 dans du JSON** (`{ image: "data:image/jpeg;base64,..." }`), cohérent avec `apiPost`. |
 | 4 | Calcul du statut | **Serveur calcule tout** : applique les seuils, renvoie `{ status, class, slug, confidence, probabilities }`. PWA « bête ». |
 | 5 | Persistance | `/predict` **stateless** (inférence seule). La PWA appelle `/api/mobile/scans` séparément si elle veut sauvegarder. |
-| 6 | Runtime inférence | **`onnxruntime-node`** (via conversion ONNX). Écarté : TF.js client (offline non requis), VPS Python (2e service inutile pour l'instant). |
+| 6 | Runtime inférence | **`onnxruntime-node`** (ONNX converti **depuis le `.tflite`**, cf. §5.1). Écarté : TF.js client (offline non requis), VPS Python (2e service inutile pour l'instant). |
 | 7 | Rate limiting | **`@upstash/ratelimit` + Upstash Redis** (store partagé, fiable sur Vercel serverless — l'in-memory ne tient pas entre instances Lambda). |
 
 ---
 
-## 3. Spécification du modèle (source de vérité)
+## 3. Spécification du modèle (source de vérité — VÉRIFIÉE empiriquement le 2026-05-25)
 
-Architecture (`venv/src/models.py`) :
-MobileNetV2 (`include_top=False`, poids imagenet) → `GlobalAveragePooling2D` → `Dense(100, relu)` → `Dense(100, relu)` → `Dense(4, softmax)`.
+> ⚠️ `venv/src/models.py` ne reflète **pas** le modèle réellement entraîné. La spec ci-dessous
+> vient du chargement du vrai `model.keras` + `model.tflite` (diagnostic de la session).
 
-- **Softmax inclus dans le modèle** → sortie = 4 probabilités directement.
+Architecture réelle : **CNN custom** (un `Sequential` d'augmentation en tête, puis empilement `Conv2D`/`BatchNormalization`/`MaxPooling2D`/`Dropout` → `GlobalAveragePooling2D` → 3× `Dense`). **Pas MobileNetV2.** Pour l'endpoint, le modèle est une **boîte noire** : image → 4 logits.
+
+- **Sortie = LOGITS** (dernière couche `Dense` activation `linear`). **PAS de softmax dans le modèle.**
+  → le **softmax est appliqué côté serveur** avant les seuils (comme sur mobile : `softmax()` dans `VinEye/src/services/ml/preprocessing.ts`).
 - **Input** : `[1, 224, 224, 3]`, float32, layout **NHWC**.
-- **Normalisation** : **`/255` → [0, 1]** (entraînement avec `Rescaling(1./255)`, **PAS** `mobilenet_v2.preprocess_input`).
-- **Resize** : sans préservation du ratio (`image_dataset_from_directory` redimensionne en `fill`).
+- **Normalisation** : **`/255` → [0, 1]** — aligné sur le preprocessing mobile validé (`preprocessing.ts` : resize 224² + `/255`). Le modèle a aussi un `Rescaling(1/255)` interne, mais on **reproduit exactement le chemin mobile validé** : l'ONNX issu du `.tflite` est identique au `.tflite` à ~1.5e-4 près.
+- **Resize** : 224×224 sans préservation du ratio (`fit:"fill"`), comme le mobile.
 - **Ordre des classes** (autoritatif, `VinEye/src/services/ml/classes.ts`) :
-  `['black_rot', 'esca', 'healthy', 'leaf_blight']` → index 0/1/2/3 de la sortie softmax.
+  `['black_rot', 'esca', 'healthy', 'leaf_blight']` → index 0/1/2/3 de la sortie.
 - **Mapping slug** : `healthy → null`, `black_rot → black-rot`, `esca → esca`, `leaf_blight → leaf-blight`.
-- **Seuils de confidence** : `≥ 0.70` → `vine` · `0.40–0.70` → `uncertain` · `< 0.40` → `not_vine`.
+- **Seuils de confidence** (appliqués sur les probas APRÈS softmax) : `≥ 0.70` → `vine` · `0.40–0.70` → `uncertain` · `< 0.40` → `not_vine`.
 
 ---
 
@@ -60,7 +63,8 @@ PWA (navigateur)
            ├─ auth best-effort (token optionnel → userId)
            ├─ Zod valide le payload                       → 400 si invalide
            ├─ preprocess (sharp): decode → resize 224² fill → RGB Float32 /255 → [1,224,224,3]
-           ├─ inference (onnxruntime-node): session singleton → 4 probas softmax
+           ├─ inference (onnxruntime-node): session singleton → 4 logits
+           ├─ softmax(logits) → 4 probas
            └─ argmax + seuils → { prediction }            → 200
 ```
 
@@ -68,25 +72,29 @@ PWA (navigateur)
 
 ## 5. Composants & fichiers
 
-### 5.1 Conversion du modèle (Python, exécutée une fois)
+### 5.1 Conversion du modèle (Python, exécutée une fois) — ✅ FAITE (2026-05-25)
+
+> **Pourquoi depuis le `.tflite` et non le `.keras`** : `model.keras` commence par un `Sequential`
+> d'augmentation (RandomFlip/Rotation/Zoom) dont les ops random (`StatelessRandomUniformV2`,
+> `ImageProjectiveTransformV3`) **ne sont pas convertibles en ONNX** → onnxruntime refuse de charger
+> l'ONNX issu du keras. Le `.tflite` est inference-only et donne un ONNX **valide**.
 
 `venv/src/export_onnx.py` :
-1. Charge `models/2026-03-23_11-55-09/model.keras`.
-2. Exporte en SavedModel (`model.export(...)`).
-3. Convertit via `tf2onnx` (opset 13) → `model.onnx`.
-4. **Test de parité** : compare sorties ONNX vs Keras sur quelques images échantillons (écart absolu max < 1e-4). Bloque si la conversion dérive.
-5. Copie le `.onnx` validé vers `vineye-admin/lib/ml/grapevine_v1.onnx`.
+1. `tf2onnx.convert --tflite models/2026-03-23_11-55-09/model.tflite --opset 13 → model.onnx`.
+2. **Test de parité** : ONNX vs TFLite sur 3 entrées aléatoires (écart max < 1e-3 ; mesuré ~1.5e-4).
+3. Copie le `.onnx` validé vers `vineye-admin/lib/ml/grapevine_v1.onnx` (4.9 MB).
 
-Prérequis : `pip install tf2onnx onnx` dans le venv (TensorFlow déjà présent). Le venv peut nécessiter une réinstallation des deps (site-packages non versionné).
+Env de conversion : venv Python 3.11 dédié `.venv-ml/` (Windows) avec `tensorflow tf2onnx onnx onnxruntime`.
+> Statut : déjà exécuté dans la session — le `.onnx` est présent dans le backend. Cette task se résume à vérifier sa présence.
 
 ### 5.2 Backend `vineye-admin`
 
 | Fichier | Rôle |
 |---------|------|
-| `lib/ml/grapevine_v1.onnx` | Modèle converti (~10-14 MB). **Hors `/public`** (privé). Committé. |
+| `lib/ml/grapevine_v1.onnx` | Modèle converti (4.9 MB). **Hors `/public`** (privé). Committé. |
 | `lib/ml/classes.ts` | Miroir de `classes.ts` mobile : `ML_CLASSES`, `CLASS_TO_SLUG`, seuils. Source de vérité backend. |
 | `lib/ml/preprocess.ts` | sharp : base64 → decode → `resize(224,224,{fit:"fill"})` → RGB → `Float32Array` `/255` → NHWC. |
-| `lib/ml/inference.ts` | `onnxruntime-node` : session singleton (module-scope), `runInference(input) → number[4]`, puis argmax + seuils → objet `prediction`. |
+| `lib/ml/inference.ts` | `onnxruntime-node` : session singleton (module-scope), `runModel(input) → number[4]` **logits**, puis **`softmax()`** → probas → `classify()` (argmax + seuils) → objet `prediction`. Nom d'entrée/sortie lus dynamiquement (`session.inputNames[0]` / `outputNames[0]`). |
 | `lib/ratelimit.ts` | `@upstash/ratelimit` + client Redis Upstash. Limiter IP pour `/predict`. |
 | `lib/validations.ts` | Ajout `mobilePredictSchema` : valide **le format** data-URI base64 (préfixe `data:image/...;base64,` + corps base64 non vide). La **taille** est un garde-fou séparé (→ 413), pas dans Zod. |
 | `app/api/mobile/predict/route.ts` | Handler POST + OPTIONS. `runtime = "nodejs"`, `maxDuration = 30`. Pattern CORS de `scans/route.ts`. |
@@ -152,7 +160,7 @@ Aucune stack trace exposée. Logs serveur sans donnée sensible (pas d'image, pa
 
 ## 8. Tests
 
-- **Python (conversion)** : parité ONNX ↔ Keras sur images échantillons (écart < 1e-4).
+- **Python (conversion)** : parité ONNX ↔ TFLite sur entrées aléatoires (écart < 1e-3). ✅ fait.
 - **Backend unit** :
   - `preprocess.ts` : image connue → stats de tenseur attendues (shape, min/max, longueur).
   - `inference.ts` : image vigne connue → classe attendue + confidence plausible.
@@ -176,5 +184,6 @@ Aucune stack trace exposée. Logs serveur sans donnée sensible (pas d'image, pa
 1. **Next.js 16 spécifique** : `outputFileTracingIncludes` et `serverExternalPackages` doivent être validés contre `node_modules/next/dist/docs/` (cf. `vineye-admin/AGENTS.md` — « This is NOT the Next.js you know »).
 2. **Binaire natif `onnxruntime-node` sur Vercel** : doit être correctement embarqué dans le bundle de la fonction (linux-x64). Risque de tree-shaking / exclusion → vérifier le packaging.
 3. **Embarquer le `.onnx`** dans le file tracing de la fonction (sinon `ENOENT` au runtime).
-4. **tf2onnx + MobileNetV2** : conversion réputée fiable, mais le test de parité (5.1.4) est la garde.
-5. **Cold start** : acceptable pour un scan ponctuel ; si gênant plus tard → bascule VPS persistant.
+4. **Conversion ONNX** : ✅ résolue — keras→ONNX cassé (ops random), `.tflite`→ONNX valide et vérifié (parité ~1.5e-4).
+5. **Sortie = logits** : ne pas oublier le `softmax()` côté serveur avant les seuils (sinon `confidence` aberrante).
+6. **Cold start** : acceptable pour un scan ponctuel ; si gênant plus tard → bascule VPS persistant.
