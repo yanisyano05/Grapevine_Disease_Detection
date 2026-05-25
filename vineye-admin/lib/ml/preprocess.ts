@@ -17,7 +17,8 @@ export function dataUriToBuffer(dataUri: string): Buffer {
  * Sortie : Float32Array layout NHWC (H×W×C interleaved), length 224*224*3.
  */
 export async function preprocessImage(buffer: Buffer): Promise<Float32Array> {
-  const { data } = await sharp(buffer)
+  // limitInputPixels: decompression-bomb protection (25 MP is generous for legit photos)
+  const { data } = await sharp(buffer, { limitInputPixels: 25_000_000 })
     .removeAlpha()
     .resize(MODEL_INPUT_SIZE, MODEL_INPUT_SIZE, { fit: "fill" })
     .raw()

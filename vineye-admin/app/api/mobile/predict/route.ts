@@ -46,6 +46,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // 1b. Content-Length early gate (best-effort: header can be absent or spoofed;
+  //     the authoritative decoded-size check is in step 4).
+  const RAW_LIMIT = 3 * 1024 * 1024; // 3 MB — covers 2 MB image + base64/JSON overhead
+  const contentLength = request.headers.get("content-length");
+  if (contentLength !== null && parseInt(contentLength, 10) > RAW_LIMIT) {
+    return Response.json(
+      { error: "Image too large" },
+      { status: 413, headers: CORS_HEADERS },
+    );
+  }
+
   // 2. Parse JSON
   let body: unknown;
   try {
